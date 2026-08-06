@@ -1,3 +1,557 @@
 @use "./variables.scss" as *;
 
-// put your custom CSS here!
+/* =========================================================
+   PRIME ARCHIVES
+   Clean stylesheet
+   ========================================================= */
+
+/* =========================================================
+   1. GLOBAL
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-shadow: 0 0 12px rgba(100, 215, 255, 0.3);
+}
+
+.article-title,
+h1,
+h2,
+h3 {
+  letter-spacing: -0.025em;
+}
+
+.article-title {
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+}
+
+.center article {
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.center article p {
+  max-width: 78ch;
+}
+
+blockquote {
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-left: 3px solid var(--secondary);
+  border-radius: 0 10px 10px 0;
+  background: rgba(100, 215, 255, 0.07);
+}
+
+/* =========================================================
+   2. STANDARD SITE LAYOUT
+   ========================================================= */
+
+@media all and (min-width: 1200px) {
+  #quartz-body {
+    grid-template-columns: 220px minmax(0, 1fr);
+    width: 100%;
+    max-width: 1700px;
+    margin: 0 auto;
+    padding-inline: 2rem;
+    column-gap: 2rem;
+  }
+
+  #quartz-body .sidebar.right {
+    display: none;
+  }
+
+  #quartz-body .center,
+  #quartz-body .center article,
+  #quartz-body .center .markdown-preview-view {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* =========================================================
+   3. SIDEBAR
+   ========================================================= */
+
+.sidebar.left {
+  padding-top: 2rem;
+  padding-right: 1rem;
+  border-right: 0;
+}
+
+.page-title {
+  margin-bottom: 1.25rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.search {
+  margin-bottom: 1rem;
+}
+
+.explorer-title,
+.explorer .title-button h2 {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+/* =========================================================
+   4. FOOTER
+   ========================================================= */
+
+footer {
+  padding-top: 1.5rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--lightgray);
+  opacity: 0.78;
+
+  > p {
+    display: none;
+  }
+
+  > ul {
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+/* =========================================================
+   5. REUSABLE BUTTON
+   ========================================================= */
+
+.prime-button {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.5rem;
+  border: 1px solid #64d7ff;
+  border-radius: 9px;
+  background: rgba(100, 215, 255, 0.13);
+  box-shadow:
+    inset 0 0 18px rgba(100, 215, 255, 0.06),
+    0 0 30px rgba(100, 215, 255, 0.12);
+  color: #fff !important;
+  font-weight: 750;
+  text-decoration: none !important;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.prime-button::after {
+  content: "→";
+}
+
+.prime-button:hover {
+  transform: translateY(-3px);
+  border-color: #64d7ff;
+  background: rgba(100, 215, 255, 0.23);
+  box-shadow: 0 0 38px rgba(100, 215, 255, 0.3);
+  text-shadow: none;
+}
+
+/* =========================================================
+   6. LANDING PAGE — /
+   ========================================================= */
+
+body[data-slug="index"] {
+  min-height: 100vh;
+
+  #quartz-body {
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar.left,
+  .sidebar.right,
+  .page-header,
+  footer,
+  hr {
+    display: none;
+  }
+
+  .center,
+  article,
+  .markdown-preview-view {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .markdown-preview-view {
+    position: relative;
+    min-height: 100vh;
+    background: #060910;
+  }
+
+  .markdown-preview-view > p:first-child {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    min-height: 720px;
+    margin: 0;
+    overflow: hidden;
+    background: #060910;
+  }
+
+  .markdown-preview-view > p:first-child::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(6, 9, 16, 0.96) 0%,
+        rgba(6, 9, 16, 0.8) 35%,
+        rgba(6, 9, 16, 0.28) 70%,
+        rgba(6, 9, 16, 0.08) 100%
+      ),
+      linear-gradient(
+        0deg,
+        rgba(6, 9, 16, 0.72) 0%,
+        transparent 45%
+      );
+  }
+
+  .markdown-preview-view > p:first-child img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .markdown-preview-view > h1 {
+    position: absolute;
+    z-index: 2;
+    top: 31%;
+    left: clamp(2rem, 7vw, 8rem);
+    max-width: 720px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(4rem, 7vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.065em;
+    text-shadow: 0 8px 35px rgba(0, 0, 0, 0.82);
+  }
+
+  .markdown-preview-view > h1::before {
+    display: block;
+    margin-bottom: 1rem;
+    color: #64d7ff;
+    content: "ECHOES OF PRIME";
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    line-height: 1;
+  }
+
+  .markdown-preview-view > blockquote:first-of-type {
+    position: absolute;
+    z-index: 2;
+    top: 58%;
+    left: clamp(2rem, 7vw, 8rem);
+    max-width: 560px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: #dce8f2;
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+  }
+
+  .markdown-preview-view > blockquote:first-of-type p {
+    margin: 0;
+  }
+
+  .markdown-preview-view > a.prime-button,
+  .markdown-preview-view > .hero-button {
+    position: absolute;
+    z-index: 2;
+    top: 69%;
+    left: clamp(2rem, 7vw, 8rem);
+    margin: 0;
+  }
+
+  .markdown-preview-view > .hero-button {
+    max-width: none;
+  }
+
+  .markdown-preview-view > .hero-button .prime-button {
+    position: static;
+  }
+}
+
+/* =========================================================
+   7. ARCHIVES PAGE — /archives
+   ========================================================= */
+
+body[data-slug="archives"] {
+  .article-title,
+  .content-meta {
+    display: none;
+  }
+
+  .markdown-preview-view {
+    width: 100%;
+    max-width: none;
+    padding-top: 1rem;
+  }
+
+  .markdown-preview-view > h1,
+  .markdown-preview-view > h2 {
+    margin: 0 0 1rem;
+    text-align: center;
+    font-size: clamp(2.3rem, 4vw, 3.5rem);
+  }
+
+  .markdown-preview-view > h1::before,
+  .markdown-preview-view > h2::before {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--secondary);
+    content: "ACCESS PUBLIC RECORDS";
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+  }
+
+  .markdown-preview-view > h1 + p,
+  .markdown-preview-view > h2 + p {
+    max-width: 760px;
+    margin: 0 auto 3rem;
+    color: var(--darkgray);
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .markdown-preview-view > ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 1150px;
+    padding: 0;
+    margin: 0 auto 4rem;
+    list-style: none;
+  }
+
+  .markdown-preview-view > ul > li {
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+  }
+
+  .markdown-preview-view > ul > li > p {
+    height: 100%;
+    margin: 0;
+  }
+
+  .markdown-preview-view > ul > li > p > a {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 190px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.55rem;
+    overflow: hidden;
+    padding: 1.6rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 16px;
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(139, 108, 255, 0.12),
+        transparent 48%
+      ),
+      linear-gradient(
+        145deg,
+        rgba(100, 215, 255, 0.08),
+        rgba(139, 108, 255, 0.035)
+      );
+    color: var(--dark);
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .markdown-preview-view > ul > li > p > a::before {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.6rem;
+    color: var(--gray);
+    content: "PUBLIC ARCHIVE";
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+  }
+
+  .markdown-preview-view > ul > li > p > a::after {
+    position: absolute;
+    top: 1.15rem;
+    right: 1.5rem;
+    color: var(--secondary);
+    font-family: var(--codeFont);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    opacity: 0.75;
+  }
+
+  .markdown-preview-view > ul > li:nth-child(1) > p > a::after {
+    content: "01";
+  }
+
+  .markdown-preview-view > ul > li:nth-child(2) > p > a::after {
+    content: "04";
+  }
+
+  .markdown-preview-view > ul > li:nth-child(3) > p > a::after {
+    content: "05";
+  }
+
+  .markdown-preview-view > ul > li:nth-child(4) > p > a::after {
+    content: "06";
+  }
+
+  .markdown-preview-view > ul > li:nth-child(5) > p > a::after {
+    content: "07";
+  }
+
+  .markdown-preview-view > ul > li:nth-child(6) > p > a::after {
+    content: "02";
+  }
+
+  .markdown-preview-view > ul > li > p > a strong {
+    color: var(--secondary);
+    font-size: 1.55rem;
+    line-height: 1.1;
+  }
+
+  .markdown-preview-view > ul > li > p > a:hover {
+    transform: translateY(-6px);
+    border-color: var(--secondary);
+    box-shadow:
+      0 22px 45px rgba(0, 0, 0, 0.26),
+      0 0 28px rgba(100, 215, 255, 0.1);
+    text-shadow: none;
+  }
+
+  .markdown-preview-view > blockquote.callout:last-child {
+    max-width: 850px;
+    margin: 0 auto;
+    border: 1px solid rgba(100, 215, 255, 0.2);
+    border-left: 4px solid var(--secondary);
+    background: rgba(100, 215, 255, 0.055);
+  }
+}
+
+/* =========================================================
+   8. TABLET
+   ========================================================= */
+
+@media all and (max-width: 1000px) {
+  body[data-slug="archives"] {
+    .markdown-preview-view > ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+/* =========================================================
+   9. MOBILE
+   ========================================================= */
+
+@media all and (max-width: 799px) {
+  .sidebar.left {
+    border-right: 0;
+  }
+
+  body[data-slug="index"] {
+    .markdown-preview-view > p:first-child {
+      height: 100vh;
+      min-height: 680px;
+    }
+
+    .markdown-preview-view > p:first-child::after {
+      background: linear-gradient(
+        0deg,
+        rgba(6, 9, 16, 0.97) 0%,
+        rgba(6, 9, 16, 0.6) 68%,
+        rgba(6, 9, 16, 0.12) 100%
+      );
+    }
+
+    .markdown-preview-view > h1 {
+      top: 45%;
+      right: 1.5rem;
+      left: 1.5rem;
+      font-size: clamp(3.3rem, 15vw, 5rem);
+    }
+
+    .markdown-preview-view > blockquote:first-of-type {
+      top: 67%;
+      right: 1.5rem;
+      left: 1.5rem;
+    }
+
+    .markdown-preview-view > a.prime-button,
+    .markdown-preview-view > .hero-button {
+      top: 79%;
+      left: 1.5rem;
+    }
+  }
+
+  body[data-slug="archives"] {
+    .markdown-preview-view > ul {
+      grid-template-columns: 1fr;
+    }
+
+    .markdown-preview-view > ul > li > p > a {
+      min-height: 155px;
+    }
+  }
+}

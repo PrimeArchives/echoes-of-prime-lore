@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 
 configuration:
-  pageTitle: Echoes of Prime
+  pageTitle: Prime Archives
+  description: The official player archives of Echoes of Prime.
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -10,7 +11,7 @@ configuration:
     provider: plausible
 
   locale: en-US
-  baseUrl: primearchives.github.io/echoes-of-prime-lore
+  baseUrl: echoes-of-prime-lore.primearchives.workers.dev
 
   ignorePatterns:
     - private
@@ -28,26 +29,26 @@ configuration:
 
     colors:
       lightMode:
-        light: "#faf8f8"
-        lightgray: "#e5e5e5"
-        gray: "#b8b8b8"
-        darkgray: "#4e4e4e"
-        dark: "#2b2b2b"
-        secondary: "#284b63"
-        tertiary: "#84a59d"
-        highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#fff23688"
+        light: "#F7F9FC"
+        lightgray: "#E2E8F0"
+        gray: "#94A3B8"
+        darkgray: "#475569"
+        dark: "#18212F"
+        secondary: "#177FA6"
+        tertiary: "#684FD6"
+        highlight: rgba(23, 127, 166, 0.14)
+        textHighlight: "#64D7FF55"
 
       darkMode:
-        light: "#161618"
-        lightgray: "#393639"
-        gray: "#646464"
-        darkgray: "#d4d4d4"
-        dark: "#ebebec"
-        secondary: "#7b97aa"
-        tertiary: "#84a59d"
-        highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#b3aa0288"
+        light: "#15181D"
+        lightgray: "#222831"
+        gray: "#4F5B66"
+        darkgray: "#B8C4D0"
+        dark: "#F2F6FA"
+        secondary: "#64D7FF"
+        tertiary: "#8B6CFF"
+        highlight: rgba(100, 215, 255, 0.15)
+        textHighlight: "#64D7FF44"
 
 plugins:
   - source: "@quartz-community/created-modified-date"
@@ -133,7 +134,7 @@ plugins:
     enabled: true
 
   - source: "@quartz-themes/core"
-    enabled: true
+    enabled: false
     options:
       theme: its-theme.ttrpg-dnd
       mode: both
@@ -166,6 +167,9 @@ plugins:
 
   - source: "@quartz-community/alias-redirects"
     enabled: true
+    
+  - source: "@quartz-community/assets"
+    enabled: true
 
   - source: "@quartz-community/content-index"
     enabled: true
@@ -196,12 +200,17 @@ plugins:
 
   - source: "@quartz-community/explorer"
     enabled: true
+    options:
+      title: Archives
+      folderClickBehavior: collapse
+      folderDefaultState: collapsed
+      useSavedState: true
     layout:
       position: left
       priority: 50
 
   - source: "@quartz-community/graph"
-    enabled: true
+    enabled: false
     layout:
       position: right
       priority: 10
@@ -216,7 +225,7 @@ plugins:
         grow: true
 
   - source: "@quartz-community/backlinks"
-    enabled: true
+    enabled: false
     layout:
       position: right
       priority: 50
@@ -279,8 +288,7 @@ plugins:
     enabled: true
     options:
       links:
-        PrimeArchives: https://github.com/PrimeArchives
-        Source: https://github.com/PrimeArchives/echoes-of-prime-lore
+        Prime Archives: https://primearchives.nl
     layout:
       position: footer
       priority: 50
@@ -311,8 +319,8 @@ plugins:
         - tags
         - aliases
       excludedProperties: []
-      hidePropertiesView: false
-      delimiters: ---
+      hidePropertiesView: true
+      delimiters: "---"
       language: yaml
     order: 5
     layout:
@@ -339,7 +347,10 @@ layout:
         left: []
         right: []
 
-    content: {}
+    content:
+      exclude:
+        - content-meta
+        - table-of-contents
 
     folder:
       exclude:
