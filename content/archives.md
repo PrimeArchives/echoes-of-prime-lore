@@ -1,12 +1,11 @@
 ---
-title: Archives
-description: Openbare databank van Echoes of Prime.
+title: Archive Index
+description: Public record index of the Prime Archives.
 ---
 
-# Explore the known universe
+# Archive Index
 
-De Prime Archives bevatten alle locaties, personen, facties en ontdekkingen die tijdens de campagne voor spelers bekend zijn geworden.
-
+Selecteer een archiefcategorie om de vrijgegeven publieke gegevens te bekijken.
 - [**Universe**  
   Geschiedenis, werelden en kosmische kennis.](/01-universe/)
 

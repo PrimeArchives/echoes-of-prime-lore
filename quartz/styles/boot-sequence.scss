@@ -1,0 +1,233 @@
+/* =========================================================
+   PRIME ARCHIVES — BOOT SEQUENCE
+   CSS-only dismissal after 3.2 seconds
+   ========================================================= */
+
+.prime-boot {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #02050a;
+  color: #dff7ff;
+  pointer-events: all;
+  animation: prime-boot-dismiss 3.2s forwards;
+}
+
+.prime-boot::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0.18;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 3px,
+    rgba(100, 215, 255, 0.09) 4px
+  );
+}
+
+.prime-boot::after {
+  position: absolute;
+  top: -40%;
+  left: -30%;
+  width: 38%;
+  height: 180%;
+  content: "";
+  pointer-events: none;
+  opacity: 0.28;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(100, 215, 255, 0.2),
+    rgba(210, 248, 255, 0.42),
+    rgba(100, 215, 255, 0.14),
+    transparent
+  );
+  filter: blur(12px);
+  transform: rotate(12deg);
+  animation: prime-boot-scan 2.8s linear forwards;
+}
+
+.prime-boot__screen {
+  position: relative;
+  z-index: 2;
+  width: min(90vw, 760px);
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px solid rgba(100, 215, 255, 0.2);
+  border-radius: 18px;
+  background: rgba(8, 13, 22, 0.92);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.6),
+    0 0 45px rgba(100, 215, 255, 0.08);
+}
+
+.prime-boot__device {
+  margin: 0 0 1rem;
+  color: #64d7ff;
+  font-family: var(--codeFont);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.prime-boot h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.prime-boot__log {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 2rem;
+  font-family: var(--codeFont);
+  font-size: 0.95rem;
+}
+
+.prime-boot__log p {
+  margin: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: prime-boot-line 240ms ease forwards;
+}
+
+.prime-boot__log p:nth-child(1) {
+  animation-delay: 250ms;
+}
+
+.prime-boot__log p:nth-child(2) {
+  animation-delay: 800ms;
+}
+
+.prime-boot__log p:nth-child(3) {
+  animation-delay: 1400ms;
+}
+
+.prime-boot__log p:nth-child(4) {
+  animation-delay: 2100ms;
+}
+
+.prime-boot__online {
+  color: #64d7ff;
+  font-weight: 700;
+}
+
+.prime-boot__progress {
+  width: 100%;
+  height: 8px;
+  margin-top: 2rem;
+  overflow: hidden;
+  border: 1px solid rgba(100, 215, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.prime-boot__progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #177fa6,
+    #64d7ff,
+    #d9f8ff
+  );
+  box-shadow: 0 0 18px rgba(100, 215, 255, 0.6);
+  animation: prime-boot-progress 2.5s ease-in-out forwards;
+}
+
+@keyframes prime-boot-line {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes prime-boot-progress {
+  0% {
+    width: 0;
+  }
+
+  25% {
+    width: 20%;
+  }
+
+  52% {
+    width: 54%;
+  }
+
+  78% {
+    width: 81%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes prime-boot-scan {
+  from {
+    transform: translateX(-40vw) rotate(12deg);
+  }
+
+  to {
+    transform: translateX(180vw) rotate(12deg);
+  }
+}
+
+@keyframes prime-boot-dismiss {
+  0%,
+  84% {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  92% {
+    visibility: visible;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  100% {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .prime-boot__screen {
+    width: calc(100vw - 2rem);
+    padding: 2rem 1.5rem;
+    border-radius: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prime-boot {
+    animation-duration: 3.2s;
+  }
+
+  .prime-boot::after,
+  .prime-boot__log p,
+  .prime-boot__progress span {
+    animation: none;
+  }
+
+  .prime-boot__log p {
+    opacity: 1;
+    transform: none;
+  }
+
+  .prime-boot__progress span {
+    width: 100%;
+  }
+}

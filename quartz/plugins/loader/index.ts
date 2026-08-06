@@ -1,3 +1,4 @@
+import ArchiveDashboard from "./prime/ArchiveDashboard"
 import { styleText } from "util"
 import {
   PluginManifest,

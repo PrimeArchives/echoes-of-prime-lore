@@ -1,0 +1,709 @@
+/* ==========================================================================
+   PRIME ARCHIVES — ARCHIVE DASHBOARD v2
+   Complete replacement stylesheet
+   ========================================================================== */
+
+/* ==========================================================================
+   1. LOCAL DESIGN TOKENS
+   ========================================================================== */
+
+body[data-slug="archives"] {
+  --pa-bg: #080b12;
+  --pa-bg-deep: #04070c;
+  --pa-panel: rgba(14, 20, 31, 0.9);
+  --pa-panel-soft: rgba(14, 20, 31, 0.78);
+  --pa-border: rgba(100, 215, 255, 0.16);
+  --pa-border-strong: rgba(100, 215, 255, 0.34);
+  --pa-cyan: #64d7ff;
+  --pa-cyan-soft: rgba(100, 215, 255, 0.14);
+  --pa-cyan-glow: rgba(100, 215, 255, 0.55);
+  --pa-violet: #8b6cff;
+  --pa-gold: #ffbf5c;
+  --pa-gold-soft: rgba(255, 191, 92, 0.12);
+  --pa-gold-border: rgba(255, 191, 92, 0.28);
+  --pa-text: #dbe7f1;
+  --pa-text-muted: #9fb0bf;
+  --pa-text-dim: #718696;
+  --pa-radius-lg: 18px;
+  --pa-radius-md: 16px;
+  --pa-radius-sm: 12px;
+  --pa-sidebar-width: 172px;
+}
+
+/* ==========================================================================
+   2. QUARTZ PAGE SHELL
+   ========================================================================== */
+
+body[data-slug="archives"] {
+  margin: 0;
+  background: var(--pa-bg-deep);
+}
+
+body[data-slug="archives"] #quartz-root,
+body[data-slug="archives"] #quartz-root.page,
+body[data-slug="archives"] .page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+body[data-slug="archives"] #quartz-body {
+  display: grid;
+  grid-template-columns: var(--pa-sidebar-width) minmax(0, 1fr);
+  column-gap: 0;
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body[data-slug="archives"] .sidebar.left {
+  width: var(--pa-sidebar-width);
+  min-width: var(--pa-sidebar-width);
+  padding: 2rem 1rem;
+  border-right: 1px solid rgba(100, 215, 255, 0.1);
+  background: #0b0f16;
+}
+
+body[data-slug="archives"] .sidebar.right {
+  display: none;
+}
+
+body[data-slug="archives"] .center,
+body[data-slug="archives"] .center article,
+body[data-slug="archives"] .center .popover-hint {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   3. DASHBOARD CANVAS
+   ========================================================================== */
+
+.archive-dashboard {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 1.75rem 2rem 2.25rem;
+  color: var(--pa-text);
+  background:
+    radial-gradient(
+      circle at 82% 8%,
+      rgba(100, 215, 255, 0.1),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 15% 95%,
+      rgba(139, 108, 255, 0.1),
+      transparent 34%
+    ),
+    linear-gradient(180deg, #090d15, var(--pa-bg));
+}
+
+/* Scanlines */
+.archive-dashboard::before {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0.12;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 3px,
+    rgba(100, 215, 255, 0.08) 4px
+  );
+}
+
+/* Moving scan glare */
+.archive-dashboard::after {
+  position: fixed;
+  z-index: 19;
+  top: -35%;
+  left: -42%;
+  width: 38%;
+  height: 180%;
+  content: "";
+  pointer-events: none;
+  opacity: 0.4;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(100, 215, 255, 0.03) 24%,
+    rgba(100, 215, 255, 0.23) 45%,
+    rgba(218, 250, 255, 0.42) 52%,
+    rgba(100, 215, 255, 0.18) 60%,
+    transparent 100%
+  );
+  filter: blur(10px);
+  transform: rotate(12deg);
+  animation: archive-scan 8s linear infinite;
+}
+
+.archive-dashboard > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes archive-scan {
+  from {
+    transform: translateX(-55vw) rotate(12deg);
+  }
+
+  to {
+    transform: translateX(240vw) rotate(12deg);
+  }
+}
+
+/* ==========================================================================
+   4. DASHBOARD HEADER
+   ========================================================================== */
+
+.archive-dashboard__header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2rem;
+  border: 1px solid var(--pa-border);
+  border-radius: var(--pa-radius-lg);
+  background: rgba(14, 20, 31, 0.88);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.35),
+    inset 0 0 40px rgba(100, 215, 255, 0.025);
+  backdrop-filter: blur(14px);
+}
+
+.archive-dashboard__header::after {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(100, 215, 255, 0.05);
+  border-radius: calc(var(--pa-radius-lg) - 4px);
+  content: "";
+  pointer-events: none;
+}
+
+.archive-dashboard__eyebrow,
+.archive-dashboard__section-heading p {
+  margin: 0 0 0.6rem;
+  color: var(--pa-cyan);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.archive-dashboard__header h1,
+.archive-dashboard__section-heading h2 {
+  margin: 0;
+  color: #fff;
+}
+
+.archive-dashboard__header h1 {
+  font-size: clamp(2.8rem, 5vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.archive-dashboard__subtitle {
+  max-width: 620px;
+  margin: 1rem 0 0;
+  color: #aebdca;
+  font-size: 1.1rem;
+}
+
+.archive-dashboard__device {
+  display: grid;
+  min-width: 220px;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.archive-dashboard__device div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.archive-dashboard__device dt {
+  color: #7f91a2;
+}
+
+.archive-dashboard__device dd {
+  margin: 0;
+  color: var(--pa-cyan);
+  font-family: var(--codeFont);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   5. SECTIONS AND GRIDS
+   ========================================================================== */
+
+.archive-dashboard__section {
+  margin-top: 2.5rem;
+}
+
+.archive-dashboard__section-heading {
+  margin-bottom: 1rem;
+}
+
+.archive-dashboard__grid,
+.archive-dashboard__grid--tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+/* ==========================================================================
+   6. ARCHIVE CARDS
+   ========================================================================== */
+
+.archive-card {
+  position: relative;
+  display: flex;
+  min-height: 190px;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 1.4rem;
+  border: 1px solid var(--pa-border);
+  border-radius: var(--pa-radius-md);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(100, 215, 255, 0.08),
+      rgba(139, 108, 255, 0.035)
+    ),
+    var(--pa-panel);
+  color: var(--pa-text);
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.archive-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--pa-cyan);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(100, 215, 255, 0.12),
+      rgba(139, 108, 255, 0.045)
+    ),
+    var(--pa-panel);
+  box-shadow:
+    0 22px 45px rgba(0, 0, 0, 0.28),
+    0 0 28px rgba(100, 215, 255, 0.14);
+  text-shadow: none;
+}
+
+.archive-card.tool {
+  border-color: var(--pa-gold-border);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 191, 92, 0.08),
+      rgba(139, 108, 255, 0.03)
+    ),
+    var(--pa-panel);
+}
+
+.archive-card.tool:hover {
+  border-color: var(--pa-gold);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 191, 92, 0.12),
+      rgba(139, 108, 255, 0.035)
+    ),
+    var(--pa-panel);
+  box-shadow:
+    0 22px 45px rgba(0, 0, 0, 0.28),
+    0 0 28px rgba(255, 191, 92, 0.12);
+}
+
+/* Card top bar */
+.archive-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.archive-label {
+  color: var(--pa-text-dim);
+  font-family: var(--codeFont);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.archive-card.tool .archive-label {
+  color: #c8984f;
+}
+
+/* LED */
+.archive-led {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--pa-cyan);
+  box-shadow:
+    0 0 8px var(--pa-cyan),
+    0 0 18px var(--pa-cyan-glow);
+  animation: archive-led-pulse 2s ease-in-out infinite;
+}
+
+.archive-card.tool .archive-led {
+  background: var(--pa-gold);
+  box-shadow:
+    0 0 8px var(--pa-gold),
+    0 0 18px rgba(255, 191, 92, 0.5);
+}
+
+@keyframes archive-led-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Card main content */
+.archive-card-header {
+  display: flex;
+  gap: 1rem;
+}
+
+.archive-card-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(100, 215, 255, 0.22);
+  border-radius: var(--pa-radius-sm);
+  color: var(--pa-cyan);
+  font-size: 1.5rem;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.archive-card.tool .archive-card-icon {
+  border-color: rgba(255, 191, 92, 0.3);
+  color: var(--pa-gold);
+}
+
+.archive-card:hover .archive-card-icon {
+  transform: rotate(-3deg) scale(1.06);
+  border-color: var(--pa-cyan);
+  box-shadow:
+    inset 0 0 14px rgba(100, 215, 255, 0.12),
+    0 0 18px rgba(100, 215, 255, 0.16);
+}
+
+.archive-card.tool:hover .archive-card-icon {
+  border-color: var(--pa-gold);
+  box-shadow:
+    inset 0 0 14px rgba(255, 191, 92, 0.1),
+    0 0 18px rgba(255, 191, 92, 0.15);
+}
+
+.archive-card h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.archive-card p {
+  margin: 0.45rem 0 0;
+  color: var(--pa-text-muted);
+  line-height: 1.5;
+}
+
+/* Footer */
+.archive-card-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  color: var(--pa-cyan);
+  font-family: var(--codeFont);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.archive-card.tool .archive-card-footer {
+  color: var(--pa-gold);
+}
+
+.archive-open {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* Locked state */
+.archive-card.locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(0.35);
+}
+
+.archive-card.locked:hover {
+  transform: none;
+  border-color: var(--pa-border);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   7. STATUS BAR
+   ========================================================================== */
+
+.archive-dashboard__status {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(100, 215, 255, 0.14);
+  border-radius: 14px;
+  background: var(--pa-panel-soft);
+  backdrop-filter: blur(14px);
+}
+
+.archive-dashboard__status::after {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(100, 215, 255, 0.05);
+  border-radius: 10px;
+  content: "";
+  pointer-events: none;
+}
+
+.archive-dashboard__status div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1rem;
+}
+
+.archive-dashboard__status div::before {
+  position: absolute;
+  top: 0.35rem;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pa-cyan);
+  box-shadow: 0 0 10px rgba(100, 215, 255, 0.7);
+  content: "";
+}
+
+.archive-dashboard__status span {
+  color: #7f91a2;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.archive-dashboard__status strong {
+  color: var(--pa-cyan);
+  font-family: var(--codeFont);
+}
+
+/* ==========================================================================
+   8. READER MODE
+   ========================================================================== */
+
+/*
+  Quartz stores Reader Mode on <html reader-mode="on">.
+  In Reader Mode, the content takes the full viewport.
+  The original Reader Mode control remains available as a small floating button.
+*/
+
+html[reader-mode="on"] body[data-slug="archives"] #quartz-root,
+html[reader-mode="on"] body[data-slug="archives"] #quartz-root.page,
+html[reader-mode="on"] body[data-slug="archives"] .page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+html[reader-mode="on"] body[data-slug="archives"] #quartz-body {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+html[reader-mode="on"] body[data-slug="archives"] .sidebar.right {
+  display: none;
+}
+
+html[reader-mode="on"] body[data-slug="archives"] .sidebar.left {
+  position: fixed;
+  z-index: 1000;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: block;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+/* Hide normal sidebar content */
+html[reader-mode="on"] body[data-slug="archives"] .sidebar.left > * {
+  display: none;
+}
+
+/* Keep the toolbar wrapper containing Reader Mode */
+html[reader-mode="on"] body[data-slug="archives"] .sidebar.left > *:has(.readermode) {
+  display: flex;
+}
+
+/* Keep Reader Mode control itself visible */
+html[reader-mode="on"] body[data-slug="archives"] .readermode {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(100, 215, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(8, 13, 22, 0.88);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 0 18px rgba(100, 215, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+html[reader-mode="on"] body[data-slug="archives"] .center,
+html[reader-mode="on"] body[data-slug="archives"] .center article,
+html[reader-mode="on"] body[data-slug="archives"] .center .popover-hint {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+html[reader-mode="on"] body[data-slug="archives"] .archive-dashboard {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  padding: 1.75rem 2rem 2.25rem;
+}
+
+/* ==========================================================================
+   9. RESPONSIVE
+   ========================================================================== */
+
+@media all and (max-width: 1199px) {
+  body[data-slug="archives"] #quartz-body {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+
+  body[data-slug="archives"] .sidebar.left {
+    width: 150px;
+    min-width: 150px;
+  }
+
+  .archive-dashboard__grid,
+  .archive-dashboard__grid--tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archive-dashboard__status {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media all and (max-width: 800px) {
+  body[data-slug="archives"] #quartz-body {
+    display: block;
+  }
+
+  body[data-slug="archives"] .sidebar.left {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    padding: 1rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(100, 215, 255, 0.1);
+  }
+
+  .archive-dashboard {
+    padding: 1rem;
+  }
+
+  .archive-dashboard__header {
+    flex-direction: column;
+  }
+
+  .archive-dashboard__device {
+    min-width: 0;
+  }
+}
+
+@media all and (max-width: 700px) {
+  .archive-dashboard__grid,
+  .archive-dashboard__grid--tools,
+  .archive-dashboard__status {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-dashboard__header {
+    padding: 1.5rem;
+  }
+
+  .archive-card {
+    min-height: 175px;
+  }
+}
+
+/* ==========================================================================
+   10. ACCESSIBILITY
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-dashboard::after,
+  .archive-led {
+    animation: none;
+  }
+
+  .archive-card,
+  .archive-card-icon {
+    transition: none;
+  }
+}

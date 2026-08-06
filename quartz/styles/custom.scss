@@ -1,4 +1,6 @@
 @use "./variables.scss" as *;
+@use "./archive-dashboard.scss";
+@use "./boot-sequence.scss";
 
 /* =========================================================
    PRIME ARCHIVES
@@ -554,4 +556,65 @@ body[data-slug="archives"] {
       min-height: 155px;
     }
   }
+}
+/* =========================================================
+   404 full-screen layout
+   ========================================================= */
+
+body[data-slug="404"] {
+  #quartz-body {
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .left.sidebar,
+  .right.sidebar,
+  footer,
+  hr,
+  .page-header {
+    display: none;
+  }
+
+  .center,
+  .center article,
+  .center .popover-hint {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .prime-404 {
+    width: 100%;
+    min-height: 100vh;
+  }
+}
+/* =========================================================
+   Prime Archives interface terminology
+   ========================================================= */
+
+/* Search → Search Archives */
+.search-button > p {
+  font-size: 0;
+}
+
+.search-button > p::after {
+  content: "Search Archives";
+  font-size: 0.95rem;
+}
+
+/* Searchveld in het geopende zoekvenster */
+.search-bar::placeholder {
+  color: transparent;
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-bar::placeholder {
+  opacity: 0;
 }
