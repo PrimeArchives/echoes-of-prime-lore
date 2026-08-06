@@ -1,25 +1,21 @@
 ---
 title: Echoes of Prime
-description: Player Archives for the Echoes of Prime campaign.
-tags:
-  - echoes-of-prime
-  - player-archives
+description: De publieke spelersarchieven van Echoes of Prime.
 ---
 
 # Echoes of Prime
 
-Welcome to the **Prime Archives**.
+Welkom in de **Prime Archives**.
 
-Deze omgeving is jullie portaal in de wereld van Echoes of Prime.
-Je vind onder andere lore, locaties, npcs, facties en informatie die jullie vrijgespeeld hebben.
+Deze databank bevat de personen, locaties, facties en ontdekkingen die tijdens de campagne bekend zijn geworden. hebben.
 
-## Explore
+## Verken de archieven
 
-- [[01 Universe/UNI-009 Intro|Introduction to the Universe]]
-- [[01 Universe/|Universe]]
+- [[01 Universe/UNI-009 Intro|Introductie tot Echoes of Prime]]
+- [[01 Universe/|Het universum]]
 
-## About these archives
+## Over deze databank
 
-The information in these archives reflects what has been revealed during the campaign.
+De inhoud van deze archieven groeit mee met de campagne.
 
-New discoveries will be added as the story develops.
+Alle informatie op deze website is spelerskennis.
