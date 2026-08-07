@@ -5,7 +5,7 @@ import DesktopOnly from "./DesktopOnly"
 import MobileOnly from "./MobileOnly"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
-import ArchiveDashboard from "./prime/ArchiveDashboard"
+import PrimeOS from "./Prime/PrimeOS"
 
 export { componentRegistry, defineComponent } from "./registry"
 export { External } from "./external"
@@ -24,5 +24,5 @@ export {
   NotFound,
   Flex,
   ConditionalRender,
-  ArchiveDashboard,
+  PrimeOS,
 }

@@ -3,9 +3,12 @@ import {
   QuartzComponentConstructor,
   QuartzComponentProps,
 } from "../types"
-import ArchiveCard from "./ArchiveCard"
 
-const ArchiveDashboard: QuartzComponent = (_props: QuartzComponentProps) => {
+import ArchiveCard from "./ArchiveCard"
+import Map from "./navigation/Map"
+import { virex9Map } from "./navigation/maps/virex9"
+
+const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
   return (
     <>
       <div class="prime-boot" aria-hidden="true">
@@ -18,7 +21,9 @@ const ArchiveDashboard: QuartzComponent = (_props: QuartzComponentProps) => {
             <p>Initializing hardware...</p>
             <p>Loading local cache...</p>
             <p>Synchronizing archives...</p>
-            <p class="prime-boot__online">Connection established.</p>
+            <p class="prime-boot__online">
+              Connection established.
+            </p>
           </div>
 
           <div class="prime-boot__progress">
@@ -30,7 +35,9 @@ const ArchiveDashboard: QuartzComponent = (_props: QuartzComponentProps) => {
       <main class="archive-dashboard">
         <header class="archive-dashboard__header">
           <div>
-            <p class="archive-dashboard__eyebrow">Prime Archives Terminal</p>
+            <p class="archive-dashboard__eyebrow">
+              Prime Archives Terminal
+            </p>
 
             <h1>Archive Index</h1>
 
@@ -124,7 +131,7 @@ const ArchiveDashboard: QuartzComponent = (_props: QuartzComponentProps) => {
             <ArchiveCard
               title="Navigation"
               description="Maps, routes and known destinations."
-              href="/navigation/"
+              href="#navigation"
               icon="⌁"
               category="tool"
               status="Available"
@@ -133,19 +140,19 @@ const ArchiveDashboard: QuartzComponent = (_props: QuartzComponentProps) => {
             <ArchiveCard
               title="Messages"
               description="Incoming and archived transmissions."
-              href="/messages/"
+              href="#"
               icon="✉"
               category="tool"
-              status="No unread messages"
+              status="Unavailable"
             />
 
             <ArchiveCard
               title="Objectives"
               description="Current tasks and recovered mission data."
-              href="/objectives/"
+              href="#"
               icon="◎"
               category="tool"
-              status="Available"
+              status="Unavailable"
             />
           </div>
         </section>
@@ -172,8 +179,36 @@ const ArchiveDashboard: QuartzComponent = (_props: QuartzComponentProps) => {
           </div>
         </footer>
       </main>
+
+      <section
+        id="navigation"
+        class="prime-app prime-app--navigation"
+      >
+        <div class="prime-app__shell">
+          <header class="prime-app__topbar">
+            <div>
+              <span class="prime-app__system">
+                PAT-03 / FIELD APPLICATION
+              </span>
+
+              <strong>Navigation</strong>
+            </div>
+
+            <a
+              class="prime-app__close"
+              href="#"
+              data-no-popover="true"
+              aria-label="Return to Archive Index"
+            >
+              ×
+            </a>
+          </header>
+
+          <Map map={virex9Map} />
+        </div>
+      </section>
     </>
   )
 }
 
-export default (() => ArchiveDashboard) satisfies QuartzComponentConstructor
+export default (() => PrimeOS) satisfies QuartzComponentConstructor

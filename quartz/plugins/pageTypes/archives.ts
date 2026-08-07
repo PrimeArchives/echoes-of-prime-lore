@@ -1,5 +1,5 @@
 import { QuartzPageTypePlugin } from "../types"
-import { ArchiveDashboard } from "../../components"
+import { PrimeOS } from "../../components"
 
 export const ArchivesPageType: QuartzPageTypePlugin = () => ({
   name: "archives",
@@ -11,5 +11,5 @@ export const ArchivesPageType: QuartzPageTypePlugin = () => ({
 
   layout: "archives",
   frame: "default",
-  body: ArchiveDashboard,
+  body: PrimeOS,
 })
