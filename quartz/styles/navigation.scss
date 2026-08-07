@@ -1,0 +1,919 @@
+/* ==========================================================================
+   PRIME ARCHIVES — NAVIGATION APP
+   Stable version (pre-retrieval animation)
+   ========================================================================== */
+
+.prime-app-toggle {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prime-app {
+  position: fixed;
+  z-index: 5000;
+  inset: 0;
+
+  display: none;
+
+  width: 100vw;
+  height: 100vh;
+
+  overflow: auto;
+
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(100, 215, 255, 0.07),
+      transparent 50%
+    ),
+    linear-gradient(
+      rgba(100, 215, 255, 0.02) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.02) 1px,
+      transparent 1px
+    ),
+    #050911;
+
+  background-size:
+    auto,
+    48px 48px,
+    48px 48px,
+    auto;
+}
+
+#navigation-toggle:checked ~ .prime-app--navigation {
+  display: block;
+}
+
+.prime-app-launcher {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ==========================================================================
+   APPLICATION SHELL
+   ========================================================================== */
+
+.prime-app__shell {
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+.prime-app__topbar {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-bottom: 0.9rem;
+  padding: 0.8rem 1rem;
+
+  border: 1px solid rgba(100, 215, 255, 0.18);
+  border-radius: 12px;
+
+  background: rgba(10, 16, 26, 0.96);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 0 30px rgba(100, 215, 255, 0.02);
+
+  backdrop-filter: blur(12px);
+}
+
+.prime-app__topbar > div {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.prime-app__system {
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.66rem;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.prime-app__topbar strong {
+  color: #fff;
+  font-size: 1.15rem;
+}
+
+.prime-app__close {
+  display: grid;
+
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+
+  place-items: center;
+
+  border: 1px solid rgba(100, 215, 255, 0.2);
+  border-radius: 9px;
+
+  background: rgba(100, 215, 255, 0.06);
+  color: #64d7ff;
+
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.prime-app__close:hover {
+  transform: scale(1.04);
+
+  border-color: #64d7ff;
+  background: rgba(100, 215, 255, 0.12);
+
+  box-shadow:
+    0 0 24px rgba(100, 215, 255, 0.16);
+}
+
+/* ==========================================================================
+   NAVIGATION HEADER
+   ========================================================================== */
+
+.navigation-map {
+  width: 100%;
+  color: #dbe7f1;
+}
+
+.navigation-map__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+
+  width: min(100%, 1600px);
+
+  margin: 0 auto 0.8rem;
+}
+
+.navigation-map__eyebrow {
+  margin: 0 0 0.2rem;
+
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.65rem;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.navigation-map__header h1 {
+  margin: 0;
+
+  color: #fff;
+
+  font-size: clamp(2rem, 3.2vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.navigation-map__description {
+  margin: 0.45rem 0 0;
+
+  color: #9fb0bf;
+  font-size: 0.9rem;
+}
+
+.navigation-map__status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
+
+  text-align: right;
+}
+
+.navigation-map__status span {
+  color: #718696;
+
+  font-family: var(--codeFont);
+  font-size: 0.61rem;
+
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.navigation-map__status strong {
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.78rem;
+
+  letter-spacing: 0.06em;
+}
+
+/* ==========================================================================
+   WORKSPACE
+   ========================================================================== */
+
+.navigation-map__workspace {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(300px, 360px);
+
+  gap: 1.25rem;
+
+  align-items: stretch;
+
+  width: min(1600px, 96vw);
+
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   MAP VIEWPORT
+   ========================================================================== */
+
+.navigation-map__viewport {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(100, 215, 255, 0.22);
+  border-radius: 16px;
+
+  background: #081018;
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.42),
+    0 0 55px rgba(100, 215, 255, 0.055),
+    inset 0 0 45px rgba(100, 215, 255, 0.035);
+}
+
+.navigation-map__viewport::before {
+  position: absolute;
+  z-index: 8;
+
+  inset: 8px;
+
+  border: 1px solid rgba(100, 215, 255, 0.07);
+  border-radius: 11px;
+
+  content: "";
+
+  pointer-events: none;
+}
+
+.navigation-map__background {
+  position: relative;
+  z-index: 1;
+
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  max-width: none;
+  max-height: none;
+
+  margin: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: #06101a;
+}
+
+.navigation-map__placeholder {
+  position: relative;
+
+  display: grid;
+
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  place-items: center;
+
+  color: rgba(100, 215, 255, 0.45);
+
+  font-family: var(--codeFont);
+}
+
+.navigation-map__grid {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0.2;
+
+  background-image:
+    linear-gradient(
+      rgba(100, 215, 255, 0.14) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.14) 1px,
+      transparent 1px
+    );
+
+  background-size: 40px 40px;
+}
+
+.navigation-map__markers {
+  position: absolute;
+  z-index: 5;
+
+  inset: 0;
+}
+
+/* ==========================================================================
+   MAP MARKERS
+   ========================================================================== */
+
+.virex-map-marker {
+  position: absolute;
+  z-index: 5;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 0.3rem;
+
+  width: auto;
+  min-width: 0;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #64d7ff;
+
+  cursor: pointer;
+  user-select: none;
+
+  transform: translate(-50%, -50%);
+
+  transition:
+    filter 200ms ease,
+    opacity 200ms ease;
+}
+
+.virex-map-marker__core {
+  display: grid;
+
+  width: 34px;
+  height: 34px;
+
+  place-items: center;
+
+  border: 1px solid rgba(100, 215, 255, 0.5);
+  border-radius: 50%;
+
+  background: rgba(5, 9, 17, 0.88);
+
+  box-shadow:
+    0 0 12px rgba(100, 215, 255, 0.3),
+    inset 0 0 10px rgba(100, 215, 255, 0.1);
+
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    background 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.virex-map-marker__core svg {
+  width: 26px;
+  height: 26px;
+}
+
+.virex-map-marker__pulse {
+  position: absolute;
+
+  top: 17px;
+  left: 50%;
+
+  width: 32px;
+  height: 32px;
+
+  border: 1px solid rgba(100, 215, 255, 0.65);
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  animation: virex-marker-pulse 2s ease-out infinite;
+
+  transition:
+    border-color 200ms ease;
+}
+
+.virex-map-marker__label {
+  padding: 0.25rem 0.45rem;
+
+  border: 1px solid rgba(100, 215, 255, 0.22);
+  border-radius: 5px;
+
+  background: rgba(5, 9, 17, 0.86);
+
+  color: #dff7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.62rem;
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+
+  white-space: nowrap;
+  text-transform: uppercase;
+
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.35);
+
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.virex-map-marker:hover .virex-map-marker__core {
+  transform: scale(1.06);
+
+  border-color: #64d7ff;
+
+  box-shadow:
+    0 0 20px rgba(100, 215, 255, 0.55),
+    inset 0 0 12px rgba(100, 215, 255, 0.14);
+}
+
+.virex-map-marker:hover .virex-map-marker__label {
+  border-color: #64d7ff;
+  color: #fff;
+}
+
+@keyframes virex-marker-pulse {
+  0% {
+    opacity: 0.8;
+
+    transform:
+      translate(-50%, -50%)
+      scale(0.8);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.8);
+  }
+}
+
+/* ==========================================================================
+   LOCATION PANEL
+   ========================================================================== */
+
+.navigation-location-panel {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100%;
+
+  overflow: hidden;
+
+  padding: 1.25rem;
+
+  border: 1px solid rgba(100, 215, 255, 0.18);
+  border-radius: 16px;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(100, 215, 255, 0.07),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(20, 30, 45, 0.94),
+      rgba(9, 14, 22, 0.97)
+    );
+
+  box-shadow:
+    inset 0 0 40px rgba(100, 215, 255, 0.035),
+    0 12px 35px rgba(0, 0, 0, 0.35);
+}
+
+.navigation-location-panel::after {
+  position: absolute;
+
+  top: -30%;
+  left: -70%;
+
+  width: 45%;
+  height: 160%;
+
+  content: "";
+
+  pointer-events: none;
+
+  opacity: 0.12;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(100, 215, 255, 0.28),
+      transparent
+    );
+
+  transform: rotate(14deg);
+
+  animation:
+    navigation-panel-scan 7s linear infinite;
+}
+
+@keyframes navigation-panel-scan {
+  from {
+    transform:
+      translateX(-20vw)
+      rotate(14deg);
+  }
+
+  to {
+    transform:
+      translateX(60vw)
+      rotate(14deg);
+  }
+}
+
+.navigation-location-panel > * {
+  position: relative;
+  z-index: 2;
+}
+
+.navigation-location-panel__content {
+  animation:
+    navigation-panel-enter 220ms ease-out;
+}
+
+@keyframes navigation-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navigation-location-panel__header {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 0.75rem;
+}
+
+.navigation-location-panel__eyebrow,
+.navigation-location-panel__data-label {
+  display: block;
+
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.63rem;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.navigation-location-panel__data-label {
+  margin-top: 1rem;
+  color: #718696;
+}
+
+.navigation-location-panel h2 {
+  margin: 0.25rem 0 0;
+
+  color: #fff;
+
+  font-size: 1.7rem;
+  line-height: 1.05;
+}
+
+.navigation-location-panel__close {
+  display: grid;
+
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+
+  place-items: center;
+
+  border: 1px solid rgba(100, 215, 255, 0.25);
+  border-radius: 8px;
+
+  background: rgba(100, 215, 255, 0.04);
+
+  color: #64d7ff;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.navigation-location-panel__close:hover {
+  border-color: #64d7ff;
+
+  background: rgba(100, 215, 255, 0.1);
+
+  box-shadow:
+    0 0 18px rgba(100, 215, 255, 0.12);
+}
+
+.navigation-location-panel__divider {
+  position: relative;
+
+  height: 1px;
+
+  margin-bottom: 0.75rem;
+
+  overflow: hidden;
+
+  background:
+    rgba(255, 255, 255, 0.07);
+}
+
+.navigation-location-panel__divider span {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 32%;
+  height: 100%;
+
+  background: #64d7ff;
+
+  box-shadow:
+    0 0 10px rgba(100, 215, 255, 0.6);
+}
+
+.navigation-location-panel__status,
+.navigation-location-panel__coordinates {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.8rem 0;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.07);
+}
+
+.navigation-location-panel__status span,
+.navigation-location-panel__coordinates span {
+  color: #8ea7bb;
+
+  font-size: 0.68rem;
+
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.navigation-location-panel__status strong,
+.navigation-location-panel__coordinates strong {
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.72rem;
+}
+
+.navigation-location-panel__description {
+  margin: 0.55rem 0 0.9rem;
+
+  color: #d6e2ec;
+
+  line-height: 1.65;
+}
+
+.navigation-location-panel__empty {
+  display: flex;
+
+  flex: 1;
+
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  min-height: 300px;
+
+  text-align: center;
+}
+
+.navigation-location-panel__empty span {
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.63rem;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.navigation-location-panel__empty strong {
+  margin-top: 0.6rem;
+
+  color: #fff;
+
+  font-size: 1.25rem;
+}
+
+.navigation-location-panel__empty p {
+  max-width: 260px;
+
+  margin-top: 0.7rem;
+
+  color: #91a6b8;
+
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   DESTINATION CONTROL
+   ========================================================================== */
+
+.navigation-destination-control {
+  display: grid;
+
+  width: 100%;
+  min-height: 48px;
+
+  margin-top: 1.25rem;
+
+  place-items: center;
+
+  border: 1px solid rgba(255, 191, 92, 0.34);
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 191, 92, 0.06),
+      rgba(255, 191, 92, 0.12),
+      rgba(255, 191, 92, 0.06)
+    );
+
+  color: #ffbf5c;
+
+  font-family: var(--codeFont);
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.navigation-destination-control:hover {
+  transform: translateY(-1px);
+
+  border-color: #ffbf5c;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 191, 92, 0.1),
+      rgba(255, 191, 92, 0.18),
+      rgba(255, 191, 92, 0.1)
+    );
+
+  box-shadow:
+    0 0 24px rgba(255, 191, 92, 0.15),
+    inset 0 0 18px rgba(255, 191, 92, 0.05);
+}
+
+.navigation-destination-control__active {
+  color: #ffdf9d;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.navigation-map__footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  width: min(1600px, 96vw);
+
+  margin: 0.65rem auto 0;
+
+  color: #718696;
+
+  font-family: var(--codeFont);
+  font-size: 0.62rem;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media all and (max-width: 1200px) {
+  .navigation-map__workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .navigation-location-panel {
+    min-height: 280px;
+  }
+}
+
+@media all and (max-width: 900px) {
+  .prime-app__shell {
+    padding: 0.75rem;
+  }
+
+  .prime-app__topbar > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .navigation-map__header {
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 0.5rem;
+  }
+
+  .navigation-map__status {
+    text-align: left;
+  }
+
+  .virex-map-marker__label {
+    font-size: 0.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .virex-map-marker__pulse,
+  .navigation-location-panel::after,
+  .navigation-location-panel__content {
+    animation: none;
+  }
+}

@@ -11,19 +11,23 @@ import { virex9Map } from "./navigation/maps/virex9"
 const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
   return (
     <>
+      <input
+        id="navigation-toggle"
+        class="prime-app-toggle"
+        type="checkbox"
+        aria-hidden="true"
+      />
+
       <div class="prime-boot" aria-hidden="true">
         <div class="prime-boot__screen">
           <p class="prime-boot__device">PAT-03</p>
-
           <h1>Prime Archives Terminal</h1>
 
           <div class="prime-boot__log">
             <p>Initializing hardware...</p>
             <p>Loading local cache...</p>
             <p>Synchronizing archives...</p>
-            <p class="prime-boot__online">
-              Connection established.
-            </p>
+            <p class="prime-boot__online">Connection established.</p>
           </div>
 
           <div class="prime-boot__progress">
@@ -35,12 +39,8 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
       <main class="archive-dashboard">
         <header class="archive-dashboard__header">
           <div>
-            <p class="archive-dashboard__eyebrow">
-              Prime Archives Terminal
-            </p>
-
+            <p class="archive-dashboard__eyebrow">Prime Archives Terminal</p>
             <h1>Archive Index</h1>
-
             <p class="archive-dashboard__subtitle">
               Public records and field tools available to Echo Squad.
             </p>
@@ -128,14 +128,28 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
           </div>
 
           <div class="archive-dashboard__grid archive-dashboard__grid--tools">
-            <ArchiveCard
-              title="Navigation"
-              description="Maps, routes and known destinations."
-              href="#navigation"
-              icon="⌁"
-              category="tool"
-              status="Available"
-            />
+            <label
+              for="navigation-toggle"
+              class="archive-card tool prime-app-launcher"
+            >
+              <div class="archive-card-top">
+                <span class="archive-label">FIELD APPLICATION</span>
+                <span class="archive-led" aria-hidden="true"></span>
+              </div>
+
+              <div class="archive-card-header">
+                <div class="archive-card-icon">⌁</div>
+                <div>
+                  <h3>Navigation</h3>
+                  <p>Maps and known destinations.</p>
+                </div>
+              </div>
+
+              <div class="archive-card-footer">
+                <span>AVAILABLE</span>
+                <span class="archive-open">OPEN →</span>
+              </div>
+            </label>
 
             <ArchiveCard
               title="Messages"
@@ -181,27 +195,24 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
       </main>
 
       <section
-        id="navigation"
         class="prime-app prime-app--navigation"
+        aria-label="Navigation application"
       >
         <div class="prime-app__shell">
           <header class="prime-app__topbar">
             <div>
-              <span class="prime-app__system">
-                PAT-03 / FIELD APPLICATION
-              </span>
-
+              <span class="prime-app__system">PAT-03 / FIELD APPLICATION</span>
               <strong>Navigation</strong>
             </div>
 
-            <a
+            <label
+              for="navigation-toggle"
               class="prime-app__close"
-              href="#"
-              data-no-popover="true"
               aria-label="Return to Archive Index"
+              title="Return to Archive Index"
             >
               ×
-            </a>
+            </label>
           </header>
 
           <Map map={virex9Map} />

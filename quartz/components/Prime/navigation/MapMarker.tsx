@@ -2,28 +2,25 @@ import { MapLocation } from "./types"
 
 interface MapMarkerProps {
   location: MapLocation
-  active?: boolean
+  inputId: string
 }
 
 export default function MapMarker({
   location,
-  active = false,
+  inputId,
 }: MapMarkerProps) {
   if (!location.discovered) {
     return null
   }
 
   return (
-    <button
-      type="button"
-      class={`virex-map-marker ${
-        active ? "virex-map-marker--active" : ""
-      }`}
+    <label
+      class="virex-map-marker"
       style={{
         left: `${location.x}%`,
         top: `${location.y}%`,
       }}
-      data-location-id={location.id}
+      for={inputId}
       aria-label={location.name}
       title={location.name}
     >
@@ -70,6 +67,6 @@ export default function MapMarker({
       <span class="virex-map-marker__label">
         {location.name}
       </span>
-    </button>
+    </label>
   )
 }

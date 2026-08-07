@@ -10,8 +10,295 @@ export default function Map({ map }: MapProps) {
     (location) => location.discovered,
   )
 
+  const locationRadioGroup = `navigation-location-${map.id}`
+  const destinationRadioGroup = `navigation-destination-${map.id}`
+
+  const generatedStyles = discoveredLocations
+    .map((location) => {
+      const locationInputId =
+        `navigation-location-${map.id}-${location.id}`
+
+      const destinationInputId =
+        `navigation-destination-${map.id}-${location.id}`
+
+      return `
+        .navigation-map:has(#${locationInputId}:checked)
+          .virex-map-marker[for="${locationInputId}"]
+          .virex-map-marker__core {
+          border-color: #64d7ff;
+          background: rgba(10, 34, 48, 0.96);
+          box-shadow:
+            0 0 18px rgba(100, 215, 255, 0.82),
+            0 0 42px rgba(100, 215, 255, 0.26),
+            inset 0 0 16px rgba(100, 215, 255, 0.18);
+          transform: scale(1.08);
+        }
+
+        .navigation-map:has(#${locationInputId}:checked)
+          .virex-map-marker[for="${locationInputId}"]
+          .virex-map-marker__label {
+          border-color: #64d7ff;
+          color: #ffffff;
+          box-shadow:
+            0 0 18px rgba(100, 215, 255, 0.22);
+        }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          .virex-map-marker[for="${locationInputId}"]
+          .virex-map-marker__core {
+          border-color: #ffbf5c;
+          background: rgba(45, 31, 12, 0.96);
+          color: #ffbf5c;
+          box-shadow:
+            0 0 20px rgba(255, 191, 92, 0.9),
+            0 0 52px rgba(255, 191, 92, 0.34),
+            inset 0 0 16px rgba(255, 191, 92, 0.18);
+          transform: scale(1.12);
+        }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          .virex-map-marker[for="${locationInputId}"]
+          .virex-map-marker__pulse {
+          border-color: rgba(255, 191, 92, 0.95);
+          animation-duration: 1.25s;
+        }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          .virex-map-marker[for="${locationInputId}"]
+          .virex-map-marker__label {
+          border-color: #ffbf5c;
+          color: #ffdf9d;
+          background: rgba(35, 25, 12, 0.92);
+          box-shadow:
+            0 0 22px rgba(255, 191, 92, 0.24);
+        }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          .navigation-destination-control[data-destination="${location.id}"]
+          .navigation-destination-control__set {
+          display: none;
+        }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          .navigation-destination-control[data-destination="${location.id}"]
+          .navigation-destination-control__active {
+          display: inline;
+        }
+      `
+    })
+    .join("\n")
+
   return (
     <section class="navigation-map">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .navigation-location-toggle,
+            .navigation-destination-toggle {
+              position: absolute;
+              width: 1px;
+              height: 1px;
+              opacity: 0;
+              pointer-events: none;
+            }
+
+            .navigation-location-panel__empty,
+            .navigation-location-panel__content {
+              display: none;
+            }
+
+            .navigation-location-toggle--none:checked
+              + .navigation-location-panel__empty {
+              display: flex;
+            }
+
+            .navigation-location-toggle:checked
+              + .navigation-location-panel__content {
+              display: block;
+            }
+
+            .navigation-destination-control__active {
+              display: none;
+            }
+
+            /* ============================================================
+               PAT-03 LOCAL ARCHIVE RETRIEVAL
+               Only affects the archive-summary area.
+               ============================================================ */
+
+            .navigation-location-retrieval {
+              position: relative;
+              min-height: 145px;
+              margin-top: 1rem;
+              overflow: hidden;
+            }
+
+            .navigation-location-retrieval__loading {
+              position: absolute;
+              z-index: 5;
+              inset: 0;
+
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+
+              border: 1px solid rgba(100, 215, 255, 0.12);
+              border-radius: 8px;
+
+              background:
+                linear-gradient(
+                  rgba(100, 215, 255, 0.025) 1px,
+                  transparent 1px
+                ),
+                linear-gradient(
+                  90deg,
+                  rgba(100, 215, 255, 0.025) 1px,
+                  transparent 1px
+                ),
+                rgba(7, 13, 22, 0.97);
+
+              background-size:
+                24px 24px,
+                24px 24px,
+                auto;
+
+              color: #64d7ff;
+
+              font-family: var(--codeFont);
+              font-size: 0.66rem;
+              font-weight: 700;
+
+              letter-spacing: 0.11em;
+              text-transform: uppercase;
+
+              pointer-events: none;
+
+              animation:
+                prime-location-retrieval-hide 1600ms ease forwards;
+            }
+
+            .navigation-location-retrieval__loading strong {
+              color: #dff7ff;
+
+              font-size: 0.72rem;
+              font-weight: 700;
+            }
+
+            .navigation-location-retrieval__loading span {
+              margin-top: 0.35rem;
+
+              color: #64d7ff;
+
+              opacity: 0.72;
+            }
+
+            .navigation-location-retrieval__scan {
+              position: absolute;
+              z-index: 6;
+
+              top: 6%;
+              left: 5%;
+
+              width: 90%;
+              height: 2px;
+
+              opacity: 0;
+
+              background:
+                linear-gradient(
+                  90deg,
+                  transparent,
+                  rgba(100, 215, 255, 0.9),
+                  #e1fbff,
+                  rgba(100, 215, 255, 0.9),
+                  transparent
+                );
+
+              box-shadow:
+                0 0 9px rgba(100, 215, 255, 0.9),
+                0 0 20px rgba(100, 215, 255, 0.45);
+
+              pointer-events: none;
+
+              animation:
+                prime-location-retrieval-scan 960ms ease-in-out forwards;
+            }
+
+            .navigation-location-retrieval__data {
+              opacity: 0;
+              transform: translateY(5px);
+
+              animation:
+                prime-location-retrieval-data 220ms ease forwards;
+
+              animation-delay: 1260ms;
+            }
+
+            @keyframes prime-location-retrieval-hide {
+              0%,
+              76% {
+                visibility: visible;
+                opacity: 1;
+              }
+
+              100% {
+                visibility: hidden;
+                opacity: 0;
+              }
+            }
+
+            @keyframes prime-location-retrieval-scan {
+              0% {
+                top: 6%;
+                opacity: 0;
+              }
+
+              12% {
+                opacity: 1;
+              }
+
+              88% {
+                opacity: 1;
+              }
+
+              100% {
+                top: calc(100% - 5px);
+                opacity: 0;
+              }
+            }
+
+            @keyframes prime-location-retrieval-data {
+              from {
+                opacity: 0;
+                transform: translateY(5px);
+              }
+
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+              .navigation-location-retrieval__loading,
+              .navigation-location-retrieval__scan {
+                display: none;
+                animation: none;
+              }
+
+              .navigation-location-retrieval__data {
+                opacity: 1;
+                transform: none;
+                animation: none;
+              }
+            }
+
+            ${generatedStyles}
+          `,
+        }}
+      />
+
       <header class="navigation-map__header">
         <div>
           <p class="navigation-map__eyebrow">
@@ -28,52 +315,178 @@ export default function Map({ map }: MapProps) {
         </div>
 
         <div class="navigation-map__status">
-          <span>Map Status</span>
-          <strong>Online</strong>
+          <span>Map Data</span>
+
+          <strong>
+            {discoveredLocations.length}{" "}
+            {discoveredLocations.length === 1
+              ? "LOCATION"
+              : "LOCATIONS"}{" "}
+            SYNCHRONIZED
+          </strong>
         </div>
       </header>
 
-      <div class="navigation-map__viewport">
-        {map.background && (
-          <img
-            class="navigation-map__background"
-            src={map.background}
-            alt=""
-            aria-hidden="true"
-          />
-        )}
-
-        {!map.background && (
-          <div
-            class="navigation-map__placeholder"
-            aria-hidden="true"
-          >
-            <div class="navigation-map__grid"></div>
-
-            <span>
-              MAP DATA // {map.name.toUpperCase()}
-            </span>
-          </div>
-        )}
-
-        <div class="navigation-map__markers">
-          {discoveredLocations.map((location) => (
-            <MapMarker
-              key={location.id}
-              location={location}
+      <div class="navigation-map__workspace">
+        <div class="navigation-map__viewport">
+          {map.background && (
+            <img
+              class="navigation-map__background"
+              src={map.background}
+              alt=""
+              aria-hidden="true"
             />
-          ))}
+          )}
+
+          {!map.background && (
+            <div
+              class="navigation-map__placeholder"
+              aria-hidden="true"
+            >
+              <div class="navigation-map__grid"></div>
+
+              <span>
+                MAP DATA // {map.name.toUpperCase()}
+              </span>
+            </div>
+          )}
+
+          <div class="navigation-map__markers">
+            {discoveredLocations.map((location) => (
+              <MapMarker
+                key={location.id}
+                location={location}
+                inputId={`navigation-location-${map.id}-${location.id}`}
+              />
+            ))}
+          </div>
         </div>
+
+        <aside class="navigation-location-panel">
+          <input
+            id={`navigation-location-${map.id}-none`}
+            class="navigation-location-toggle navigation-location-toggle--none"
+            type="radio"
+            name={locationRadioGroup}
+            checked
+          />
+
+          <div class="navigation-location-panel__empty">
+            <span>Location Data</span>
+
+            <strong>Select a map marker</strong>
+
+            <p>
+              Tap a discovered location to view available navigation data.
+            </p>
+          </div>
+
+          {discoveredLocations.map((location) => {
+            const locationInputId =
+              `navigation-location-${map.id}-${location.id}`
+
+            const destinationInputId =
+              `navigation-destination-${map.id}-${location.id}`
+
+            return (
+              <>
+                <input
+                  id={locationInputId}
+                  class="navigation-location-toggle"
+                  type="radio"
+                  name={locationRadioGroup}
+                />
+
+                <div class="navigation-location-panel__content">
+                  <div class="navigation-location-panel__header">
+                    <div>
+                      <span class="navigation-location-panel__eyebrow">
+                        Selected Location
+                      </span>
+
+                      <h2>{location.name}</h2>
+                    </div>
+
+                    <label
+                      class="navigation-location-panel__close"
+                      for={`navigation-location-${map.id}-none`}
+                      aria-label="Close location information"
+                      title="Close location information"
+                    >
+                      ×
+                    </label>
+                  </div>
+
+                  <div class="navigation-location-panel__divider">
+                    <span></span>
+                  </div>
+
+                  <div class="navigation-location-panel__status">
+                    <span>Status</span>
+
+                    <strong>
+                      {(location.status ?? "available").toUpperCase()}
+                    </strong>
+                  </div>
+
+                  <div class="navigation-location-retrieval">
+                    <div class="navigation-location-retrieval__loading">
+                      <strong>ACCESSING LOCAL ARCHIVE</strong>
+                      <span>RETRIEVING LOCATION DATA...</span>
+
+                      <div class="navigation-location-retrieval__scan"></div>
+                    </div>
+
+                    <div class="navigation-location-retrieval__data">
+                      <div class="navigation-location-panel__data-label">
+                        Archive Summary
+                      </div>
+
+                      <p class="navigation-location-panel__description">
+                        {location.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="navigation-location-panel__coordinates">
+                    <span>Map Coordinates</span>
+
+                    <strong>
+                      X {Math.round(location.x)} / Y{" "}
+                      {Math.round(location.y)}
+                    </strong>
+                  </div>
+
+                  <input
+                    id={destinationInputId}
+                    class="navigation-destination-toggle"
+                    type="radio"
+                    name={destinationRadioGroup}
+                  />
+
+                  <label
+                    class="navigation-destination-control"
+                    data-destination={location.id}
+                    for={destinationInputId}
+                  >
+                    <span class="navigation-destination-control__set">
+                      SET DESTINATION
+                    </span>
+
+                    <span class="navigation-destination-control__active">
+                      ◆ GUIDANCE ACTIVE
+                    </span>
+                  </label>
+                </div>
+              </>
+            )
+          })}
+        </aside>
       </div>
 
       <footer class="navigation-map__footer">
-        <span>
-          Visible locations: {discoveredLocations.length}
-        </span>
-
-        <span>
-          PAT-03 NAVIGATION
-        </span>
+        <span>PAT-03 // LOCAL NAVIGATION CACHE</span>
+        <span>SIGNAL STABLE</span>
       </footer>
     </section>
   )
