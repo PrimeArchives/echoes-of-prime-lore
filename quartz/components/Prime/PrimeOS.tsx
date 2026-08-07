@@ -5,7 +5,7 @@ import {
 } from "../types"
 
 import ArchiveCard from "./ArchiveCard"
-import Map from "./navigation/Map"
+import Map from "./navigation/map"
 import { virex9Map } from "./navigation/maps/virex9"
 
 const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
