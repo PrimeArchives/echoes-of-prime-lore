@@ -12,7 +12,7 @@ description: De publieke spelersarchieven van Echoes of Prime.
 <p class="hero-button">
   <a
     class="prime-button"
-    href="/archives"
+    href="/archives#prime-boot"
     data-no-popover="true"
   >
     Enter the Archives

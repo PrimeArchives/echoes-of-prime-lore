@@ -707,3 +707,113 @@ html[reader-mode="on"] body[data-slug="archives"] .archive-dashboard {
     transition: none;
   }
 }
+/* ==========================================================================
+   ARCHIVE CARD STATUS STATES
+   ========================================================================== */
+
+.archive-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.archive-card-status__dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #64d7ff;
+  box-shadow: 0 0 8px rgba(100, 215, 255, 0.7);
+}
+
+/* ONLINE / AVAILABLE */
+
+.archive-card[data-status="online"] .archive-card-status__dot,
+.archive-card[data-status="available"] .archive-card-status__dot {
+  background: #71f5b1;
+  box-shadow: 0 0 9px rgba(113, 245, 177, 0.75);
+}
+
+.archive-card[data-status="online"] .archive-card-status,
+.archive-card[data-status="available"] .archive-card-status {
+  color: #71f5b1;
+}
+
+/* STANDBY */
+
+.archive-card[data-status="standby"] .archive-card-status__dot {
+  background: #64d7ff;
+  box-shadow: 0 0 9px rgba(100, 215, 255, 0.75);
+}
+
+.archive-card[data-status="standby"] .archive-card-status {
+  color: #64d7ff;
+}
+
+/* OFFLINE */
+
+.archive-card[data-status="offline"] .archive-card-status__dot {
+  background: #ffb454;
+  box-shadow: 0 0 9px rgba(255, 180, 84, 0.75);
+}
+
+.archive-card[data-status="offline"] .archive-card-status {
+  color: #ffb454;
+}
+
+/* RESTRICTED */
+
+.archive-card[data-status="restricted"] .archive-card-status__dot {
+  background: #ff6b6b;
+  box-shadow: 0 0 9px rgba(255, 107, 107, 0.75);
+}
+
+.archive-card[data-status="restricted"] .archive-card-status {
+  color: #ff7b7b;
+}
+
+/* Locked cards should still look intentional */
+
+.archive-card[data-status="offline"],
+.archive-card[data-status="restricted"],
+.archive-card[data-status="standby"] {
+  opacity: 0.78;
+}
+
+.archive-card[data-status="offline"]:hover,
+.archive-card[data-status="restricted"]:hover,
+.archive-card[data-status="standby"]:hover {
+  opacity: 1;
+}
+/* ==========================================================================
+   PRIMEOS — HIDE QUARTZ CHROME ON ARCHIVE INDEX
+   ========================================================================== */
+
+body[data-slug="archives"] .sidebar.left,
+body[data-slug="archives"] .sidebar.right,
+body[data-slug="archives"] .left.sidebar,
+body[data-slug="archives"] .right.sidebar,
+body[data-slug="archives"] .explorer,
+body[data-slug="archives"] .breadcrumb-container,
+body[data-slug="archives"] .page-header {
+  display: none !important;
+}
+
+body[data-slug="archives"] #quartz-body {
+  grid-template-columns: 1fr !important;
+  grid-template-areas:
+    "grid-center"
+    "grid-footer" !important;
+}
+
+body[data-slug="archives"] .center {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+body[data-slug="archives"] .center > article {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
