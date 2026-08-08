@@ -2,16 +2,11 @@
 id: UNI-009
 title: Intro
 status: Public
-tags:
-  - universe
-  - event
-  - mystery
-  - reactor13
 ---
 
 Het jaar is 3864.
 
-De wereld van Aetherion draait al eeuwen op technologie en industrie. 
+De wereld van Aetherion Prime draait al eeuwen op technologie en industrie. 
 Er bestaat vrijwel geen magie, maar wetenschap en brandstof gewonnen uit de aether kernen.
 
 Eeuwenlang was de Aether Syndicatorum het gezag, de keizer en overheid in één.

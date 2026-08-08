@@ -36,7 +36,7 @@ configuration:
         dark: "#18212F"
         secondary: "#177FA6"
         tertiary: "#684FD6"
-        highlight: rgba(23, 127, 166, 0.14)
+        highlight: "rgba(23, 127, 166, 0.14)"
         textHighlight: "#64D7FF55"
 
       darkMode:
@@ -47,7 +47,7 @@ configuration:
         dark: "#F2F6FA"
         secondary: "#64D7FF"
         tertiary: "#8B6CFF"
-        highlight: rgba(100, 215, 255, 0.15)
+        highlight: "rgba(100, 215, 255, 0.15)"
         textHighlight: "#64D7FF44"
 
 plugins:
@@ -163,11 +163,11 @@ plugins:
     layout:
       position: afterBody
       priority: 50
-      display: all
+    display: all
 
   - source: "@quartz-community/alias-redirects"
     enabled: true
-    
+
   - source: "@quartz-community/assets"
     enabled: true
 
@@ -273,7 +273,7 @@ plugins:
     layout:
       position: beforeBody
       priority: 5
-      condition: not-index
+    condition: not-index
 
   - source: "@quartz-community/comments"
     enabled: false
@@ -288,7 +288,7 @@ plugins:
     enabled: true
     options:
       links:
-        Prime Archives: https://primearchives.nl
+        Prime Archives: "https://primearchives.nl"
     layout:
       position: footer
       priority: 50
@@ -303,7 +303,7 @@ plugins:
     layout:
       position: left
       priority: 25
-      display: mobile-only
+    display: mobile-only
 
   - source: "@quartz-community/bases-page"
     enabled: true
@@ -326,9 +326,9 @@ plugins:
     layout:
       position: beforeBody
       priority: 15
-      display: all
+    display: all
 
-  - source: github:Requiae/quartz-leaflet-bases-plugin
+  - source: "github:Requiae/quartz-leaflet-bases-plugin"
     enabled: true
     options:
       enableCopyTool: false
@@ -342,28 +342,33 @@ layout:
 
   byPageType:
     "404":
-      positions:
-        beforeBody: []
-        left: []
-        right: []
+      beforeBody: []
+      left: []
+      right: []
 
     content:
       exclude:
         - content-meta
         - table-of-contents
+      left: []
+      right: []
 
     folder:
       exclude:
         - reader-mode
-      positions:
-        right: []
+      left: []
+      right: []
 
     tag:
       exclude:
         - reader-mode
-      positions:
-        right: []
+      left: []
+      right: []
 
-    canvas: {}
+    canvas:
+      left: []
+      right: []
 
-    bases: {}
+    bases:
+      left: []
+      right: []

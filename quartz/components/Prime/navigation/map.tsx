@@ -5,6 +5,14 @@ interface MapProps {
   map: NavigationMap
 }
 
+function navigationKey(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
 export default function Map({ map }: MapProps) {
   const discoveredLocations = map.locations.filter(
     (location) => location.discovered,
@@ -12,9 +20,13 @@ export default function Map({ map }: MapProps) {
 
   const locationRadioGroup = `navigation-location-${map.id}`
   const destinationRadioGroup = `navigation-destination-${map.id}`
+  const destinationNoneInputId =
+    `navigation-destination-${map.id}-none`
 
   const generatedStyles = discoveredLocations
     .map((location) => {
+      const locationKey = navigationKey(location.name)
+
       const locationInputId =
         `navigation-location-${map.id}-${location.id}`
 
@@ -84,6 +96,16 @@ export default function Map({ map }: MapProps) {
           .navigation-destination-control__active {
           display: inline;
         }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          .navigation-global-clear {
+          display: inline-flex;
+        }
+
+        .navigation-map:has(#${destinationInputId}:checked)
+          [data-navigation-active-destination]::after {
+          content: "${location.name.replace('"', '\"')}";
+        }
       `
     })
     .join("\n")
@@ -119,6 +141,30 @@ export default function Map({ map }: MapProps) {
 
             .navigation-destination-control__active {
               display: none;
+            }
+
+            .navigation-global-clear {
+              display: none;
+              align-items: center;
+              justify-content: center;
+              min-height: 34px;
+              padding: 0.45rem 0.8rem;
+              border: 1px solid rgba(255, 191, 92, 0.3);
+              border-radius: 7px;
+              background: rgba(255, 191, 92, 0.06);
+              color: #ffcf7a;
+              font-family: var(--codeFont);
+              font-size: 0.62rem;
+              font-weight: 700;
+              letter-spacing: 0.08em;
+              text-transform: uppercase;
+              cursor: pointer;
+            }
+
+            [data-navigation-active-destination]::after {
+              content: "NONE";
+              margin-left: 0.35rem;
+              color: #ffcf7a;
             }
 
             /* ============================================================
@@ -362,6 +408,15 @@ export default function Map({ map }: MapProps) {
           </div>
         </div>
 
+        <input
+          id={destinationNoneInputId}
+          class="navigation-destination-toggle navigation-destination-toggle--none"
+          type="radio"
+          name={destinationRadioGroup}
+          data-destination-key=""
+          checked
+        />
+
         <aside class="navigation-location-panel">
           <input
             id={`navigation-location-${map.id}-none`}
@@ -395,6 +450,7 @@ export default function Map({ map }: MapProps) {
                   class="navigation-location-toggle"
                   type="radio"
                   name={locationRadioGroup}
+                  data-location-key={navigationKey(location.name)}
                 />
 
                 <div class="navigation-location-panel__content">
@@ -413,7 +469,7 @@ export default function Map({ map }: MapProps) {
                       aria-label="Close location information"
                       title="Close location information"
                     >
-                      ×
+                      Ã—
                     </label>
                   </div>
 
@@ -462,6 +518,7 @@ export default function Map({ map }: MapProps) {
                     class="navigation-destination-toggle"
                     type="radio"
                     name={destinationRadioGroup}
+                    data-destination-key={navigationKey(location.name)}
                   />
 
                   <label
@@ -474,7 +531,7 @@ export default function Map({ map }: MapProps) {
                     </span>
 
                     <span class="navigation-destination-control__active">
-                      ◆ GUIDANCE ACTIVE
+                      â—† GUIDANCE ACTIVE
                     </span>
                   </label>
                 </div>
@@ -484,10 +541,125 @@ export default function Map({ map }: MapProps) {
         </aside>
       </div>
 
+
       <footer class="navigation-map__footer">
         <span>PAT-03 // LOCAL NAVIGATION CACHE</span>
+
+        <span data-navigation-active-destination>
+          DESTINATION
+        </span>
+
+        <label
+          class="navigation-global-clear"
+          for={destinationNoneInputId}
+        >
+          CLEAR DESTINATION
+        </label>
+
         <span>SIGNAL STABLE</span>
       </footer>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (() => {
+              const root = document.currentScript?.closest(".navigation-map")
+              if (!root) return
+
+              const storageKey = "prime-navigation-destination"
+              const hashParams = new URLSearchParams(
+                window.location.hash.replace(/^#/, ""),
+              )
+
+              const requestedLocation = hashParams.get("navigation")
+              const requestedDestination = hashParams.get("destination")
+
+              const navigationToggle =
+                document.getElementById("navigation-toggle")
+
+              const selectLocation = (key) => {
+                if (!key) return
+                const input = root.querySelector(
+                  '.navigation-location-toggle[data-location-key="' +
+                  CSS.escape(key) +
+                  '"]',
+                )
+
+                if (input instanceof HTMLInputElement) {
+                  input.checked = true
+                }
+              }
+
+              const selectDestination = (key, persist = true) => {
+                const selector = key
+                  ? '.navigation-destination-toggle[data-destination-key="' +
+                    CSS.escape(key) +
+                    '"]'
+                  : '.navigation-destination-toggle--none'
+
+                const input = root.querySelector(selector)
+
+                if (input instanceof HTMLInputElement) {
+                  input.checked = true
+
+                  if (persist) {
+                    if (key) {
+                      localStorage.setItem(storageKey, key)
+                    } else {
+                      localStorage.removeItem(storageKey)
+                    }
+                  }
+                }
+              }
+
+              if (requestedLocation) {
+                if (navigationToggle instanceof HTMLInputElement) {
+                  navigationToggle.checked = true
+                }
+
+                selectLocation(requestedLocation)
+              }
+
+              if (requestedDestination) {
+                selectDestination(requestedDestination)
+              } else {
+                const storedDestination = localStorage.getItem(storageKey)
+                if (storedDestination) {
+                  selectDestination(storedDestination, false)
+                }
+              }
+
+              root
+                .querySelectorAll(
+                  ".navigation-destination-toggle[data-destination-key]",
+                )
+                .forEach((input) => {
+                  input.addEventListener("change", () => {
+                    if (!(input instanceof HTMLInputElement) || !input.checked) {
+                      return
+                    }
+
+                    const key = input.dataset.destinationKey ?? ""
+
+                    if (key) {
+                      localStorage.setItem(storageKey, key)
+                    } else {
+                      localStorage.removeItem(storageKey)
+                    }
+                  })
+                })
+
+              if (requestedLocation || requestedDestination) {
+                window.history.replaceState(
+                  {},
+                  "",
+                  window.location.pathname + window.location.search,
+                )
+              }
+            })()
+          `,
+        }}
+      />
     </section>
   )
 }

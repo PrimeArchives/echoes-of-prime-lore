@@ -158,7 +158,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             <ArchiveCard
               title="Locations"
               description="Cities, stations, planets and known regions."
-              href="/04-locations/"
+              href="/02-locations/"
               icon="⌖"
               status="Online"
             />
@@ -403,5 +403,54 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
     </>
   )
 }
+
+
+PrimeOS.afterDOMLoaded = `
+(() => {
+  const applyNavigationHash = (attempt = 0) => {
+    const match = window.location.hash.match(/^#navigation([a-z0-9-]+)$/i)
+    if (!match) return
+
+    const locationId = match[1].toLowerCase()
+
+    const navigationToggle = document.getElementById("navigation-toggle")
+    const locationToggle = document.getElementById(
+      "navigation-location-virex-9-" + locationId,
+    )
+
+    if (
+      !(navigationToggle instanceof HTMLInputElement) ||
+      !(locationToggle instanceof HTMLInputElement)
+    ) {
+      if (attempt < 12) {
+        window.setTimeout(() => applyNavigationHash(attempt + 1), 75)
+      }
+      return
+    }
+
+    navigationToggle.checked = true
+    navigationToggle.dispatchEvent(new Event("change", { bubbles: true }))
+
+    locationToggle.checked = true
+    locationToggle.dispatchEvent(new Event("change", { bubbles: true }))
+  }
+
+  const run = () => {
+    window.setTimeout(() => applyNavigationHash(), 0)
+  }
+
+  run()
+
+  window.addEventListener("hashchange", run)
+  document.addEventListener("nav", run)
+  document.addEventListener("render", run)
+
+  window.addCleanup?.(() => {
+    window.removeEventListener("hashchange", run)
+    document.removeEventListener("nav", run)
+    document.removeEventListener("render", run)
+  })
+})()
+`
 
 export default (() => PrimeOS) satisfies QuartzComponentConstructor
