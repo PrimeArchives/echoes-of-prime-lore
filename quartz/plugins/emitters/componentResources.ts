@@ -257,7 +257,25 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
       document.head.appendChild(rybbitScript);
     `)
   }
+componentResources.afterDOMLoaded.push(`
+  const fixArchiveBreadcrumb = () => {
+    const firstBreadcrumb = document.querySelector(
+      ".breadcrumb-container .breadcrumb-element:first-child a"
+    )
 
+    if (firstBreadcrumb) {
+      firstBreadcrumb.textContent = "Archives"
+      firstBreadcrumb.setAttribute("href", "/archives")
+      firstBreadcrumb.setAttribute("data-no-popover", "true")
+    }
+  }
+
+  fixArchiveBreadcrumb()
+
+  document.addEventListener("nav", () => {
+    fixArchiveBreadcrumb()
+  })
+`)
   if (cfg.enableSPA) {
     componentResources.afterDOMLoaded.push(spaRouterScript)
   } else {

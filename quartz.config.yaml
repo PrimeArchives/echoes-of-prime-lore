@@ -271,11 +271,11 @@ plugins:
   - source: "@quartz-community/breadcrumbs"
     enabled: true
     options:
-    rootName: "Archives"
+      rootName: "Archives"
     layout:
-    position: beforeBody
-    priority: 5
-    condition: not-index
+      position: beforeBody
+      priority: 5
+      condition: not-index
 
   - source: "@quartz-community/comments"
     enabled: false
