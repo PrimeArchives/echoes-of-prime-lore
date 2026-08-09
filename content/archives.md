@@ -1,4 +1,4 @@
----
+﻿---
 title: Archive Index
 description: Public record index of the Prime Archives.
 ---
@@ -13,7 +13,7 @@ Selecteer een archiefcategorie om de vrijgegeven publieke gegevens te bekijken.
   Planeten, steden, stations en bekende gebieden.](/04-locations/)
 
 - [**Characters**  
-  Bekende personen, contacten en tegenstanders.](/05-npcs/)
+  Bekende personen, contacten en tegenstanders.](/03-personnel/)
 
 - [**Factions**  
   Organisaties, machten en politieke spelers.](/06-factions/)
@@ -26,3 +26,5 @@ Selecteer een archiefcategorie om de vrijgegeven publieke gegevens te bekijken.
 
 > [!info] Player-safe archive
 > Deze website bevat uitsluitend informatie die voor spelers openbaar is geworden. De inhoud groeit mee met de campagne.
+
+

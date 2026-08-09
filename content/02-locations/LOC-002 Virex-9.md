@@ -1,9 +1,9 @@
----
+﻿---
 
-title: "Virex-9"
-id: "LOC-002"
+title: Virex-9
+id: LOC-002
 type: location
-location: "[[Aetherium Prime]]"
+location: Aetherium Prime
 ---
 
 <div class="location-hero location-hero--wide">
@@ -13,7 +13,7 @@ location: "[[Aetherium Prime]]"
 
 # Virex-9
 
-**Virex-9** is een voormalige Aether-energiehub op [[Aetherium Prime]]. Ooit groeide de stad rond de winning en verwerking van Aether; tegenwoordig wordt ze grotendeels gevormd door huurlingen, handelaars en iedereen die tussen beide groepen zijn bestaan probeert op te bouwen.
+**Virex-9** is een voormalige Aether-energiehub op [[02-locations/LOC-001 Aetherium Prime|Aetherium Prime]]. Ooit groeide de stad rond de winning en verwerking van Aether; tegenwoordig wordt ze grotendeels gevormd door huurlingen, handelaars en iedereen die tussen beide groepen zijn bestaan probeert op te bouwen.
 
 Roestige luchtschepen bewegen boven neonverlichte fabrieken terwijl stoom tussen de metalen constructies ontsnapt. Het constante ritme van machines vormt de hartslag van de stad, vermengd met verre, bijna gezongen datastreams.
 
@@ -27,7 +27,9 @@ De stad bestaat uit verschillende districten en niveaus, ieder gevormd rond de i
 
 Bekende locaties zijn onder andere:
 
-* [[Coil Market]]
-* [[The Docking Spires]]
-* [[Skybridge-04]]
+* [[02-locations/LOC-004 Coil Market|Coil Market]]
+* [[02-locations/LOC-003 Docking Spires|Docking Spires]]
+* [[02-locations/LOC-005 Skybridges|Skybridges]]
 * [[Verdant Scar]]
+
+

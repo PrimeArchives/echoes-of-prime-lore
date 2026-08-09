@@ -80,8 +80,8 @@ export const PageList: QuartzComponent = ({
   const currentSlug = fileData.slug ?? ""
 
   const isPersonnelPage =
-    currentSlug === "05-npcs" ||
-    currentSlug === "05-npcs/index"
+    currentSlug === "03-personnel" ||
+    currentSlug === "03-personnel/index"
 
   if (isPersonnelPage) {
     return (

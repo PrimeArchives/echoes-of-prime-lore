@@ -1,8 +1,8 @@
 ---
-title: "Coil Market"
-id: "LOC-004"
+title: Coil Market
+id: LOC-004
 type: location
-location: "[[Virex-9]]"
+location: Virex-9
 ---
 
 <div class="location-hero location-hero--wide">
@@ -19,13 +19,14 @@ location: "[[Virex-9]]"
   </a>
 </div>
 
+
 # Coil Market
 
-> *“Alles voor een prijs en geen permanente eigendommen.”*
+> *Alles voor een prijs en geen permanente eigendommen.* 
 
 Een kolkend doolhof van metalen steigers, dampende leidingen en duizend kleuren licht. De lucht ruikt naar olie, ozon en exotische kruiden.
 
-Rond de centrale **Coil**, de enorme turbine-schacht die de zwaartekracht van [[Virex-9]] reguleert, heeft zich een markt gevormd waar vrijwel alles te koop is — legaal of anderszins.
+Rond de centrale **Coil**, de enorme turbine-schacht die de zwaartekracht van [[02-locations/LOC-002 Virex-9|Virex 9]] reguleert, heeft zich een markt gevormd waar vrijwel alles te koop is — legaal of anderszins.
 
 ## Market Rings
 

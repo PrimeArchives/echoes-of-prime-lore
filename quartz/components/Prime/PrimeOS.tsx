@@ -166,7 +166,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             <ArchiveCard
               title="Personnel"
               description="Known contacts, figures and hostile actors."
-              href="/05-npcs/"
+              href="/03-personnel/"
               icon="◇"
               status="Online"
             />
@@ -397,7 +397,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             </label>
           </header>
 
-          <Messages />
+          <Messages allFiles={_props.allFiles ?? []} />
         </div>
       </section>
     </>

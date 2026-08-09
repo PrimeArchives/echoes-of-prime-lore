@@ -1,4 +1,4 @@
----
+﻿---
 title: Prime Archives
 description: De publieke spelersarchieven van Echoes of Prime.
 ---
@@ -18,3 +18,4 @@ description: De publieke spelersarchieven van Echoes of Prime.
     Enter the Archives
   </a>
 </p>
+

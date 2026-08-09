@@ -23,7 +23,7 @@ const REGISTRIES: Record<string, RegistryConfig> = {
     cardLabel: "LOCATION RECORD",
     openLabel: "OPEN LOCATION →",
   },
-  "05-npcs": {
+  "03-personnel": {
     kind: "personnel",
     eyebrow: "PERSONNEL DATABASE",
     title: "Personnel",
@@ -363,3 +363,4 @@ ArchiveRegistry.css = `
 `
 
 export default ArchiveRegistry
+

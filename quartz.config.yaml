@@ -270,9 +270,11 @@ plugins:
 
   - source: "@quartz-community/breadcrumbs"
     enabled: true
+    options:
+    rootName: "Archives"
     layout:
-      position: beforeBody
-      priority: 5
+    position: beforeBody
+    priority: 5
     condition: not-index
 
   - source: "@quartz-community/comments"

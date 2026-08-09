@@ -469,7 +469,7 @@ export default function Map({ map }: MapProps) {
                       aria-label="Close location information"
                       title="Close location information"
                     >
-                      Ã—
+                      ×
                     </label>
                   </div>
 
@@ -531,7 +531,7 @@ export default function Map({ map }: MapProps) {
                     </span>
 
                     <span class="navigation-destination-control__active">
-                      â—† GUIDANCE ACTIVE
+                      ◆ GUIDANCE ACTIVE
                     </span>
                   </label>
                 </div>

@@ -1,11 +1,11 @@
-import { QuartzPageTypePlugin } from "../types"
+﻿import { QuartzPageTypePlugin } from "../types"
 import ArchiveRegistry from "../../components/Prime/ArchiveRegistry"
 
 const registrySlugs = new Set([
   "02-locations",
   "02-locations/index",
-  "05-npcs",
-  "05-npcs/index",
+  "03-personnel",
+  "03-personnel/index",
 ])
 
 export const RegistryPageType: QuartzPageTypePlugin = () => ({

@@ -26,8 +26,8 @@ const PersonnelOS: QuartzComponent = ({
       const frontmatter = (page.frontmatter ?? {}) as PersonnelFrontmatter
 
       return (
-        slug.startsWith("05-npcs/") &&
-        slug !== "05-npcs/index" &&
+        slug.startsWith("03-personnel/") &&
+        slug !== "03-personnel/index" &&
         frontmatter.type === "npc"
       )
     })

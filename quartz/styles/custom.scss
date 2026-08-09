@@ -942,10 +942,10 @@ body:not([data-slug="index"]):not([data-slug="archives"]):not([data-slug="404"])
 
 
 /* ==========================================================================
-   13. PERSONNEL INDEX — /05-npcs/
+   13. PERSONNEL INDEX — /03-personnel/
    ========================================================================== */
 
-body[data-slug="05-npcs/index"] {
+body[data-slug="03-personnel/index"] {
   .markdown-preview-view {
     width: 100%;
     max-width: none;
@@ -1163,7 +1163,7 @@ body[data-slug="05-npcs/index"] {
    ========================================================================== */
 
 @media all and (max-width: 1000px) {
-  body[data-slug="05-npcs/index"] {
+  body[data-slug="03-personnel/index"] {
     .personnel-index {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1171,7 +1171,7 @@ body[data-slug="05-npcs/index"] {
 }
 
 @media all and (max-width: 650px) {
-  body[data-slug="05-npcs/index"] {
+  body[data-slug="03-personnel/index"] {
     .personnel-index {
       grid-template-columns: 1fr;
     }
@@ -1684,4 +1684,1197 @@ body[data-slug="02-locations/index"] {
   .prime-registry-card {
     min-height: 230px;
   }
+}
+/* ==========================================================================
+   MESSAGES — MAILBOX
+   ========================================================================== */
+
+.prime-messages {
+  width: 100%;
+  min-height: 620px;
+  padding: clamp(1rem, 2vw, 1.75rem);
+}
+
+.prime-messages__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.prime-messages__header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.prime-messages__header span,
+.prime-messages__header > strong,
+.prime-messages__toolbar,
+.prime-message-row span,
+.prime-message-row__open {
+  font-family: var(--codeFont);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prime-messages__header span {
+  color: #64d7ff;
+}
+
+.prime-messages__header h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.prime-messages__header > strong {
+  color: var(--gray);
+}
+
+.prime-messages__toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(100, 215, 255, 0.12);
+  border-radius: 8px 8px 0 0;
+  background: rgba(100, 215, 255, 0.035);
+  color: var(--gray);
+}
+
+.prime-messages__list {
+  overflow: hidden;
+  border: 1px solid rgba(100, 215, 255, 0.14);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: rgba(7, 12, 19, 0.76);
+}
+
+.prime-message-row {
+  display: grid;
+  grid-template-columns:
+    24px
+    minmax(130px, 0.75fr)
+    minmax(220px, 1.5fr)
+    auto
+    auto;
+
+  align-items: center;
+  gap: 1rem;
+
+  min-height: 76px;
+  padding: 0.8rem 1rem;
+
+  border-bottom: 1px solid rgba(100, 215, 255, 0.08);
+
+  color: inherit;
+  text-decoration: none !important;
+
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.prime-message-row:last-child {
+  border-bottom: 0;
+}
+
+.prime-message-row:hover {
+  background: rgba(100, 215, 255, 0.07);
+  text-shadow: none;
+}
+
+.prime-message-row__state span {
+  display: block;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #61717d;
+}
+
+.prime-message-row--unread
+  .prime-message-row__state
+  span {
+  background: #64d7ff;
+  box-shadow: 0 0 10px rgba(100, 215, 255, 0.9);
+}
+
+.prime-message-row--corrupted
+  .prime-message-row__state
+  span {
+  background: #ff6f81;
+  box-shadow: 0 0 10px rgba(255, 111, 129, 0.8);
+}
+
+.prime-message-row__sender,
+.prime-message-row__subject {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.prime-message-row__sender span,
+.prime-message-row__subject span {
+  color: var(--gray);
+  font-size: 0.5rem;
+}
+
+.prime-message-row__sender strong,
+.prime-message-row__subject strong {
+  overflow: hidden;
+
+  color: #dbe8f1;
+
+  font-size: 0.82rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prime-message-row--unread
+  .prime-message-row__subject
+  strong {
+  color: #fff;
+}
+
+.prime-message-row__meta {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  color: var(--gray);
+}
+
+.prime-message-row__meta strong {
+  color: #ffbf5c;
+
+  font-family: var(--codeFont);
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+}
+
+.prime-message-row--corrupted
+  .prime-message-row__meta
+  strong {
+  color: #ff7f91;
+}
+
+.prime-message-row__open {
+  color: #64d7ff;
+}
+
+.prime-messages__empty {
+  padding: 3rem 1rem;
+
+  color: var(--gray);
+
+  text-align: center;
+}
+
+@media all and (max-width: 800px) {
+  .prime-message-row {
+    grid-template-columns: 18px 1fr auto;
+  }
+
+  .prime-message-row__sender {
+    display: none;
+  }
+
+  .prime-message-row__meta {
+    display: none;
+  }
+
+  .prime-messages__toolbar span:last-child {
+    display: none;
+  }
+}
+/* ==========================================================================
+   MESSAGES — PAT-03 INBOX
+   ========================================================================== */
+
+.prime-app--messages .prime-app__shell {
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(100, 215, 255, 0.06),
+      transparent 30rem
+    ),
+    linear-gradient(
+      180deg,
+      rgba(7, 12, 19, 0.99),
+      rgba(10, 15, 23, 0.99)
+    );
+}
+
+.prime-messages {
+  width: 100%;
+  min-height: 680px;
+  padding: clamp(1rem, 2vw, 1.75rem);
+}
+
+.prime-messages__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.75rem 0 1.25rem;
+}
+
+.prime-messages__header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.prime-messages__header span {
+  color: #64d7ff;
+  font-family: var(--codeFont);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.prime-messages__header h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.3rem, 4vw, 3.6rem);
+  line-height: 0.95;
+}
+
+.prime-messages__header > strong {
+  color: #7e91a1;
+  font-family: var(--codeFont);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.prime-messages__toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  padding: 0.72rem 1rem;
+
+  border: 1px solid rgba(100, 215, 255, 0.16);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.06),
+      rgba(100, 215, 255, 0.02)
+    );
+
+  color: #718392;
+
+  font-family: var(--codeFont);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.prime-messages__list {
+  overflow: hidden;
+
+  border: 1px solid rgba(100, 215, 255, 0.16);
+  border-radius: 0 0 12px 12px;
+
+  background: rgba(6, 11, 17, 0.82);
+
+  box-shadow:
+    0 18px 55px rgba(0, 0, 0, 0.24),
+    inset 0 0 32px rgba(100, 215, 255, 0.012);
+}
+
+.prime-message-row {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    22px
+    minmax(130px, 0.8fr)
+    minmax(260px, 1.6fr)
+    minmax(90px, auto)
+    70px;
+
+  align-items: center;
+  gap: 1rem;
+
+  min-height: 84px;
+  padding: 0.9rem 1rem;
+
+  border-bottom: 1px solid rgba(100, 215, 255, 0.075);
+
+  background: rgba(255, 255, 255, 0.005);
+
+  color: inherit !important;
+  text-decoration: none !important;
+
+  transition:
+    background 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.prime-message-row:last-child {
+  border-bottom: 0;
+}
+
+.prime-message-row:hover {
+  z-index: 2;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.075),
+      rgba(100, 215, 255, 0.025)
+    );
+
+  box-shadow:
+    inset 3px 0 0 #64d7ff,
+    0 0 24px rgba(100, 215, 255, 0.05);
+
+  text-shadow: none;
+
+  transform: translateX(2px);
+}
+
+.prime-message-row__state {
+  display: grid;
+  place-items: center;
+}
+
+.prime-message-row__state span {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #566572;
+}
+
+.prime-message-row--unread
+  .prime-message-row__state
+  span {
+  background: #64d7ff;
+
+  box-shadow:
+    0 0 8px #64d7ff,
+    0 0 18px rgba(100, 215, 255, 0.45);
+}
+
+.prime-message-row--corrupted {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 92, 112, 0.055),
+      rgba(255, 92, 112, 0.01)
+    );
+}
+
+.prime-message-row--corrupted
+  .prime-message-row__state
+  span {
+  background: #ff6f81;
+
+  box-shadow:
+    0 0 8px #ff6f81,
+    0 0 18px rgba(255, 111, 129, 0.42);
+}
+
+.prime-message-row--priority::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 2px;
+  height: 100%;
+
+  background: #ffbf5c;
+
+  content: "";
+}
+
+.prime-message-row__sender,
+.prime-message-row__subject {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.prime-message-row__sender span,
+.prime-message-row__subject span {
+  color: #667784;
+
+  font-family: var(--codeFont);
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.prime-message-row__sender strong,
+.prime-message-row__subject strong {
+  overflow: hidden;
+
+  color: #cdd9e2;
+
+  font-size: 0.84rem;
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prime-message-row--unread
+  .prime-message-row__sender
+  strong,
+.prime-message-row--unread
+  .prime-message-row__subject
+  strong {
+  color: #fff;
+  font-weight: 750;
+}
+
+.prime-message-row__meta {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.18rem;
+
+  min-width: 80px;
+}
+
+.prime-message-row__meta > span {
+  color: #71818d;
+
+  font-family: var(--codeFont);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.prime-message-row__meta > strong {
+  color: #ffbf5c;
+
+  font-family: var(--codeFont);
+  font-size: 0.48rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+}
+
+.prime-message-row--corrupted
+  .prime-message-row__meta
+  > strong {
+  color: #ff7f91;
+}
+
+.prime-message-row__open {
+  justify-self: end;
+
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.52rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.prime-message-row:hover
+  .prime-message-row__open {
+  color: #fff;
+}
+
+.prime-messages__empty {
+  padding: 4rem 1rem;
+
+  color: #6f7f8c;
+
+  font-family: var(--codeFont);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media all and (max-width: 900px) {
+  .prime-message-row {
+    grid-template-columns:
+      18px
+      minmax(0, 1fr)
+      70px;
+  }
+
+  .prime-message-row__sender,
+  .prime-message-row__meta {
+    display: none;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .prime-messages {
+    padding: 0.8rem;
+  }
+
+  .prime-messages__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .prime-messages__toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .prime-messages__toolbar span:last-child {
+    display: none;
+  }
+
+  .prime-message-row {
+    grid-template-columns:
+      16px
+      minmax(0, 1fr);
+
+    min-height: 76px;
+  }
+
+  .prime-message-row__open {
+    display: none;
+  }
+}/* ==========================================================================
+   PRIME MESSAGES — SPLIT VIEW MAIL CLIENT
+   ========================================================================== */
+
+.prime-mail {
+  width: 100%;
+  padding: clamp(1rem, 1.8vw, 1.75rem);
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(100, 215, 255, 0.045),
+      transparent 32rem
+    );
+}
+
+/* Hidden mailbox state */
+
+.prime-mail__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Header */
+
+.prime-mail__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.prime-mail__eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.prime-mail__header h2 {
+  margin: 0;
+
+  color: #f4f8fb;
+
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  line-height: 0.95;
+}
+
+.prime-mail__count {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.prime-mail__count strong {
+  color: #f4f8fb;
+  font-family: var(--codeFont);
+  font-size: 1rem;
+}
+
+.prime-mail__count span {
+  color: #718492;
+
+  font-family: var(--codeFont);
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+/* System strip */
+
+.prime-mail__statusbar {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0.62rem 0.85rem;
+
+  border: 1px solid rgba(100, 215, 255, 0.16);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.055),
+      rgba(100, 215, 255, 0.015)
+    );
+
+  color: #66808f;
+
+  font-family: var(--codeFont);
+  font-size: 0.49rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+/* Main application */
+
+.prime-mail__workspace {
+  display: grid;
+  grid-template-columns:
+    minmax(300px, 22vw)
+    minmax(0, 1fr);
+
+  min-height: 650px;
+  max-height: calc(100vh - 245px);
+
+  overflow: hidden;
+
+  border: 1px solid rgba(100, 215, 255, 0.16);
+  border-radius: 0 0 12px 12px;
+
+  background: rgba(6, 11, 17, 0.82);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.28),
+    inset 0 0 40px rgba(100, 215, 255, 0.012);
+}
+
+/* ==========================================================================
+   INBOX
+   ========================================================================== */
+
+.prime-mail__inbox {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+
+  border-right: 1px solid rgba(100, 215, 255, 0.12);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 23, 34, 0.88),
+      rgba(7, 12, 19, 0.92)
+    );
+}
+
+.prime-mail__inbox-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.85rem 1rem;
+
+  border-bottom: 1px solid rgba(100, 215, 255, 0.1);
+
+  color: #708492;
+
+  font-family: var(--codeFont);
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.prime-mail__inbox-heading strong {
+  color: #64d7ff;
+}
+
+.prime-mail__list {
+  overflow-y: auto;
+}
+
+.prime-mail-item {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 0.7rem;
+
+  padding: 1rem;
+
+  border-bottom: 1px solid rgba(100, 215, 255, 0.075);
+
+  cursor: pointer;
+
+  transition:
+    background 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.prime-mail-item:hover {
+  background: rgba(100, 215, 255, 0.055);
+}
+
+.prime-mail-item__indicator {
+  width: 6px;
+  height: 6px;
+
+  margin-top: 0.33rem;
+
+  border-radius: 50%;
+
+  background: #52636f;
+}
+
+.prime-mail-item--unread
+  .prime-mail-item__indicator {
+  background: #64d7ff;
+
+  box-shadow:
+    0 0 8px rgba(100, 215, 255, 0.8);
+}
+
+.prime-mail-item--corrupted
+  .prime-mail-item__indicator {
+  background: #ff7081;
+
+  box-shadow:
+    0 0 9px rgba(255, 112, 129, 0.8);
+}
+
+.prime-mail-item--priority::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 2px;
+  height: 100%;
+
+  background: #ffbd59;
+
+  content: "";
+}
+
+.prime-mail-item__content {
+  min-width: 0;
+}
+
+.prime-mail-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0.75rem;
+}
+
+.prime-mail-item__top strong {
+  overflow: hidden;
+
+  color: #d8e2e9;
+
+  font-size: 0.76rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prime-mail-item__top span {
+  flex: 0 0 auto;
+
+  color: #607583;
+
+  font-family: var(--codeFont);
+  font-size: 0.45rem;
+  letter-spacing: 0.08em;
+}
+
+.prime-mail-item p {
+  overflow: hidden;
+
+  margin: 0.35rem 0 0 !important;
+
+  color: #8396a4;
+
+  font-size: 0.72rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prime-mail-item__flags {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+
+  color: #64d7ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.42rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.prime-mail-item__flag--priority {
+  color: #ffbd59;
+}
+
+.prime-mail-item__flag--danger {
+  color: #ff7081;
+}
+
+/* ==========================================================================
+   READER
+   ========================================================================== */
+
+.prime-mail__reader {
+  min-width: 0;
+
+  overflow-y: auto;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(100, 215, 255, 0.035),
+      transparent 35rem
+    ),
+    rgba(7, 12, 19, 0.78);
+}
+
+.prime-mail-reader {
+  display: none;
+  min-height: 100%;
+  flex-direction: column;
+
+  padding:
+    clamp(1.5rem, 3vw, 3rem)
+    clamp(1.5rem, 4vw, 4rem);
+}
+
+.prime-mail-reader__header {
+  padding-bottom: 1.35rem;
+
+  border-bottom: 1px solid rgba(100, 215, 255, 0.12);
+}
+
+.prime-mail-reader__classification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+
+  font-family: var(--codeFont);
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.prime-mail-reader__classification span {
+  color: #64d7ff;
+}
+
+.prime-mail-reader__classification strong {
+  color: #708694;
+}
+
+.prime-mail-reader__header h2 {
+  margin: 0;
+
+  color: #f5f8fb;
+
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.05;
+}
+
+.prime-mail-reader__flags {
+  display: flex;
+  gap: 0.5rem;
+
+  margin-top: 0.9rem;
+}
+
+.prime-mail-reader__flag {
+  padding: 0.28rem 0.46rem;
+
+  border: 1px solid currentColor;
+  border-radius: 4px;
+
+  font-family: var(--codeFont);
+  font-size: 0.45rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+}
+
+.prime-mail-reader__flag--priority {
+  color: #ffbd59;
+}
+
+.prime-mail-reader__flag--danger {
+  color: #ff7081;
+}
+
+/* Metadata */
+
+.prime-mail-reader__metadata {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 1rem;
+  padding: 1.25rem 0;
+  margin: 0;
+
+  border-bottom: 1px solid rgba(100, 215, 255, 0.1);
+}
+
+.prime-mail-reader__metadata div {
+  min-width: 0;
+}
+
+.prime-mail-reader__metadata dt {
+  margin-bottom: 0.25rem;
+
+  color: #617886;
+
+  font-family: var(--codeFont);
+  font-size: 0.44rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.prime-mail-reader__metadata dd {
+  overflow: hidden;
+
+  margin: 0;
+
+  color: #cbd7df;
+
+  font-size: 0.72rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Divider */
+
+.prime-mail-reader__divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  gap: 0.8rem;
+  margin: 1.6rem 0;
+}
+
+.prime-mail-reader__divider span {
+  height: 1px;
+
+  background: rgba(100, 215, 255, 0.09);
+}
+
+.prime-mail-reader__divider strong {
+  color: #607785;
+
+  font-family: var(--codeFont);
+  font-size: 0.43rem;
+  letter-spacing: 0.12em;
+}
+
+/* Actual Markdown */
+
+.prime-mail-reader__body {
+  width: 100%;
+  max-width: 900px;
+
+  color: #c7d3dc;
+
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.prime-mail-reader__body > *:first-child {
+  margin-top: 0;
+}
+
+.prime-mail-reader__body p {
+  margin: 0 0 1rem;
+}
+
+.prime-mail-reader__body h1,
+.prime-mail-reader__body h2,
+.prime-mail-reader__body h3,
+.prime-mail-reader__body h4 {
+  color: #f0f5f8;
+}
+
+.prime-mail-reader__body a {
+  color: #64d7ff;
+}
+
+.prime-mail-reader__body blockquote {
+  padding: 0.75rem 1rem;
+
+  border-left: 2px solid #64d7ff;
+
+  background: rgba(100, 215, 255, 0.035);
+}
+
+/* Corruption treatment */
+
+.prime-mail-reader--corrupted
+  .prime-mail-reader__header {
+  border-bottom-color: rgba(255, 112, 129, 0.2);
+}
+
+.prime-mail-reader--corrupted
+  .prime-mail-reader__body {
+  text-shadow:
+    0 0 12px rgba(255, 112, 129, 0.035);
+}
+
+/* Footer */
+
+.prime-mail-reader__footer {
+  display: flex;
+  justify-content: space-between;
+
+  padding-top: 2rem;
+  margin-top: auto;
+
+  color: #536875;
+
+  font-family: var(--codeFont);
+  font-size: 0.43rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+/* Empty */
+
+.prime-mail__empty {
+  padding: 4rem;
+
+  color: #687d8b;
+
+  font-family: var(--codeFont);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media all and (max-width: 900px) {
+  .prime-mail__workspace {
+    grid-template-columns: 270px minmax(0, 1fr);
+  }
+
+  .prime-mail-reader__metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media all and (max-width: 650px) {
+  .prime-mail {
+    padding: 0.75rem;
+  }
+
+  .prime-mail__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .prime-mail__statusbar span:last-child {
+    display: none;
+  }
+
+  .prime-mail__workspace {
+    display: block;
+    max-height: none;
+  }
+
+  .prime-mail__inbox {
+    max-height: 270px;
+
+    border-right: 0;
+    border-bottom: 1px solid rgba(100, 215, 255, 0.12);
+  }
+
+  .prime-mail-reader {
+    padding: 1.4rem;
+  }
+
+  .prime-mail-reader__metadata {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.prime-mail-reader {
+  padding:
+    clamp(2rem, 3vw, 3.5rem)
+    clamp(2.25rem, 4vw, 4.5rem);
+}
+
+.prime-mail-reader__body {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+/* Message reader breathing room */
+
+.prime-mail-reader {
+  padding-left: clamp(2.75rem, 4vw, 5rem) !important;
+  padding-right: clamp(2.75rem, 4vw, 5rem) !important;
+}
+
+.prime-mail-reader__header,
+.prime-mail-reader__metadata,
+.prime-mail-reader__divider,
+.prime-mail-reader__body,
+.prime-mail-reader__footer {
+  width: 100%;
+}
+
+.prime-mail-reader__header {
+  padding-left: 0.25rem;
+}
+
+.prime-mail-reader__body {
+  padding-left: 0.25rem;
+  max-width: 860px;
 }

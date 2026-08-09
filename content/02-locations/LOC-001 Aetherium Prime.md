@@ -1,9 +1,8 @@
----
-title: "Aetherium Prime"
-id: "LOC-001"
+﻿---
+title: Aetherium Prime
+id: LOC-001"
 type: location
-location: "[[Aetherium Prime]]"
-publish: false
+location: Planet
 ---
 
 <div class="location-hero location-hero--wide">

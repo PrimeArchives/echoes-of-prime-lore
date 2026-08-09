@@ -1,4 +1,4 @@
-Prime Archives
+﻿Prime Archives
 
 Prime Archives is de publieke, in-universe tabletomgeving voor de D&D-campagne Echoes of Prime.
 
@@ -97,15 +97,15 @@ Belangrijkste contentmappen
 De huidige structuur gebruikt onder andere:
 
 content/
-├── index.md
-├── archives.md
-├── static/
-├── 01 Universe/
-├── 02 Timeline/
-├── 04 Locations/
-├── 05 NPCs/
-├── 06 Factions/
-└── 07 Systems/
+â”œâ”€â”€ index.md
+â”œâ”€â”€ archives.md
+â”œâ”€â”€ static/
+â”œâ”€â”€ 01 Universe/
+â”œâ”€â”€ 02 Timeline/
+â”œâ”€â”€ 04 Locations/
+â”œâ”€â”€ 05 NPCs/
+â”œâ”€â”€ 06 Factions/
+â””â”€â”€ 07 Systems/
 
 Nieuwe content plaats je in de passende map.
 
@@ -166,7 +166,7 @@ De dashboardtegels verwijzen momenteel onder andere naar:
 /01-universe/
 /02-timeline/
 /04-locations/
-/05-npcs/
+/03-personnel/
 /06-factions/
 /07-systems/
 
@@ -175,8 +175,8 @@ Belangrijke codebestanden
 Dashboardcomponenten
 
 quartz/components/prime/
-├── ArchiveCard.tsx
-└── ArchiveDashboard.tsx
+â”œâ”€â”€ ArchiveCard.tsx
+â””â”€â”€ ArchiveDashboard.tsx
 
 ArchiveCard.tsx bepaalt de opbouw van iedere dashboardtegel.
 
@@ -185,9 +185,9 @@ ArchiveDashboard.tsx bepaalt welke tegels, teksten en statussen op /archives sta
 Dashboardstyling
 
 quartz/styles/
-├── custom.scss
-├── archive-dashboard.scss
-└── boot-sequence.scss
+â”œâ”€â”€ custom.scss
+â”œâ”€â”€ archive-dashboard.scss
+â””â”€â”€ boot-sequence.scss
 
 custom.scss laadt de eigen stylesheets en bevat algemene site-aanpassingen.
 
@@ -207,7 +207,7 @@ quartz/plugins/pageTypes/archives.ts
 
 Dit bestand zorgt ervoor dat /archives door ArchiveDashboard wordt gerenderd.
 
-Het paginatype wordt geëxporteerd via:
+Het paginatype wordt geÃ«xporteerd via:
 
 quartz/plugins/pageTypes/index.ts
 
@@ -227,7 +227,7 @@ Een kaart ziet er bijvoorbeeld zo uit:
   title="Universe"
   description="History, worlds and cosmic knowledge."
   href="/01-universe/"
-  icon="◉"
+  icon="â—‰"
   status="Online"
 />
 
@@ -237,7 +237,7 @@ Een Field Tool gebruikt:
   title="Navigation"
   description="Maps, routes and known destinations."
   href="/navigation/"
-  icon="⌁"
+  icon="âŒ"
   category="tool"
   status="Available"
 />

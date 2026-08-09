@@ -19,7 +19,7 @@ Zij fluisteren dat de wereld nog leeft, dat ze kreunt onder het gewicht van roes
 
 De megacorporaties van House Kareth proberen stabiliteit te bewaren in een universum vol winst en oorlog, terwijl de Warden Guilds de jacht openen op iedereen die de balans verstoort.. voor de juiste prijs.
 
-En ergens in de schaduw van vergeten databanken, bewaren de Archivists wat overblijft van de oude wereld. kennis, kracht, en misschien… de waarheid over wat er écht met de goden is gebeurd.
+En ergens in de schaduw van vergeten databanken, bewaren de Archivists wat overblijft van de oude wereld. kennis, kracht, en misschien⬦ de waarheid over wat er écht met de goden is gebeurd.
 
 In een wereld waar geloof gestorven is, wordt macht aanbeden.
 
@@ -28,3 +28,5 @@ Aan jullie het avontuur.
 ---
 
 # Related Documents
+
+
