@@ -334,7 +334,7 @@ export default function AudioArchive({
 
       <audio
         id="prime-audio-element"
-        src={`/static/audio/${firstId}.mp3`}
+        src={`/static/audio/${firstId.toLowerCase()}.mp3`}
         preload="metadata"
       />
 
@@ -382,7 +382,7 @@ export default function AudioArchive({
                   class="prime-audio-track"
                   data-audio-track-label
                   data-audio-index={index}
-                  data-audio-src={`/static/audio/${id}.mp3`}
+                  data-audio-src={`/static/audio/${id.toLowerCase()}.mp3`}
                   data-audio-title={title}
                 >
                   <div class="prime-audio-track__top">
@@ -586,7 +586,7 @@ export default function AudioArchive({
                     </span>
                     <br />
                     <span>
-                      Playback source: /static/audio/{id}.mp3
+                      Playback source: /static/audio/{id.toLowerCase()}.mp3
                     </span>
                   </div>
                 </div>
