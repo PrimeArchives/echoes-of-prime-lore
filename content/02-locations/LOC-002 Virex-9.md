@@ -7,7 +7,7 @@ location: Aetherium Prime
 ---
 
 <div class="location-hero location-hero--wide">
-  <img src="/static/images/locations/Aetherium-Virex.webp" alt="Aetherium location">
+  <img src="/static/images/locations/aetherium-virex.webp" alt="Aetherium location">
 </div>
 
 

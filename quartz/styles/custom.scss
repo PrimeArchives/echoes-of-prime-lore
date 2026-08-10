@@ -2878,3 +2878,29 @@ body[data-slug="02-locations/index"] {
   padding-left: 0.25rem;
   max-width: 860px;
 }
+/* ==========================================================================
+   PRIME ARCHIVES — FORCE DARK THEME
+   ========================================================================== */
+
+:root {
+  --light: #15181d;
+  --lightgray: #222831;
+  --gray: #7f91a3;
+  --darkgray: #c4d0db;
+  --dark: #f2f6fa;
+  --secondary: #64d7ff;
+  --tertiary: #8b6cff;
+  --highlight: rgba(100, 215, 255, 0.15);
+  --textHighlight: #64d7ff44;
+}
+/* Messages — force readable text */
+
+.prime-mail-reader__body,
+.prime-mail-reader__body p,
+.prime-mail-reader__body li {
+  color: #c7d3dc;
+}
+
+.prime-mail-item p {
+  color: #91a3b2;
+}

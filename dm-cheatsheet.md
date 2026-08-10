@@ -1,4 +1,4 @@
-rime Archives – DM Cheatsheet
+Prime Archives – DM Cheatsheet
 
 ## Test de site lokaal
 

@@ -6,5 +6,5 @@ location: Planet
 ---
 
 <div class="location-hero location-hero--wide">
-  <img src="/static/images/locations/Aetherium-Prime.webp" alt="Planet">
+  <img src="/static/images/locations/aetherium-prime.webp" alt="Planet">
 </div>

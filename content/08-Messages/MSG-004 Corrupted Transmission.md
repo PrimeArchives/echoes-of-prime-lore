@@ -3,6 +3,7 @@ title: "Corrupted Transmission"
 id: "MSG-004"
 type: message
 sender: "Unknown Signal"
+messageDate: "6862.114"
 recipient: "Echo Squad"
 status: corrupted
 priority: high

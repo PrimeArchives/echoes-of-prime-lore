@@ -5,7 +5,7 @@ type: message
 sender: Dr. Kael Arden
 messageDate: "6862.114"
 priority: NORMAL
-unread: true
+unread: false
 published: true
 ---
 

@@ -8,6 +8,8 @@ import ArchiveCard from "./ArchiveCard"
 import Map from "./navigation/map"
 import { virex9Map } from "./navigation/maps/virex9"
 import Messages from "./messages/messages"
+import AudioArchive from "./audio/AudioArchive"
+import audioStyle from "./audio/audio.scss"
 
 const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
   return (
@@ -30,6 +32,10 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             #messages-toggle:checked ~ .prime-app--messages {
               display: block;
             }
+
+            #audio-toggle:checked ~ .prime-app--audio {
+              display: block;
+            }
           `,
         }}
       />
@@ -43,6 +49,13 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
 
       <input
         id="messages-toggle"
+        class="prime-app-toggle"
+        type="checkbox"
+        aria-hidden="true"
+      />
+
+      <input
+        id="audio-toggle"
         class="prime-app-toggle"
         type="checkbox"
         aria-hidden="true"
@@ -129,7 +142,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </dt>
 
               <dd>
-                1.0
+                1.1
               </dd>
             </div>
           </dl>
@@ -287,6 +300,48 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </div>
             </label>
 
+            <label
+              for="audio-toggle"
+              class="archive-card tool prime-app-launcher"
+            >
+              <div class="archive-card-top">
+                <span class="archive-label">
+                  FIELD APPLICATION
+                </span>
+
+                <span
+                  class="archive-led"
+                  aria-hidden="true"
+                ></span>
+              </div>
+
+              <div class="archive-card-header">
+                <div class="archive-card-icon">
+                  ◫
+                </div>
+
+                <div>
+                  <h3>
+                    Audio Archive
+                  </h3>
+
+                  <p>
+                    Recovered songs and echo fragments.
+                  </p>
+                </div>
+              </div>
+
+              <div class="archive-card-footer">
+                <span>
+                  AVAILABLE
+                </span>
+
+                <span class="archive-open">
+                  OPEN →
+                </span>
+              </div>
+            </label>
+
             <ArchiveCard
               title="Objectives"
               description="Current tasks and recovered mission data."
@@ -400,10 +455,42 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
           <Messages allFiles={_props.allFiles ?? []} />
         </div>
       </section>
+
+      <section
+        class="prime-app prime-app--audio"
+        aria-label="Audio Archive application"
+      >
+        <div class="prime-app__shell">
+          <header class="prime-app__topbar">
+            <div>
+              <span class="prime-app__system">
+                PAT-04 / FIELD APPLICATION
+              </span>
+
+              <strong>
+                Audio Archive
+              </strong>
+            </div>
+
+            <label
+              for="audio-toggle"
+              class="prime-app__close"
+              aria-label="Return to Archive Index"
+              title="Return to Archive Index"
+            >
+              ×
+            </label>
+          </header>
+
+          <AudioArchive allFiles={_props.allFiles ?? []} />
+        </div>
+      </section>
     </>
   )
 }
 
+
+PrimeOS.css = audioStyle
 
 PrimeOS.afterDOMLoaded = `
 (() => {
@@ -450,6 +537,163 @@ PrimeOS.afterDOMLoaded = `
     document.removeEventListener("nav", run)
     document.removeEventListener("render", run)
   })
+
+  const setupPrimeAudio = () => {
+    const root = document.querySelector(".prime-audio")
+    if (!(root instanceof HTMLElement)) return
+
+    // Rebind safely after Quartz SPA renders.
+    if (root.dataset.playerReady === "true") return
+
+    const audio = root.querySelector("#prime-audio-element")
+    const labels = Array.from(root.querySelectorAll("[data-audio-track-label]"))
+    const playButton = root.querySelector("[data-audio-action='play']")
+    const prevButton = root.querySelector("[data-audio-action='prev']")
+    const nextButton = root.querySelector("[data-audio-action='next']")
+    const seek = root.querySelector("[data-audio-seek]")
+    const volume = root.querySelector("[data-audio-volume]")
+    const currentTime = root.querySelector("[data-audio-current]")
+    const duration = root.querySelector("[data-audio-duration]")
+    const playerStatus = root.querySelector("[data-audio-player-status]")
+    const appToggle = document.getElementById("audio-toggle")
+
+    if (!(audio instanceof HTMLAudioElement) || labels.length === 0) return
+
+    root.dataset.playerReady = "true"
+    let activeIndex = 0
+
+    const setStatus = (message) => {
+      if (playerStatus) playerStatus.textContent = message
+    }
+
+    const formatTime = (seconds) => {
+      if (!Number.isFinite(seconds) || seconds < 0) return "00:00"
+      const minutes = Math.floor(seconds / 60)
+      const remainder = Math.floor(seconds % 60)
+      return String(minutes).padStart(2, "0") + ":" + String(remainder).padStart(2, "0")
+    }
+
+    const selectedIndex = () => {
+      const checked = root.querySelector('input[name="prime-audio-selection"]:checked')
+      if (!(checked instanceof HTMLInputElement)) return activeIndex
+      const index = Number(checked.dataset.audioIndex)
+      return Number.isFinite(index) ? index : activeIndex
+    }
+
+    const getTrack = (index) => {
+      const normalized = (index + labels.length) % labels.length
+      const label = labels[normalized]
+      if (!(label instanceof HTMLElement)) return null
+      return {
+        index: normalized,
+        src: label.dataset.audioSrc || "",
+      }
+    }
+
+    const loadTrack = (index, autoplay = false) => {
+      const track = getTrack(index)
+      if (!track) return
+      activeIndex = track.index
+
+      const radio = root.querySelector("#prime-audio-select-" + track.index)
+      if (radio instanceof HTMLInputElement) radio.checked = true
+
+      if ((audio.getAttribute("src") || "") !== track.src) {
+        audio.src = track.src
+        audio.load()
+      }
+
+      setStatus("MEDIA LOADED")
+      if (autoplay) {
+        audio.play().catch(() => setStatus("PLAYBACK BLOCKED"))
+      }
+    }
+
+    labels.forEach((label, index) => {
+      label.addEventListener("click", () => {
+        loadTrack(index, !audio.paused)
+      })
+    })
+
+    playButton?.addEventListener("click", () => {
+      const track = getTrack(selectedIndex())
+      if (!track) return
+      if ((audio.getAttribute("src") || "") !== track.src) loadTrack(track.index)
+
+      if (audio.paused) {
+        audio.play().catch(() => setStatus("FILE NOT AVAILABLE"))
+      } else {
+        audio.pause()
+      }
+    })
+
+    prevButton?.addEventListener("click", () => loadTrack(selectedIndex() - 1, true))
+    nextButton?.addEventListener("click", () => loadTrack(selectedIndex() + 1, true))
+
+    audio.addEventListener("play", () => {
+      root.classList.add("is-playing")
+      setStatus("PLAYING")
+      if (playButton) {
+        playButton.textContent = "❚❚"
+        playButton.setAttribute("aria-label", "Pause")
+      }
+    })
+
+    audio.addEventListener("pause", () => {
+      root.classList.remove("is-playing")
+      if (!audio.ended) setStatus("PAUSED")
+      if (playButton) {
+        playButton.textContent = "▶"
+        playButton.setAttribute("aria-label", "Play")
+      }
+    })
+
+    audio.addEventListener("loadedmetadata", () => {
+      if (duration) duration.textContent = formatTime(audio.duration)
+      if (seek instanceof HTMLInputElement) {
+        seek.max = String(Number.isFinite(audio.duration) ? audio.duration : 0)
+      }
+      setStatus("READY")
+    })
+
+    audio.addEventListener("timeupdate", () => {
+      if (currentTime) currentTime.textContent = formatTime(audio.currentTime)
+      if (seek instanceof HTMLInputElement) seek.value = String(audio.currentTime)
+    })
+
+    audio.addEventListener("ended", () => loadTrack(selectedIndex() + 1, true))
+    audio.addEventListener("error", () => setStatus("FILE NOT FOUND"))
+
+    if (seek instanceof HTMLInputElement) {
+      seek.addEventListener("input", () => {
+        const nextTime = Number(seek.value)
+        if (Number.isFinite(nextTime)) audio.currentTime = nextTime
+      })
+    }
+
+    if (volume instanceof HTMLInputElement) {
+      audio.volume = Number(volume.value)
+      volume.addEventListener("input", () => {
+        audio.volume = Number(volume.value)
+      })
+    }
+
+    if (appToggle instanceof HTMLInputElement) {
+      appToggle.addEventListener("change", () => {
+        if (!appToggle.checked) audio.pause()
+      })
+    }
+
+    // The initial src already exists in the rendered <audio>.
+    // Do not call load() here: metadata may already have loaded before listeners were bound.
+    setStatus(audio.readyState >= 1 ? "READY" : "MEDIA LOADED")
+  }
+
+  const runAudio = () => window.setTimeout(setupPrimeAudio, 0)
+
+  runAudio()
+  document.addEventListener("nav", runAudio)
+  document.addEventListener("render", runAudio)
 })()
 `
 
