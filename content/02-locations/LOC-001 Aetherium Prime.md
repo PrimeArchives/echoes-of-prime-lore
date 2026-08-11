@@ -1,6 +1,6 @@
 ﻿---
 title: Aetherium Prime
-id: LOC-001"
+id: LOC-001
 type: location
 location: Planet
 ---
