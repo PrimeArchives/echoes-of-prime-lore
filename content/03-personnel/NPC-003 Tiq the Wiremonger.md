@@ -5,6 +5,9 @@ type: npc
 species: Kobold Cyborg
 role: Augment-Smith & Merchant
 location: Coil Market
+aliases:
+  - Tiq
+  - Tiq the Wiremonger
 ---
 
 <div class="personnel-hero personnel-hero--wide">

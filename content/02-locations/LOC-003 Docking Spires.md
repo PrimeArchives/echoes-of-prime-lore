@@ -3,6 +3,8 @@ title: The Docking Spires
 id: LOC-003
 type: location
 location: Virex-9
+aliases:
+  - Docking Spires
 ---
 
 <div class="location-hero location-hero--wide">

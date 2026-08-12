@@ -5,6 +5,8 @@ type: npc vendor
 species: Tiefling
 role: Chemist
 location: The Coil Market
+aliases:
+  - Dr Orren
 ---
 
 <div class="personnel-hero personnel-hero--wide">

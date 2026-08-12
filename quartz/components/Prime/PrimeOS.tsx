@@ -10,6 +10,8 @@ import { virex9Map } from "./navigation/maps/virex9"
 import Messages from "./messages/messages"
 import AudioArchive from "./audio/AudioArchive"
 import audioStyle from "./audio/audio.scss"
+import Objectives from "./objectives/Objectives"
+import objectivesStyle from "./objectives/objectives.scss"
 
 const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
   return (
@@ -36,6 +38,10 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             #audio-toggle:checked ~ .prime-app--audio {
               display: block;
             }
+
+            #objectives-toggle:checked ~ .prime-app--objectives {
+              display: block;
+            }
           `,
         }}
       />
@@ -56,6 +62,13 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
 
       <input
         id="audio-toggle"
+        class="prime-app-toggle"
+        type="checkbox"
+        aria-hidden="true"
+      />
+
+      <input
+        id="objectives-toggle"
         class="prime-app-toggle"
         type="checkbox"
         aria-hidden="true"
@@ -342,14 +355,47 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </div>
             </label>
 
-            <ArchiveCard
-              title="Objectives"
-              description="Current tasks and recovered mission data."
-              href="#"
-              icon="◎"
-              category="tool"
-              status="Standby"
-            />
+            <label
+              for="objectives-toggle"
+              class="archive-card tool prime-app-launcher"
+            >
+              <div class="archive-card-top">
+                <span class="archive-label">
+                  FIELD APPLICATION
+                </span>
+
+                <span
+                  class="archive-led"
+                  aria-hidden="true"
+                ></span>
+              </div>
+
+              <div class="archive-card-header">
+                <div class="archive-card-icon">
+                  ◎
+                </div>
+
+                <div>
+                  <h3>
+                    Objectives
+                  </h3>
+
+                  <p>
+                    Current tasks and recovered mission data.
+                  </p>
+                </div>
+              </div>
+
+              <div class="archive-card-footer">
+                <span>
+                  AVAILABLE
+                </span>
+
+                <span class="archive-open">
+                  OPEN →
+                </span>
+              </div>
+            </label>
           </div>
         </section>
 
@@ -485,12 +531,42 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
           <AudioArchive allFiles={_props.allFiles ?? []} />
         </div>
       </section>
+
+      <section
+        class="prime-app prime-app--objectives"
+        aria-label="Objectives application"
+      >
+        <div class="prime-app__shell">
+          <header class="prime-app__topbar">
+            <div>
+              <span class="prime-app__system">
+                PAT-05 / FIELD APPLICATION
+              </span>
+
+              <strong>
+                Objectives
+              </strong>
+            </div>
+
+            <label
+              for="objectives-toggle"
+              class="prime-app__close"
+              aria-label="Return to Archive Index"
+              title="Return to Archive Index"
+            >
+              ×
+            </label>
+          </header>
+
+          <Objectives allFiles={_props.allFiles ?? []} />
+        </div>
+      </section>
     </>
   )
 }
 
 
-PrimeOS.css = audioStyle
+PrimeOS.css = audioStyle + objectivesStyle
 
 PrimeOS.afterDOMLoaded = `
 (() => {

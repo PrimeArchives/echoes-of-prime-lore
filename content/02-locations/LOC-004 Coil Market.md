@@ -3,6 +3,8 @@ title: Coil Market
 id: LOC-004
 type: location
 location: Virex-9
+aliases:
+  - Coil Market
 ---
 
 <div class="location-hero location-hero--wide">

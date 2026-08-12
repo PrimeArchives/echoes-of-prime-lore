@@ -1,0 +1,26 @@
+{
+  "name": "prime-canonical-wikilinks",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": { ".": "./dist/index.js" },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --platform node --dts --clean"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "quartz": {
+    "name": "canonical-wikilinks",
+    "displayName": "Canonical WikiLinks",
+    "description": "Resolves short Prime Archives wikilinks by frontmatter title and aliases.",
+    "category": "transformer",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 25,
+    "defaultEnabled": true
+  }
+}

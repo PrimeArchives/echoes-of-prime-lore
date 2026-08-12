@@ -4,6 +4,9 @@ title: Virex-9
 id: LOC-002
 type: location
 location: Aetherium Prime
+aliases:
+  - Virex-9
+  - Virex 9
 ---
 
 <div class="location-hero location-hero--wide">

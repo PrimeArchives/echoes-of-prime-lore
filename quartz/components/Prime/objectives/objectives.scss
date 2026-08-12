@@ -1,0 +1,570 @@
+.objectives-os {
+  --objective-active: #f2b84b;
+  --objective-ongoing: #65cfff;
+  --objective-passed: #63e39d;
+  --objective-failed: #ff6475;
+
+  width: min(1400px, calc(100% - 2rem));
+  margin: 1.2rem auto 2rem;
+  color: #d8e2e9;
+}
+
+.objectives-os__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.objectives-os__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.35rem 1.5rem 1.15rem;
+  border: 1px solid rgba(101, 207, 255, 0.16);
+  border-radius: 15px 15px 0 0;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(101, 207, 255, 0.08), transparent 34rem),
+    linear-gradient(180deg, rgba(13, 20, 29, 0.98), rgba(7, 11, 17, 0.99));
+}
+
+.objectives-os__eyebrow,
+.objectives-os__sync,
+.objectives-status-board,
+.objectives-panel-heading,
+.objective-entry__id,
+.objective-status,
+.objective-entry__meta,
+.objective-dossier__classification,
+.objective-dossier__priority,
+.objective-dossier__metadata dt,
+.objective-dossier__briefing > span,
+.objective-dossier__outcome > span,
+.objective-dossier__footer {
+  font-family: var(--codeFont);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.objectives-os__eyebrow {
+  margin: 0 0 0.38rem;
+  color: #65cfff;
+  font-size: 0.58rem;
+  font-weight: 900;
+}
+
+.objectives-os__header h1 {
+  margin: 0;
+  color: #f5f9fc;
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.055em;
+}
+
+.objectives-os__subtitle {
+  max-width: 690px;
+  margin: 0.8rem 0 0;
+  color: #8f9eaa;
+  font-size: 0.9rem;
+}
+
+.objectives-os__sync {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.28rem;
+  font-size: 0.52rem;
+}
+
+.objectives-os__sync span {
+  color: #6c7c88;
+}
+
+.objectives-os__sync strong {
+  color: #65cfff;
+  font-size: 0.64rem;
+}
+
+.objectives-status-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-right: 1px solid rgba(101, 207, 255, 0.16);
+  border-left: 1px solid rgba(101, 207, 255, 0.16);
+  background: #080d13;
+}
+
+.objectives-status-board__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0.72rem 1rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.055);
+  font-size: 0.48rem;
+}
+
+.objectives-status-board__item:last-child {
+  border-right: 0;
+}
+
+.objectives-status-board__item span {
+  color: #6e7c87;
+  font-weight: 800;
+}
+
+.objectives-status-board__item strong {
+  font-size: 0.8rem;
+}
+
+.objectives-status-board__item--active strong {
+  color: var(--objective-active);
+}
+
+.objectives-status-board__item--ongoing strong {
+  color: var(--objective-ongoing);
+}
+
+.objectives-status-board__item--passed strong {
+  color: var(--objective-passed);
+}
+
+.objectives-status-board__item--failed strong {
+  color: var(--objective-failed);
+}
+
+.objectives-os__workspace {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.75fr) minmax(500px, 1.5fr);
+  min-height: 590px;
+  overflow: hidden;
+  border: 1px solid rgba(101, 207, 255, 0.16);
+  border-radius: 0 0 15px 15px;
+  background: #080c12;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.objectives-list-panel {
+  border-right: 1px solid rgba(101, 207, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(14, 21, 30, 0.98), rgba(7, 11, 17, 0.99));
+}
+
+.objectives-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(101, 207, 255, 0.1);
+  font-size: 0.48rem;
+}
+
+.objectives-panel-heading span {
+  color: #65cfff;
+  font-weight: 900;
+}
+
+.objectives-panel-heading strong {
+  color: #62717d;
+}
+
+.objectives-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.objective-entry {
+  --objective-accent: var(--objective-active);
+
+  display: block;
+  padding: 1rem 1.05rem 1.05rem 1.2rem;
+  border: 0;
+  border-bottom: 1px solid rgba(101, 207, 255, 0.075);
+  border-left: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.objective-entry--ongoing {
+  --objective-accent: var(--objective-ongoing);
+}
+
+.objective-entry--passed {
+  --objective-accent: var(--objective-passed);
+}
+
+.objective-entry--failed {
+  --objective-accent: var(--objective-failed);
+}
+
+.objective-entry:hover {
+  background: rgba(101, 207, 255, 0.035);
+  color: inherit;
+}
+
+.objective-entry__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.objective-entry__id {
+  color: #6d7d89;
+  font-size: 0.45rem;
+  font-weight: 900;
+}
+
+.objective-entry h2 {
+  margin: 0.55rem 0 0.35rem;
+  color: #e7edf1;
+  font-size: 1rem;
+  line-height: 1.12;
+}
+
+.objective-entry p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0 !important;
+  color: #7f8d98 !important;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.objective-entry__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  color: #65727c;
+  font-size: 0.42rem;
+}
+
+.objective-entry__meta strong {
+  overflow: hidden;
+  color: #87949e;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.objective-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.42rem;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-size: 0.42rem;
+  font-weight: 900;
+}
+
+.objective-status::before {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  content: "";
+}
+
+.objective-status--active {
+  color: var(--objective-active);
+}
+
+.objective-status--ongoing {
+  color: var(--objective-ongoing);
+}
+
+.objective-status--passed {
+  color: var(--objective-passed);
+}
+
+.objective-status--failed {
+  color: var(--objective-failed);
+}
+
+.objectives-detail-panel {
+  min-width: 0;
+  background:
+    radial-gradient(circle at 70% 18%, rgba(101, 207, 255, 0.045), transparent 30rem),
+    linear-gradient(180deg, #0c1118, #070a0f);
+}
+
+.objective-dossier {
+  --objective-accent: var(--objective-active);
+
+  display: none;
+  min-height: 100%;
+  flex-direction: column;
+  padding: 0 !important;
+}
+
+.objective-dossier__inner {
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding:
+    clamp(2rem, 3.5vw, 3.25rem)
+    clamp(2.25rem, 4.5vw, 4.5rem);
+}
+
+.objective-dossier--ongoing {
+  --objective-accent: var(--objective-ongoing);
+}
+
+.objective-dossier--passed {
+  --objective-accent: var(--objective-passed);
+}
+
+.objective-dossier--failed {
+  --objective-accent: var(--objective-failed);
+}
+
+.objective-dossier__classification {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #64747f;
+  font-size: 0.48rem;
+  font-weight: 800;
+}
+
+.objective-dossier__classification span {
+  color: var(--objective-accent);
+}
+
+.objective-dossier__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1.4rem;
+}
+
+.objective-dossier__title-row h2 {
+  max-width: 780px;
+  margin: 0.65rem 0 0;
+  color: #f2f5f7;
+  font-size: clamp(2rem, 4vw, 3.7rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.objective-dossier__priority {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.22rem;
+  font-size: 0.48rem;
+}
+
+.objective-dossier__priority span {
+  color: #63727d;
+}
+
+.objective-dossier__priority strong {
+  color: var(--objective-accent);
+}
+
+.objective-dossier__divider {
+  height: 1px;
+  margin: 1.7rem 0 1.3rem;
+  background:
+    linear-gradient(
+      90deg,
+      var(--objective-accent),
+      color-mix(in srgb, var(--objective-accent) 16%, transparent) 46%,
+      transparent
+    );
+  opacity: 0.48;
+}
+
+.objective-dossier__metadata {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.objective-dossier__metadata > div {
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(101, 207, 255, 0.085);
+  border-radius: 5px;
+  background: rgba(4, 8, 13, 0.46);
+}
+
+.objective-dossier__metadata dt {
+  margin-bottom: 0.28rem;
+  color: #61717c;
+  font-size: 0.42rem;
+  font-weight: 900;
+}
+
+.objective-dossier__metadata dd {
+  overflow: hidden;
+  margin: 0;
+  color: #c4ced5;
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+}
+
+.objective-dossier__briefing,
+.objective-dossier__outcome {
+  margin-top: 1.65rem;
+  padding: 1.2rem 1.25rem;
+  border-left: 3px solid var(--objective-accent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--objective-accent) 7%, transparent),
+      transparent
+    );
+}
+
+.objective-dossier__briefing > span,
+.objective-dossier__outcome > span {
+  color: var(--objective-accent);
+  font-size: 0.48rem;
+  font-weight: 900;
+}
+
+.objective-dossier__briefing p,
+.objective-dossier__outcome p {
+  max-width: 850px;
+  margin: 0.65rem 0 0 !important;
+  color: #aebac3 !important;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.objective-dossier__outcome {
+  border-left-width: 1px;
+  border-left-style: dashed;
+}
+
+.objective-dossier__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 2rem;
+  color: #5e6e78;
+  font-size: 0.43rem;
+}
+
+.objective-dossier__footer strong {
+  color: var(--objective-accent);
+}
+
+.objectives-empty {
+  padding: 4rem 2rem;
+  border: 1px dashed rgba(101, 207, 255, 0.2);
+  border-radius: 14px;
+  background: rgba(7, 11, 17, 0.95);
+  text-align: center;
+}
+
+.objectives-empty span {
+  color: #65cfff;
+  font-family: var(--codeFont);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.objectives-empty h1 {
+  margin: 0.6rem 0 0;
+  color: #eef4f7;
+}
+
+.objectives-empty p {
+  color: #82909b;
+}
+
+@media all and (max-width: 950px) {
+  .objectives-os__workspace {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .objective-dossier__metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media all and (max-width: 700px) {
+  .objective-dossier__inner {
+    padding: 1.4rem 1.25rem;
+  }
+
+  .objectives-os {
+    width: calc(100% - 1rem);
+  }
+
+  .objectives-os__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .objectives-os__sync {
+    align-items: flex-start;
+  }
+
+  .objectives-status-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .objectives-status-board__item:nth-child(2) {
+    border-right: 0;
+  }
+
+  .objectives-status-board__item:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  }
+
+  .objectives-os__workspace {
+    display: block;
+  }
+
+  .objectives-list-panel {
+    max-height: 320px;
+    overflow-y: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(101, 207, 255, 0.12);
+  }
+
+  .objective-dossier {
+    min-height: 520px;
+    padding: 1.25rem;
+  }
+
+  .objective-dossier__title-row {
+    flex-direction: column;
+  }
+
+  .objective-dossier__priority {
+    align-items: flex-start;
+  }
+
+  .objective-dossier__metadata {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .objective-dossier__footer {
+    flex-direction: column;
+  }
+}

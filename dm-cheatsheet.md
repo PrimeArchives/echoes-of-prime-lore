@@ -123,3 +123,18 @@ Push
 ```bash
 git push
 ```
+
+ojective statuses
+status: active
+
+→ amber/geel
+
+status: ongoing
+
+→ cyaan/blauw
+
+status: passed
+
+→ groen
+
+status: failed

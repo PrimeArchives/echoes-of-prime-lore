@@ -6,6 +6,8 @@ type: npc
 species: Dragonborn (Augmented)
 role: Aether Division Scientist
 location: Docking Spires
+aliases:
+  - Dr Kael Arden
 ---
 
 <div class="personnel-hero personnel-hero--wide">
