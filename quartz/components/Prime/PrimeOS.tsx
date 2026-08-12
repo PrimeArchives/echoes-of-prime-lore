@@ -10,7 +10,7 @@ import { virex9Map } from "./navigation/maps/virex9"
 import Messages from "./messages/messages"
 import AudioArchive from "./audio/AudioArchive"
 import audioStyle from "./audio/audio.scss"
-import Objectives from "./objectives/Objectives"
+import Objectives from "./objectives/objectives"
 import objectivesStyle from "./objectives/objectives.scss"
 
 const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
