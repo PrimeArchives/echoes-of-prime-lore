@@ -8,8 +8,27 @@ aliases:
   - Iron Halo
 ---
 
-<div class="location-hero location-hero--wide">
-  <img src="/static/images/locations/Iron Halo.webp" alt="Docking Spires">
+<div class="personnel-gallery">
+  <input type="radio" name="halo-gallery" id="halo-image-1" checked>
+  <input type="radio" name="halo-gallery" id="halo-image-2">
+
+  <div class="personnel-gallery__stage">
+    <img
+      class="personnel-gallery__image"
+      src="/static/images/locations/Iron Halo.webp"
+      alt="Iron halo front"
+    >
+    <img
+      class="personnel-gallery__image"
+      src="/static/images/locations/ironarena.webp"
+      alt="Iron halo arena"
+    >
+  </div>
+
+  <div class="personnel-gallery__tabs">
+    <label for="halo-image-1">Iron Halo</label>
+    <label for="halo-image-2">Iron Arena</label>
+  </div>
 </div>
 
 
@@ -86,14 +105,11 @@ In de ruimte bevindt zich een vreemd device.
 
 Wat het apparaat precies is, waarvoor het ooit gebruikt werd en waarom het zich onder de Halo bevindt, is vooralsnog onbekend.
 
-<!--
+
 ## Fighting Arena
 
-Onder de Iron Halo bevindt zich nog een andere ruimte: een fighting arena.
+Boven de Iron Halo bevindt zich nog een andere ruimte: een fighting arena.
 
 Hier worden gevechten uitgevochten buiten de gewone regels van de bar.
 
-Rook "Yelloweye" Vargan zal hier tegenover de party komen te staan.
-
-Wanneer deze ruimte door de party is ontdekt, verwijder dan deze HTML-comment markers en werk de sectie bij met de gebeurtenissen van de encounter.
--->
+Rook "Yelloweye" Vargan vecht hier met challengers van allerlei walks of life.
