@@ -8,6 +8,7 @@ location: Coil Market
 aliases:
   - Tiq
   - Tiq the Wiremonger
+  - Tiq's Emporium
 ---
 
 <div class="personnel-hero personnel-hero--wide">

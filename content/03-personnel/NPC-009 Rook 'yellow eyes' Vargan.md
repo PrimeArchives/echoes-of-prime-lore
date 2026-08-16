@@ -1,9 +1,8 @@
 ---
-
 title: "Rook 'Yelloweyes' Vargan"
 id: "NPC-009"
 type: npc
-species: "Werewolf"
+species: "Human Shapeshifter"
 role: "Arena Fighter"
 location: "[[The Iron Halo]]"
 aliases:
