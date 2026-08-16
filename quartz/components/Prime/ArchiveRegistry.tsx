@@ -3,7 +3,7 @@ import {
   QuartzComponentProps,
 } from "../types"
 
-type RegistryKind = "locations" | "personnel"
+type RegistryKind = "locations" | "personnel" | "factions" | "systems"
 
 type RegistryConfig = {
   kind: RegistryKind
@@ -12,6 +12,9 @@ type RegistryConfig = {
   empty: string
   cardLabel: string
   openLabel: string
+  classificationFallback: string
+  metaField?: "location" | "scope"
+  metaLabel?: string
 }
 
 const REGISTRIES: Record<string, RegistryConfig> = {
@@ -22,6 +25,9 @@ const REGISTRIES: Record<string, RegistryConfig> = {
     empty: "No published location records found.",
     cardLabel: "LOCATION RECORD",
     openLabel: "OPEN LOCATION →",
+    classificationFallback: "Location",
+    metaField: "location",
+    metaLabel: "LOCATION",
   },
   "03-personnel": {
     kind: "personnel",
@@ -30,6 +36,31 @@ const REGISTRIES: Record<string, RegistryConfig> = {
     empty: "No published personnel records found.",
     cardLabel: "PERSONNEL RECORD",
     openLabel: "OPEN RECORD →",
+    classificationFallback: "Personnel",
+    metaField: "location",
+    metaLabel: "LOCATION",
+  },
+  "04-factions": {
+    kind: "factions",
+    eyebrow: "FACTION INTELLIGENCE",
+    title: "Factions",
+    empty: "No published faction records found.",
+    cardLabel: "FACTION DOSSIER",
+    openLabel: "OPEN DOSSIER →",
+    classificationFallback: "Faction",
+    metaField: "scope",
+    metaLabel: "OPERATING AREA",
+  },
+  "07-systems": {
+    kind: "systems",
+    eyebrow: "SYSTEMS DATABASE",
+    title: "Systems",
+    empty: "No published system records found.",
+    cardLabel: "SYSTEM RECORD",
+    openLabel: "OPEN SYSTEM →",
+    classificationFallback: "System",
+    metaField: "scope",
+    metaLabel: "SCOPE",
   },
 }
 
@@ -115,10 +146,84 @@ const ArchiveRegistry: QuartzComponent = ({
                 ? [text(fm.species), text(fm.role)]
                     .filter(Boolean)
                     .join(" · ")
-                : text(fm.category) ?? "Location")
+                : text(fm.category) ?? config.classificationFallback)
 
-            const location = text(fm.location)
+            const metaValue =
+              config.metaField === "scope"
+                ? text(fm.scope)
+                : config.metaField === "location"
+                  ? text(fm.location)
+                  : undefined
+
+            const image =
+              config.kind === "factions"
+                ? text(fm.image)
+                : undefined
+
             const href = `/${page.slug}`
+
+            if (config.kind === "factions") {
+              return (
+                <article class="prime-registry-card prime-registry-card--faction">
+                  <div class="prime-registry-card__top">
+                    <span>{config.cardLabel}</span>
+                    <strong>{id}</strong>
+                  </div>
+
+                  <div class="prime-faction-card__main">
+                    <div class="prime-faction-card__visual">
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={`${title} insignia`}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div class="prime-faction-card__placeholder">
+                          NO INSIGNIA
+                        </div>
+                      )}
+                    </div>
+
+                    <div class="prime-faction-card__content">
+                      <div class="prime-faction-card__classification">
+                        {classification}
+                      </div>
+
+                      <h3>{title}</h3>
+
+                      <div class="prime-faction-card__rule"></div>
+
+                      <p class="prime-registry-card__description">
+                        {description}
+                      </p>
+
+                      {metaValue && (
+                        <div class="prime-faction-card__scope">
+                          <span>{config.metaLabel}</span>
+                          <strong>{metaValue}</strong>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div class="prime-faction-card__bottom">
+                    <div class="prime-faction-card__intel">
+                      <span>ARCHIVE STATUS</span>
+                      <strong>PUBLIC DOSSIER</strong>
+                    </div>
+
+                    <a
+                      href={href}
+                      class="internal prime-faction-card__open"
+                      data-no-popover="true"
+                    >
+                      {config.openLabel}
+                    </a>
+                  </div>
+                </article>
+              )
+            }
 
             return (
               <article class="prime-registry-card">
@@ -140,10 +245,10 @@ const ArchiveRegistry: QuartzComponent = ({
                     {description}
                   </p>
 
-                  {location && (
+                  {metaValue && (
                     <div class="prime-registry-card__location">
-                      <span>LOCATION</span>
-                      <strong>{location}</strong>
+                      <span>{config.metaLabel}</span>
+                      <strong>{metaValue}</strong>
                     </div>
                   )}
                 </div>
@@ -190,7 +295,11 @@ ArchiveRegistry.css = `
 .prime-registry__heading > strong,
 .prime-registry-card__top,
 .prime-registry-card__location span,
-.prime-registry-card__footer a {
+.prime-registry-card__footer a,
+.prime-faction-card__classification,
+.prime-faction-card__scope span,
+.prime-faction-card__intel,
+.prime-faction-card__open {
   font-family: var(--codeFont);
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -339,28 +448,296 @@ ArchiveRegistry.css = `
 .prime-registry__empty {
   padding: 1.5rem;
   border: 1px dashed rgba(100, 215, 255, 0.18);
-  border-radius: 12px;
+  border-radius: 10px;
   color: var(--gray);
   text-align: center;
 }
 
+/* =========================================================
+   FACTION REGISTRY — DOSSIER LAYOUT
+   ========================================================= */
+
+.prime-registry--factions .prime-registry__grid {
+  grid-template-columns: 1fr;
+}
+
+.prime-registry--factions .prime-registry-card {
+  min-height: 0;
+}
+
+.prime-registry-card--faction {
+  padding: clamp(1.2rem, 2vw, 1.8rem);
+  border-color: rgba(100, 215, 255, 0.28);
+  background:
+    radial-gradient(
+      circle at 85% 8%,
+      rgba(100, 215, 255, 0.08),
+      transparent 32rem
+    ),
+    linear-gradient(
+      rgba(100, 215, 255, 0.018) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.018) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      145deg,
+      rgba(14, 25, 38, 0.99),
+      rgba(6, 12, 20, 0.995)
+    );
+  background-size: auto, 32px 32px, 32px 32px, auto;
+}
+
+.prime-registry-card--faction::after {
+  background: #64d7ff;
+  box-shadow: 0 0 11px rgba(100, 215, 255, 0.85);
+}
+
+.prime-registry-card--faction .prime-registry-card__top {
+  color: #64d7ff;
+  font-size: 0.62rem;
+}
+
+.prime-faction-card__main {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.45fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+  margin-top: 1.75rem;
+}
+
+.prime-faction-card__visual {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 8px;
+  border: 1px solid rgba(100, 215, 255, 0.28);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(12, 20, 30, 0.96),
+      rgba(4, 8, 13, 0.98)
+    );
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.32),
+    inset 0 0 0 3px rgba(100, 215, 255, 0.025);
+}
+
+.prime-faction-card__visual::before,
+.prime-faction-card__visual::after {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  content: "";
+  pointer-events: none;
+}
+
+.prime-faction-card__visual::before {
+  top: 7px;
+  left: 7px;
+  border-top: 2px solid #64d7ff;
+  border-left: 2px solid #64d7ff;
+}
+
+.prime-faction-card__visual::after {
+  right: 7px;
+  bottom: 7px;
+  border-right: 2px solid #64d7ff;
+  border-bottom: 2px solid #64d7ff;
+}
+
+.prime-faction-card__visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 6px;
+}
+
+.prime-faction-card__placeholder {
+  color: var(--gray);
+  font-family: var(--codeFont);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+
+.prime-faction-card__content {
+  min-width: 0;
+}
+
+.prime-faction-card__classification {
+  display: inline-flex;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(100, 215, 255, 0.24);
+  border-radius: 7px;
+  color: #64d7ff;
+  background: rgba(100, 215, 255, 0.055);
+  font-size: 0.6rem;
+}
+
+.prime-faction-card__content h3 {
+  margin: 0.9rem 0 0;
+  color: #f7f9fb;
+  font-size: clamp(2rem, 3.3vw, 3.4rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.prime-faction-card__rule {
+  width: min(440px, 70%);
+  height: 2px;
+  margin-top: 1.2rem;
+  background:
+    linear-gradient(
+      90deg,
+      #64d7ff,
+      rgba(100, 215, 255, 0.22),
+      transparent
+    );
+}
+
+.prime-faction-card__content .prime-registry-card__description {
+  max-width: 760px;
+  margin-top: 1.4rem !important;
+  color: #b9c8d2;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.prime-faction-card__scope {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 1.6rem;
+}
+
+.prime-faction-card__scope span {
+  color: #587488;
+  font-size: 0.52rem;
+}
+
+.prime-faction-card__scope strong {
+  color: #eef4f7;
+  font-size: 0.95rem;
+}
+
+.prime-faction-card__bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 1.8rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(100, 215, 255, 0.11);
+}
+
+.prime-faction-card__intel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: #587488;
+  font-size: 0.5rem;
+}
+
+.prime-faction-card__intel strong {
+  color: #9eb4c2;
+  font-size: 0.65rem;
+}
+
+.prime-faction-card__open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(100, 215, 255, 0.34);
+  border-radius: 8px;
+  color: #64d7ff;
+  background: rgba(100, 215, 255, 0.055);
+  font-size: 0.58rem;
+  text-decoration: none;
+}
+
+.prime-faction-card__open:hover {
+  border-color: rgba(100, 215, 255, 0.7);
+  color: #ffffff;
+  background: rgba(100, 215, 255, 0.1);
+}
+
 @media all and (max-width: 1000px) {
-  .prime-registry__grid {
+  .prime-registry:not(.prime-registry--factions) .prime-registry__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media all and (max-width: 650px) {
+@media all and (max-width: 850px) {
   .prime-registry__heading {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .prime-registry__grid {
+  .prime-faction-card__main {
     grid-template-columns: 1fr;
+  }
+
+  .prime-faction-card__visual {
+    width: min(100%, 340px);
+    max-width: 340px;
+  }
+
+  .prime-faction-card__content h3 {
+    font-size: clamp(2.3rem, 8vw, 3.5rem);
+  }
+}
+
+@media all and (max-width: 650px) {
+  .prime-registry:not(.prime-registry--factions) .prime-registry__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prime-registry-card--faction {
+    padding: 1rem;
+  }
+
+  .prime-faction-card__main {
+    margin-top: 1.35rem;
+    gap: 1.35rem;
+  }
+
+  .prime-faction-card__visual {
+    width: 100%;
+    max-width: none;
+  }
+
+  .prime-faction-card__content h3 {
+    font-size: clamp(2.15rem, 12vw, 3.2rem);
+  }
+
+  .prime-faction-card__content .prime-registry-card__description {
+    font-size: 0.94rem;
+  }
+
+  .prime-faction-card__bottom {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .prime-faction-card__open {
+    width: 100%;
   }
 }
 `
 
 export default ArchiveRegistry
-

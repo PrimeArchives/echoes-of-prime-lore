@@ -200,7 +200,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             <ArchiveCard
               title="Factions"
               description="Organizations, powers and political actors."
-              href="/06-factions/"
+              href="/04-factions/"
               icon="△"
               status="Online"
             />
