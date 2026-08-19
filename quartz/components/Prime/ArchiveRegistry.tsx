@@ -83,6 +83,16 @@ function text(value: unknown) {
   return typeof value === "string" ? value : undefined
 }
 
+function record(value: unknown) {
+  return typeof value === "object" && value !== null
+    ? value as Record<string, unknown>
+    : undefined
+}
+
+function cssToken(value: string) {
+  return value.replace(/[^a-zA-Z0-9_-]/g, "-")
+}
+
 const ArchiveRegistry: QuartzComponent = ({
   fileData,
   allFiles,
@@ -107,8 +117,34 @@ const ArchiveRegistry: QuartzComponent = ({
       })
     })
 
+  const factionThemeCss =
+    config.kind === "factions"
+      ? records
+          .map((page) => {
+            const fm = page.frontmatter ?? {}
+            const id = cssToken(text(fm.id) ?? page.slug ?? "unindexed")
+            const theme = record(fm.theme)
+
+            const primary = text(theme?.primary) ?? "#64717b"
+            const secondary = text(theme?.secondary) ?? "#111821"
+            const accent = text(theme?.accent) ?? "#64d7ff"
+
+            return `
+              .prime-registry-card--faction[data-faction-id="${id}"] {
+                --faction-primary: ${primary};
+                --faction-secondary: ${secondary};
+                --faction-accent: ${accent};
+              }
+            `
+          })
+          .join("\n")
+      : ""
+
   return (
     <main class={`prime-registry prime-registry--${config.kind}`}>
+      {factionThemeCss && (
+        <style dangerouslySetInnerHTML={{ __html: factionThemeCss }} />
+      )}
       <div class="prime-registry__heading">
         <div>
           <span>{config.eyebrow}</span>
@@ -160,11 +196,19 @@ const ArchiveRegistry: QuartzComponent = ({
                 ? text(fm.image)
                 : undefined
 
+            const factionId =
+              config.kind === "factions"
+                ? cssToken(id)
+                : undefined
+
             const href = `/${page.slug}`
 
             if (config.kind === "factions") {
               return (
-                <article class="prime-registry-card prime-registry-card--faction">
+                <article
+                  class="prime-registry-card prime-registry-card--faction"
+                  data-faction-id={factionId}
+                >
                   <div class="prime-registry-card__top">
                     <span>{config.cardLabel}</span>
                     <strong>{id}</strong>
@@ -342,7 +386,11 @@ ArchiveRegistry.css = `
   background:
     radial-gradient(
       circle at 100% 0%,
-      rgba(100, 215, 255, 0.08),
+      color-mix(
+        in srgb,
+        var(--faction-primary) 13%,
+        transparent
+      ),
       transparent 45%
     ),
     linear-gradient(
@@ -458,46 +506,78 @@ ArchiveRegistry.css = `
    ========================================================= */
 
 .prime-registry--factions .prime-registry__grid {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .prime-registry--factions .prime-registry-card {
-  min-height: 0;
+  min-height: 520px;
 }
 
 .prime-registry-card--faction {
+  display: flex;
+  flex-direction: column;
   padding: clamp(1.2rem, 2vw, 1.8rem);
-  border-color: rgba(100, 215, 255, 0.28);
+  border-color: color-mix(
+    in srgb,
+    var(--faction-accent) 48%,
+    transparent
+  );
   background:
     radial-gradient(
-      circle at 85% 8%,
-      rgba(100, 215, 255, 0.08),
-      transparent 32rem
+      circle at 88% 4%,
+      color-mix(in srgb, var(--faction-accent) 15%, transparent),
+      transparent 22rem
+    ),
+    radial-gradient(
+      circle at 7% 88%,
+      color-mix(in srgb, var(--faction-primary) 18%, transparent),
+      transparent 25rem
     ),
     linear-gradient(
-      rgba(100, 215, 255, 0.018) 1px,
+      color-mix(
+        in srgb,
+        var(--faction-accent) 2.5%,
+        transparent
+      ) 1px,
       transparent 1px
     ),
     linear-gradient(
       90deg,
-      rgba(100, 215, 255, 0.018) 1px,
+      color-mix(
+        in srgb,
+        var(--faction-primary) 2.5%,
+        transparent
+      ) 1px,
       transparent 1px
     ),
     linear-gradient(
       145deg,
-      rgba(14, 25, 38, 0.99),
-      rgba(6, 12, 20, 0.995)
+      color-mix(
+        in srgb,
+        var(--faction-secondary) 48%,
+        rgba(14, 25, 38, 0.99)
+      ),
+      color-mix(
+        in srgb,
+        var(--faction-secondary) 32%,
+        rgba(6, 12, 20, 0.995)
+      )
     );
-  background-size: auto, 32px 32px, 32px 32px, auto;
+  background-size: auto, auto, 32px 32px, 32px 32px, auto;
 }
 
 .prime-registry-card--faction::after {
-  background: #64d7ff;
-  box-shadow: 0 0 11px rgba(100, 215, 255, 0.85);
+  background: var(--faction-accent);
+  box-shadow:
+    0 0 11px color-mix(
+      in srgb,
+      var(--faction-accent) 82%,
+      transparent
+    );
 }
 
 .prime-registry-card--faction .prime-registry-card__top {
-  color: #64d7ff;
+  color: var(--faction-accent);
   font-size: 0.62rem;
 }
 
@@ -507,6 +587,7 @@ ArchiveRegistry.css = `
   gap: clamp(1.5rem, 3vw, 2.5rem);
   align-items: start;
   margin-top: 1.75rem;
+  flex: 1;
 }
 
 .prime-faction-card__visual {
@@ -517,8 +598,13 @@ ArchiveRegistry.css = `
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 8px;
-  border: 1px solid rgba(100, 215, 255, 0.28);
+  padding: 16px;
+  box-sizing: border-box;
+  border: 1px solid color-mix(
+    in srgb,
+    var(--faction-primary) 42%,
+    transparent
+  );
   border-radius: 12px;
   background:
     linear-gradient(
@@ -528,7 +614,11 @@ ArchiveRegistry.css = `
     );
   box-shadow:
     0 18px 38px rgba(0, 0, 0, 0.32),
-    inset 0 0 0 3px rgba(100, 215, 255, 0.025);
+    inset 0 0 0 3px color-mix(
+      in srgb,
+      var(--faction-primary) 5%,
+      transparent
+    );
 }
 
 .prime-faction-card__visual::before,
@@ -543,21 +633,23 @@ ArchiveRegistry.css = `
 .prime-faction-card__visual::before {
   top: 7px;
   left: 7px;
-  border-top: 2px solid #64d7ff;
-  border-left: 2px solid #64d7ff;
+  border-top: 2px solid var(--faction-accent);
+  border-left: 2px solid var(--faction-accent);
 }
 
 .prime-faction-card__visual::after {
   right: 7px;
   bottom: 7px;
-  border-right: 2px solid #64d7ff;
-  border-bottom: 2px solid #64d7ff;
+  border-right: 2px solid var(--faction-primary);
+  border-bottom: 2px solid var(--faction-primary);
 }
 
 .prime-faction-card__visual img {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
   border-radius: 6px;
@@ -571,16 +663,27 @@ ArchiveRegistry.css = `
 }
 
 .prime-faction-card__content {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  height: 100%;
 }
 
 .prime-faction-card__classification {
   display: inline-flex;
   padding: 0.5rem 0.65rem;
-  border: 1px solid rgba(100, 215, 255, 0.24);
+  border: 1px solid color-mix(
+    in srgb,
+    var(--faction-accent) 40%,
+    transparent
+  );
   border-radius: 7px;
-  color: #64d7ff;
-  background: rgba(100, 215, 255, 0.055);
+  color: var(--faction-accent);
+  background: color-mix(
+    in srgb,
+    var(--faction-accent) 7%,
+    transparent
+  );
   font-size: 0.6rem;
 }
 
@@ -595,6 +698,24 @@ ArchiveRegistry.css = `
   word-break: normal;
 }
 
+.prime-registry-card--faction .prime-faction-card__content h3 {
+  text-shadow:
+    0 0 28px color-mix(
+      in srgb,
+      var(--faction-primary) 15%,
+      transparent
+    );
+}
+
+.prime-registry-card--faction .prime-faction-card__scope strong,
+.prime-registry-card--faction .prime-faction-card__intel strong {
+  color: color-mix(
+    in srgb,
+    var(--faction-primary) 24%,
+    #eef4f7
+  );
+}
+
 .prime-faction-card__rule {
   width: min(440px, 70%);
   height: 2px;
@@ -602,8 +723,9 @@ ArchiveRegistry.css = `
   background:
     linear-gradient(
       90deg,
-      #64d7ff,
-      rgba(100, 215, 255, 0.22),
+      var(--faction-accent),
+      var(--faction-primary),
+
       transparent
     );
 }
@@ -620,11 +742,16 @@ ArchiveRegistry.css = `
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  margin-top: 1.6rem;
+  margin-top: auto;
+  padding-top: 1.6rem;
 }
 
 .prime-faction-card__scope span {
-  color: #587488;
+  color: color-mix(
+    in srgb,
+    var(--faction-primary) 72%,
+    #587488
+  );
   font-size: 0.52rem;
 }
 
@@ -638,9 +765,13 @@ ArchiveRegistry.css = `
   align-items: flex-end;
   justify-content: space-between;
   gap: 1.5rem;
-  margin-top: 1.8rem;
+  margin-top: auto;
   padding-top: 1.2rem;
-  border-top: 1px solid rgba(100, 215, 255, 0.11);
+  border-top: 1px solid color-mix(
+    in srgb,
+    var(--faction-accent) 18%,
+    transparent
+  );
 }
 
 .prime-faction-card__intel {
@@ -662,18 +793,40 @@ ArchiveRegistry.css = `
   justify-content: center;
   min-height: 42px;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(100, 215, 255, 0.34);
+  border: 1px solid color-mix(
+    in srgb,
+    var(--faction-accent) 48%,
+    transparent
+  );
   border-radius: 8px;
-  color: #64d7ff;
-  background: rgba(100, 215, 255, 0.055);
+  color: var(--faction-accent);
+  background: color-mix(
+    in srgb,
+    var(--faction-accent) 7%,
+    transparent
+  );
   font-size: 0.58rem;
   text-decoration: none;
 }
 
 .prime-faction-card__open:hover {
-  border-color: rgba(100, 215, 255, 0.7);
+  border-color: color-mix(
+    in srgb,
+    var(--faction-accent) 78%,
+    white
+  );
   color: #ffffff;
-  background: rgba(100, 215, 255, 0.1);
+  background: color-mix(
+    in srgb,
+    var(--faction-accent) 14%,
+    transparent
+  );
+}
+
+@media all and (max-width: 1150px) {
+  .prime-registry--factions .prime-registry__grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media all and (max-width: 1000px) {

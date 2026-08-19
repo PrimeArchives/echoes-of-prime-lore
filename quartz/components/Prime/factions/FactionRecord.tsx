@@ -31,6 +31,10 @@ function text(value: unknown) {
   return typeof value === "string" ? value : undefined
 }
 
+function safeCssValue(value: string) {
+  return /^#[0-9a-fA-F]{3,8}$/.test(value) ? value : "#64d7ff"
+}
+
 function nodeText(node: Node): string {
   if (node.type === "text") {
     return node.value
@@ -104,18 +108,21 @@ const FactionRecord: QuartzComponent = ({
     "No public faction summary is currently available."
   const image = text(fm.image)
 
-  const primary = text(fm.theme?.primary) ?? "#8f9699"
-  const secondary = text(fm.theme?.secondary) ?? "#403b37"
-  const accent = text(fm.theme?.accent) ?? "#b88752"
+  const primary = safeCssValue(text(fm.theme?.primary) ?? "#8f9699")
+  const secondary = safeCssValue(text(fm.theme?.secondary) ?? "#403b37")
+  const accent = safeCssValue(text(fm.theme?.accent) ?? "#b88752")
 
-  const themeStyle = {
-    "--faction-primary": primary,
-    "--faction-secondary": secondary,
-    "--faction-accent": accent,
-  } as Record<string, string>
+  const themeCss = `
+    .faction-record {
+      --faction-primary: ${primary};
+      --faction-secondary: ${secondary};
+      --faction-accent: ${accent};
+    }
+  `
 
   return (
-    <main class="faction-record" style={themeStyle}>
+    <main class="faction-record">
+      <style dangerouslySetInnerHTML={{ __html: themeCss }} />
       <header class="faction-record__hero">
         <div class="faction-record__topline">
           <a

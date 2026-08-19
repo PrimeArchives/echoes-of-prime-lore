@@ -2,7 +2,7 @@
 title: The Warden Guilds
 id: FAC-001
 type: faction
-classification: major
+classification: Major
 scope: Interplanetary
 description: A decentralized network of bounty hunters, security contractors and investigators operating on the boundary between law and the underworld.
 image: /static/images/factions/warden-guilds.webp
@@ -109,8 +109,8 @@ Zijn bar functioneert naast drinkgelegenheid en ontmoetingsplaats als onofficië
 
 ## Reputation
 **Positive** 
-| **+1** | Toegang tot basis services en 10% korting of winstdeling. 
-| **+2** | Toegang tot het Bounty Board met exclusieve opdrachten. 
+- | +1 | Toegang tot basis services en 10% korting of winstdeling. 
+- | +2 | Toegang tot het Bounty Board met exclusieve opdrachten. 
 ---
 
 ### Virex-9 Leadership

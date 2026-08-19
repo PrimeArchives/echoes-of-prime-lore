@@ -145,7 +145,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </dt>
 
               <dd>
-                Public
+                Elevated
               </dd>
             </div>
 
@@ -155,7 +155,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </dt>
 
               <dd>
-                1.1
+                1.2
               </dd>
             </div>
           </dl>
