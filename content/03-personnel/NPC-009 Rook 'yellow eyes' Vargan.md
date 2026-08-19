@@ -5,6 +5,7 @@ type: npc
 species: "Human Shapeshifter"
 role: "Arena Fighter"
 location: "[[The Iron Halo]]"
+archiveRegion: Virex-9
 aliases:
   - Rook
   - Yelloweyes

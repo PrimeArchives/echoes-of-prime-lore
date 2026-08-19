@@ -5,6 +5,7 @@ type: npc
 species: Human (Augmented)
 role: "Croupier, Bookmaker & Entertainer"
 location: "[[The Iron Halo]]"
+archiveRegion: Virex-9
 aliases:
   - Lira
   - Ironhands

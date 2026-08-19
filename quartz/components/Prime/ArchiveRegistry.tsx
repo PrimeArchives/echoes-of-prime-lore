@@ -93,6 +93,10 @@ function cssToken(value: string) {
   return value.replace(/[^a-zA-Z0-9_-]/g, "-")
 }
 
+function regionToken(value: string) {
+  return cssToken(value.toLowerCase())
+}
+
 const ArchiveRegistry: QuartzComponent = ({
   fileData,
   allFiles,
@@ -116,6 +120,47 @@ const ArchiveRegistry: QuartzComponent = ({
         sensitivity: "base",
       })
     })
+
+  const personnelRegions =
+    config.kind === "personnel"
+      ? Array.from(
+          records.reduce((regions, page) => {
+            const fm = page.frontmatter ?? {}
+            const region = text(fm.archiveRegion) ?? "Unassigned"
+            const current = regions.get(region) ?? []
+            current.push(page)
+            regions.set(region, current)
+            return regions
+          }, new Map<string, typeof records>()),
+        ).sort(([a], [b]) =>
+          a.localeCompare(b, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          }),
+        )
+      : []
+
+  const personnelSelectionCss =
+    config.kind === "personnel"
+      ? personnelRegions
+          .map(([region]) => {
+            const token = regionToken(region)
+
+            return `
+              #personnel-region-${token}:checked
+                ~ .prime-personnel-regions__selector {
+                display: none;
+              }
+
+              #personnel-region-${token}:checked
+                ~ .prime-personnel-regions__archives
+                #region-${token} {
+                display: block;
+              }
+            `
+          })
+          .join("\n")
+      : ""
 
   const factionThemeCss =
     config.kind === "factions"
@@ -156,7 +201,166 @@ const ArchiveRegistry: QuartzComponent = ({
         </strong>
       </div>
 
-      {records.length === 0 ? (
+      {config.kind === "personnel" && records.length > 0 ? (
+        <div class="prime-personnel-regions">
+          {personnelSelectionCss && (
+            <style dangerouslySetInnerHTML={{ __html: personnelSelectionCss }} />
+          )}
+
+          <input
+            id="personnel-region-all"
+            class="prime-personnel-regions__radio"
+            type="radio"
+            name="personnel-region-selection"
+            checked
+            aria-hidden="true"
+          />
+
+          {personnelRegions.map(([region]) => {
+            const token = regionToken(region)
+
+            return (
+              <input
+                id={`personnel-region-${token}`}
+                class="prime-personnel-regions__radio"
+                type="radio"
+                name="personnel-region-selection"
+                aria-hidden="true"
+              />
+            )
+          })}
+
+          <div class="prime-personnel-regions__selector">
+            <div class="prime-personnel-regions__intro">
+              <span>REGIONAL INDEX</span>
+              <p>
+                Select an operational region to access its published personnel records.
+              </p>
+            </div>
+
+            <div class="prime-personnel-regions__grid">
+              {personnelRegions.map(([region, pages]) => {
+                const token = regionToken(region)
+
+                return (
+                  <label
+                    for={`personnel-region-${token}`}
+                    class="prime-personnel-region-card"
+                  >
+                    <div class="prime-personnel-region-card__top">
+                      <span>REGIONAL PERSONNEL ARCHIVE</span>
+                      <strong>{pages.length.toString().padStart(2, "0")}</strong>
+                    </div>
+
+                    <div class="prime-personnel-region-card__body">
+                      <span>OPERATIONAL REGION</span>
+                      <h3>{region}</h3>
+                      <p>
+                        {pages.length} published {pages.length === 1 ? "record" : "records"} indexed in this archive.
+                      </p>
+                    </div>
+
+                    <div class="prime-personnel-region-card__footer">
+                      <span>OPEN REGIONAL ARCHIVE →</span>
+                    </div>
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+
+          <div class="prime-personnel-regions__archives">
+            {personnelRegions.map(([region, pages]) => {
+              const token = regionToken(region)
+
+              return (
+                <section
+                  id={`region-${token}`}
+                  class="prime-personnel-region"
+                >
+                  <div class="prime-personnel-region__heading">
+                    <div>
+                      <span>REGIONAL PERSONNEL ARCHIVE</span>
+                      <h2>{region}</h2>
+                    </div>
+
+                    <div class="prime-personnel-region__actions">
+                      <strong>
+                        {pages.length} {pages.length === 1 ? "RECORD" : "RECORDS"}
+                      </strong>
+
+                      <label
+                        for="personnel-region-all"
+                        class="prime-personnel-region__back"
+                      >
+                        ← ALL REGIONS
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="prime-registry__grid">
+                    {pages.map((page) => {
+                      const fm = page.frontmatter ?? {}
+                      const title = text(fm.title) ?? page.slug ?? "Unknown Record"
+                      const id = text(fm.id) ?? "UNINDEXED"
+                      const description =
+                        text(fm.description) ??
+                        `Public archive record for ${title}.`
+                      const classification =
+                        text(fm.classification) ??
+                        [text(fm.species), text(fm.role)]
+                          .filter(Boolean)
+                          .join(" · ")
+                      const location = text(fm.location)
+                      const href = `/${page.slug}`
+
+                      return (
+                        <article class="prime-registry-card">
+                          <div class="prime-registry-card__top">
+                            <span>{config.cardLabel}</span>
+                            <strong>{id}</strong>
+                          </div>
+
+                          <div class="prime-registry-card__body">
+                            <h3>{title}</h3>
+
+                            {classification && (
+                              <p class="prime-registry-card__classification">
+                                {classification}
+                              </p>
+                            )}
+
+                            <p class="prime-registry-card__description">
+                              {description}
+                            </p>
+
+                            {location && (
+                              <div class="prime-registry-card__location">
+                                <span>LOCATION</span>
+                                <strong>{location}</strong>
+                              </div>
+                            )}
+                          </div>
+
+                          <div class="prime-registry-card__footer">
+                            <a
+                              href={href}
+                              class="internal"
+                              data-no-popover="true"
+                            >
+                              {config.openLabel}
+                            </a>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+            })}
+          </div>
+        </div>
+      ) : records.length === 0 ? (
         <div class="prime-registry__empty">{config.empty}</div>
       ) : (
         <div class="prime-registry__grid">
@@ -499,6 +703,235 @@ ArchiveRegistry.css = `
   border-radius: 10px;
   color: var(--gray);
   text-align: center;
+}
+
+/* =========================================================
+   PERSONNEL REGISTRY — REGIONAL INDEX
+   ========================================================= */
+
+.prime-personnel-regions {
+  width: 100%;
+}
+
+.prime-personnel-regions__intro {
+  margin-bottom: 1.1rem;
+}
+
+.prime-personnel-regions__intro span,
+.prime-personnel-region-card__top,
+.prime-personnel-region-card__body > span,
+.prime-personnel-region-card__footer,
+.prime-personnel-region__heading span,
+.prime-personnel-region__actions {
+  font-family: var(--codeFont);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prime-personnel-regions__intro span {
+  color: #64d7ff;
+  font-size: 0.58rem;
+}
+
+.prime-personnel-regions__intro p {
+  max-width: 720px;
+  margin: 0.4rem 0 0 !important;
+  color: #9fb0bd;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.prime-personnel-regions__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.prime-personnel-regions__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prime-personnel-region-card {
+  position: relative;
+  display: flex;
+  min-height: 245px;
+  flex-direction: column;
+  padding: 1.25rem;
+  overflow: hidden;
+  border: 1px solid rgba(100, 215, 255, 0.24);
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(100, 215, 255, 0.11),
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(18, 29, 43, 0.98),
+      rgba(7, 12, 19, 0.995)
+    );
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.prime-personnel-region-card::after {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #64d7ff;
+  box-shadow: 0 0 10px rgba(100, 215, 255, 0.85);
+  content: "";
+}
+
+.prime-personnel-region-card:hover {
+  border-color: rgba(100, 215, 255, 0.48);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(100, 215, 255, 0.16),
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(20, 34, 49, 0.99),
+      rgba(7, 12, 19, 0.995)
+    );
+}
+
+.prime-personnel-region-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-right: 1.1rem;
+  color: #64d7ff;
+  font-size: 0.56rem;
+}
+
+.prime-personnel-region-card__top strong {
+  color: #8ea7bb;
+  font-size: 0.68rem;
+}
+
+.prime-personnel-region-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 0 1.5rem;
+}
+
+.prime-personnel-region-card__body > span {
+  color: #6f8595;
+  font-size: 0.52rem;
+}
+
+.prime-personnel-region-card__body h3 {
+  margin: 0.45rem 0 0;
+  color: #f5f9fc;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.prime-personnel-region-card__body p {
+  margin: 0.8rem 0 0 !important;
+  color: #aebdc8;
+  font-size: 0.82rem;
+}
+
+.prime-personnel-region-card__footer {
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(100, 215, 255, 0.1);
+  color: #64d7ff;
+  font-size: 0.55rem;
+  text-align: right;
+}
+
+.prime-personnel-regions__archives {
+  margin-top: 1rem;
+}
+
+.prime-personnel-region {
+  display: none;
+  scroll-margin-top: 1rem;
+}
+
+
+
+.prime-personnel-region__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(100, 215, 255, 0.12);
+  border-bottom: 1px solid rgba(100, 215, 255, 0.12);
+}
+
+.prime-personnel-region__heading > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.prime-personnel-region__heading span {
+  color: #64d7ff;
+  font-size: 0.56rem;
+}
+
+.prime-personnel-region__heading h2 {
+  margin: 0;
+  color: #f5f9fc;
+  font-size: 1.55rem;
+}
+
+.prime-personnel-region__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.54rem;
+}
+
+.prime-personnel-region__actions strong {
+  color: #7f94a4;
+}
+
+.prime-personnel-region__back {
+  color: #64d7ff;
+  cursor: pointer;
+}
+
+.prime-personnel-region__back:hover {
+  color: #ffffff;
+}
+
+@media all and (max-width: 850px) {
+  .prime-personnel-regions__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prime-personnel-region__heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .prime-personnel-region__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 /* =========================================================

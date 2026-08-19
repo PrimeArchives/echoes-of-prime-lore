@@ -5,6 +5,7 @@ type: npc
 species: "Duergar"
 role: "Auctioneer & Black Market Dealer"
 location: "[[Coil Market]]"
+archiveRegion: Virex-9
 aliases:
   - Dynar`s Dynasty
 ---

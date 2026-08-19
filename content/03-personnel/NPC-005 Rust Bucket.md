@@ -4,7 +4,8 @@ id: NPC-005
 type: npc
 species: Dragonborn
 role: Trucker
-location: Virex-9
+location: Virex-9
+archiveRegion: Virex-9
 aliases:
   - Rust Bucket
 ---

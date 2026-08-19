@@ -5,6 +5,7 @@ type: npc
 species: unkown
 role: unkown
 location: unkown
+archiveRegion: Virex-9
 ---
 
 

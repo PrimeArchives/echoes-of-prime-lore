@@ -5,6 +5,7 @@ type: npc
 species: "Unknown"
 role: "Greeter & Security"
 location: "[[The Iron Halo]]"
+archiveRegion: Virex-9
 ---
 <div class="personnel-gallery">
   <input type="radio" name="mr-jel-gallery" id="jel-image-1" checked>

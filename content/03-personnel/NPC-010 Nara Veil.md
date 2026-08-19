@@ -5,6 +5,7 @@ type: npc
 species: "Elf"
 role: "Resonance Technician & Shopkeeper"
 location: "[[Coil Market]]"
+archiveRegion: Virex-9
 aliases:
   - Tune Shop
 ---

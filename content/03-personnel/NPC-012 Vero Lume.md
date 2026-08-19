@@ -5,6 +5,7 @@ type: npc
 species: "Rock Gnome"
 role: "Archivist Scientist"
 location: "[[Coil Market]]"
+archiveRegion: Virex-9
 ---
 
 <div class="personnel-hero personnel-hero--wide">

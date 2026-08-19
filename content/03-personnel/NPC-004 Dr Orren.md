@@ -5,6 +5,8 @@ type: npc vendor
 species: Tiefling
 role: Chemist
 location: The Coil Market
+
+archiveRegion: Virex-9
 aliases:
   - Dr Orren
 ---
