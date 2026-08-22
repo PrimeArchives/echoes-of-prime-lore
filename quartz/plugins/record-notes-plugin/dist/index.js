@@ -32,9 +32,70 @@ var RecordNotes = ({
         /* @__PURE__ */ jsx(
           "div",
           {
+            class: "record-notes__identity",
+            "data-notes-identity": true,
+            children: "Checking operative credentials..."
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          "div",
+          {
             class: "record-notes__list",
             "data-notes-list": true,
             children: /* @__PURE__ */ jsx("p", { class: "record-notes__loading", children: "Synchronizing annotations..." })
+          }
+        ),
+        /* @__PURE__ */ jsxs(
+          "div",
+          {
+            class: "record-notes__auth",
+            "data-notes-auth": true,
+            hidden: true,
+            children: [
+              /* @__PURE__ */ jsxs(
+                "form",
+                {
+                  class: "record-notes__login",
+                  "data-notes-login": true,
+                  children: [
+                    /* @__PURE__ */ jsxs("label", { children: [
+                      "Operative ID",
+                      /* @__PURE__ */ jsx(
+                        "input",
+                        {
+                          type: "text",
+                          name: "username",
+                          placeholder: "Username",
+                          autocomplete: "username",
+                          required: true
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxs("label", { children: [
+                      "Access Key",
+                      /* @__PURE__ */ jsx(
+                        "input",
+                        {
+                          type: "password",
+                          name: "password",
+                          placeholder: "Password",
+                          autocomplete: "current-password",
+                          required: true
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsx("button", { type: "submit", children: "AUTHENTICATE" })
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "p",
+                {
+                  class: "record-notes__message",
+                  "data-login-message": true
+                }
+              )
+            ]
           }
         ),
         /* @__PURE__ */ jsxs(
@@ -42,20 +103,9 @@ var RecordNotes = ({
           {
             class: "record-notes__form",
             "data-notes-form": true,
+            hidden: true,
             children: [
-              /* @__PURE__ */ jsxs("label", { children: [
-                "Operative",
-                /* @__PURE__ */ jsx(
-                  "input",
-                  {
-                    type: "text",
-                    name: "author",
-                    placeholder: "Your name",
-                    required: true
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxs("label", { children: [
+              /* @__PURE__ */ jsxs("label", { class: "record-notes__annotation-label", children: [
                 "Annotation",
                 /* @__PURE__ */ jsx(
                   "textarea",
@@ -82,30 +132,146 @@ var RecordNotes = ({
     }
   );
 };
-RecordNotes.afterDOMLoaded = `
+RecordNotes.afterDOMLoaded = String.raw`
 (() => {
   const setupRecordNotes = () => {
     document.querySelectorAll(".record-notes").forEach((root) => {
       if (!(root instanceof HTMLElement)) return
-
       if (root.dataset.notesReady === "true") return
 
       const recordId = root.dataset.recordId
-      const list = root.querySelector("[data-notes-list]")
-      const count = root.querySelector("[data-notes-count]")
-      const form = root.querySelector("[data-notes-form]")
-      const message = root.querySelector("[data-notes-message]")
+
+      const list =
+        root.querySelector("[data-notes-list]")
+
+      const count =
+        root.querySelector("[data-notes-count]")
+
+      const identity =
+        root.querySelector("[data-notes-identity]")
+
+      const authBox =
+        root.querySelector("[data-notes-auth]")
+
+      const loginForm =
+        root.querySelector("[data-notes-login]")
+
+      const loginMessage =
+        root.querySelector("[data-login-message]")
+
+      const noteForm =
+        root.querySelector("[data-notes-form]")
+
+      const noteMessage =
+        root.querySelector("[data-notes-message]")
 
       if (
         !recordId ||
         !(list instanceof HTMLElement) ||
         !(count instanceof HTMLElement) ||
-        !(form instanceof HTMLFormElement)
+        !(identity instanceof HTMLElement) ||
+        !(authBox instanceof HTMLElement) ||
+        !(loginForm instanceof HTMLFormElement) ||
+        !(noteForm instanceof HTMLFormElement)
       ) {
         return
       }
 
       root.dataset.notesReady = "true"
+
+      let currentUser = null
+
+      const setMessage = (element, text) => {
+        if (element instanceof HTMLElement) {
+          element.textContent = text
+        }
+      }
+
+      const renderIdentity = () => {
+        identity.innerHTML = ""
+
+        if (!currentUser) {
+          const status = document.createElement("span")
+          status.textContent = "UNAUTHENTICATED"
+
+          identity.append(status)
+
+          authBox.hidden = false
+          noteForm.hidden = true
+          return
+        }
+
+        const operative = document.createElement("div")
+        operative.className =
+          "record-notes__operative"
+
+        const status = document.createElement("span")
+        status.textContent =
+          currentUser.role === "architect"
+            ? "ARCHITECT ACCESS"
+            : "OPERATIVE AUTHENTICATED"
+
+        const name = document.createElement("strong")
+        name.textContent = currentUser.display_name
+
+        operative.append(status, name)
+
+        const logout = document.createElement("button")
+        logout.type = "button"
+        logout.className =
+          "record-notes__logout"
+        logout.textContent = "LOG OUT"
+
+        logout.addEventListener(
+          "click",
+          async () => {
+            try {
+              await fetch("/api/auth/logout", {
+                method: "POST",
+              })
+            } catch (_) {}
+
+            currentUser = null
+
+            setMessage(noteMessage, "")
+            setMessage(loginMessage, "")
+
+            renderIdentity()
+            await loadNotes()
+          },
+        )
+
+        identity.append(operative, logout)
+
+        authBox.hidden = true
+        noteForm.hidden = false
+      }
+
+      const checkSession = async () => {
+        try {
+          const response =
+            await fetch("/api/auth/me")
+
+          if (!response.ok) {
+            throw new Error(
+              "Unable to check session",
+            )
+          }
+
+          const data = await response.json()
+
+          currentUser =
+            data &&
+            data.authenticated === true &&
+            data.user
+              ? data.user
+              : null
+        } catch (_) {
+          currentUser = null
+        }
+
+        renderIdentity()
+      }
 
       const loadNotes = async () => {
         try {
@@ -115,18 +281,26 @@ RecordNotes.afterDOMLoaded = `
           )
 
           if (!response.ok) {
-            throw new Error("Unable to load annotations")
+            throw new Error(
+              "Unable to load annotations",
+            )
           }
 
           const notes = await response.json()
 
           if (!Array.isArray(notes)) {
-            throw new Error("Invalid notes response")
+            throw new Error(
+              "Invalid notes response",
+            )
           }
 
           count.textContent =
             String(notes.length).padStart(2, "0") +
-            (notes.length === 1 ? " NOTE" : " NOTES")
+            (
+              notes.length === 1
+                ? " NOTE"
+                : " NOTES"
+            )
 
           if (notes.length === 0) {
             list.innerHTML =
@@ -146,7 +320,14 @@ RecordNotes.afterDOMLoaded = `
             const meta =
               document.createElement("div")
 
-            meta.className = "record-note__meta"
+            meta.className =
+              "record-note__meta"
+
+            const metaLeft =
+              document.createElement("div")
+
+            metaLeft.className =
+              "record-note__author"
 
             const author =
               document.createElement("strong")
@@ -156,13 +337,114 @@ RecordNotes.afterDOMLoaded = `
                 ? note.author
                 : "Unknown"
 
+            metaLeft.append(author)
+
+            if (
+              note.author_role === "architect"
+            ) {
+              const badge =
+                document.createElement("span")
+
+              badge.className =
+                "record-note__role"
+
+              badge.textContent = "ARCHITECT"
+
+              metaLeft.append(badge)
+            }
+
+            const metaRight =
+              document.createElement("div")
+
+            metaRight.className =
+              "record-note__actions"
+
             const date =
               document.createElement("time")
 
-            date.textContent =
-              typeof note.created_at === "string"
-                ? note.created_at
-                : ""
+            if (
+              typeof note.created_at ===
+              "string"
+            ) {
+              const rawDate =
+                note.created_at.includes("T")
+                  ? note.created_at
+                  : note.created_at.replace(
+                      " ",
+                      "T",
+                    ) + "Z"
+
+              const parsed =
+                new Date(rawDate)
+
+              date.textContent =
+                Number.isNaN(
+                  parsed.getTime(),
+                )
+                  ? note.created_at
+                  : parsed.toLocaleString()
+            }
+
+            metaRight.append(date)
+
+            if (note.can_delete === true) {
+              const deleteButton =
+                document.createElement("button")
+
+              deleteButton.type = "button"
+              deleteButton.className =
+                "record-note__delete"
+
+              deleteButton.textContent =
+                "DELETE"
+
+              deleteButton.addEventListener(
+                "click",
+                async () => {
+                  const confirmed =
+                    window.confirm(
+                      "Delete this annotation?",
+                    )
+
+                  if (!confirmed) return
+
+                  deleteButton.disabled = true
+
+                  try {
+                    const response =
+                      await fetch(
+                        "/api/notes/" +
+                          encodeURIComponent(
+                            String(note.id),
+                          ),
+                        {
+                          method: "DELETE",
+                        },
+                      )
+
+                    if (!response.ok) {
+                      throw new Error(
+                        "Delete failed",
+                      )
+                    }
+
+                    await loadNotes()
+                  } catch (_) {
+                    deleteButton.disabled =
+                      false
+
+                    setMessage(
+                      noteMessage,
+                      "Unable to delete annotation.",
+                    )
+                  }
+                },
+              )
+
+              metaRight.append(
+                deleteButton,
+              )
+            }
 
             const content =
               document.createElement("p")
@@ -172,76 +454,186 @@ RecordNotes.afterDOMLoaded = `
                 ? note.content
                 : ""
 
-            meta.append(author, date)
-            article.append(meta, content)
+            meta.append(
+              metaLeft,
+              metaRight,
+            )
+
+            article.append(
+              meta,
+              content,
+            )
+
             list.append(article)
           })
-        } catch (error) {
+        } catch (_) {
           list.innerHTML =
             '<p class="record-notes__error">Annotation sync unavailable.</p>'
         }
       }
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault()
+      loginForm.addEventListener(
+        "submit",
+        async (event) => {
+          event.preventDefault()
 
-        const formData = new FormData(form)
+          const formData =
+            new FormData(loginForm)
 
-        const author =
-          String(
-            formData.get("author") ?? "",
-          ).trim()
+          const username =
+            String(
+              formData.get("username") ??
+                "",
+            ).trim()
 
-        const content =
-          String(
-            formData.get("content") ?? "",
-          ).trim()
+          const password =
+            String(
+              formData.get("password") ??
+                "",
+            )
 
-        if (!author || !content) {
-          return
-        }
-
-        if (message instanceof HTMLElement) {
-          message.textContent =
-            "Transmitting annotation..."
-        }
-
-        try {
-          const response = await fetch("/api/notes", {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json",
-            },
-
-            body: JSON.stringify({
-              record_id: recordId,
-              author,
-              content,
-            }),
-          })
-
-          if (!response.ok) {
-            throw new Error("Unable to save annotation")
+          if (!username || !password) {
+            return
           }
 
-          form.reset()
+          setMessage(
+            loginMessage,
+            "Authenticating...",
+          )
 
-          if (message instanceof HTMLElement) {
-            message.textContent =
-              "Annotation recorded."
+          try {
+            const response =
+              await fetch(
+                "/api/auth/login",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type":
+                      "application/json",
+                  },
+                  body: JSON.stringify({
+                    username,
+                    password,
+                  }),
+                },
+              )
+
+            const data =
+              await response.json()
+
+            if (
+              !response.ok ||
+              !data.user
+            ) {
+              throw new Error(
+                data.error ||
+                  "Authentication failed",
+              )
+            }
+
+            currentUser = data.user
+
+            loginForm.reset()
+
+            setMessage(
+              loginMessage,
+              "",
+            )
+
+            renderIdentity()
+            await loadNotes()
+          } catch (_) {
+            setMessage(
+              loginMessage,
+              "Invalid operative ID or access key.",
+            )
+          }
+        },
+      )
+
+      noteForm.addEventListener(
+        "submit",
+        async (event) => {
+          event.preventDefault()
+
+          if (!currentUser) {
+            renderIdentity()
+            return
           }
 
-          await loadNotes()
-        } catch (error) {
-          if (message instanceof HTMLElement) {
-            message.textContent =
-              "Transmission failed."
-          }
-        }
-      })
+          const formData =
+            new FormData(noteForm)
 
-      loadNotes()
+          const content =
+            String(
+              formData.get("content") ??
+                "",
+            ).trim()
+
+          if (!content) return
+
+          setMessage(
+            noteMessage,
+            "Transmitting annotation...",
+          )
+
+          try {
+            const response =
+              await fetch(
+                "/api/notes",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type":
+                      "application/json",
+                  },
+                  body: JSON.stringify({
+                    record_id: recordId,
+                    content,
+                  }),
+                },
+              )
+
+            if (response.status === 401) {
+              currentUser = null
+              renderIdentity()
+
+              throw new Error(
+                "Session expired",
+              )
+            }
+
+            if (!response.ok) {
+              throw new Error(
+                "Unable to save annotation",
+              )
+            }
+
+            noteForm.reset()
+
+            setMessage(
+              noteMessage,
+              "Annotation recorded.",
+            )
+
+            await loadNotes()
+          } catch (_) {
+            setMessage(
+              noteMessage,
+              currentUser
+                ? "Transmission failed."
+                : "Session expired. Authenticate again.",
+            )
+          }
+        },
+      )
+
+      const initialize = async () => {
+        await checkSession()
+        await loadNotes()
+      }
+
+      initialize()
     })
   }
 
@@ -249,12 +641,20 @@ RecordNotes.afterDOMLoaded = `
 
   document.addEventListener(
     "nav",
-    () => window.setTimeout(setupRecordNotes, 0),
+    () =>
+      window.setTimeout(
+        setupRecordNotes,
+        0,
+      ),
   )
 
   document.addEventListener(
     "render",
-    () => window.setTimeout(setupRecordNotes, 0),
+    () =>
+      window.setTimeout(
+        setupRecordNotes,
+        0,
+      ),
   )
 })()
 `;
@@ -271,9 +671,6 @@ RecordNotes.css = String.raw`
       transparent 45%
     ),
     rgba(8, 14, 18, 0.5);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.025),
-    0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .record-notes__header {
@@ -281,7 +678,7 @@ RecordNotes.css = String.raw`
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   padding-bottom: 0.8rem;
   border-bottom: 1px solid rgba(100, 215, 255, 0.16);
 }
@@ -289,8 +686,6 @@ RecordNotes.css = String.raw`
 .record-notes__header h2 {
   margin: 0.15rem 0 0;
   font-size: 1.3rem;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
 }
 
 .record-notes__eyebrow {
@@ -299,20 +694,67 @@ RecordNotes.css = String.raw`
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.18em;
-  opacity: 0.9;
-  text-transform: uppercase;
 }
 
 .record-notes__count {
-  flex: 0 0 auto;
   padding: 0.28rem 0.48rem;
   border: 1px solid rgba(100, 215, 255, 0.2);
   border-radius: 4px;
-  background: rgba(100, 215, 255, 0.045);
   color: var(--secondary);
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.1em;
+}
+
+.record-notes__identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(100, 215, 255, 0.12);
+  border-radius: 4px;
+  background: rgba(100, 215, 255, 0.035);
+  color: var(--gray);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+.record-notes__operative {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.record-notes__operative strong {
+  color: var(--secondary);
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+}
+
+.record-notes__logout,
+.record-note__delete {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--lightgray);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--gray);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.record-note__delete:hover {
+  border-color: var(--tertiary);
+  color: var(--tertiary);
+}
+
+.record-notes__logout:hover {
+  border-color: var(--secondary);
+  color: var(--secondary);
 }
 
 .record-notes__list {
@@ -356,15 +798,30 @@ RecordNotes.css = String.raw`
   font-size: 0.72rem;
 }
 
-.record-note__meta strong {
-  color: var(--secondary);
-  letter-spacing: 0.04em;
+.record-note__author,
+.record-note__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
-.record-note__meta time {
+.record-note__author strong {
+  color: var(--secondary);
+}
+
+.record-note__role {
+  padding: 0.15rem 0.3rem;
+  border: 1px solid rgba(100, 215, 255, 0.25);
+  border-radius: 3px;
+  color: var(--secondary);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.record-note__actions time {
   color: var(--gray);
   font-size: 0.68rem;
-  white-space: nowrap;
 }
 
 .record-notes__empty,
@@ -377,18 +834,31 @@ RecordNotes.css = String.raw`
   font-style: italic;
 }
 
-.record-notes__error {
-  color: var(--tertiary);
-}
-
+.record-notes__auth,
 .record-notes__form {
-  display: grid;
-  grid-template-columns: minmax(130px, 0.32fr) minmax(220px, 1fr);
-  gap: 0.8rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(100, 215, 255, 0.14);
 }
 
+.record-notes__login {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 0.8rem;
+}
+
+.record-notes__form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 0.8rem;
+}
+
+.record-notes__annotation-label {
+  min-width: 0;
+}
+
+.record-notes__login label,
 .record-notes__form label {
   display: flex;
   flex-direction: column;
@@ -400,7 +870,7 @@ RecordNotes.css = String.raw`
   text-transform: uppercase;
 }
 
-.record-notes__form input,
+.record-notes__login input,
 .record-notes__form textarea {
   box-sizing: border-box;
   width: 100%;
@@ -413,16 +883,6 @@ RecordNotes.css = String.raw`
   color: var(--dark);
   font: inherit;
   font-size: 0.85rem;
-  line-height: 1.45;
-  transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
-}
-
-.record-notes__form input:focus,
-.record-notes__form textarea:focus {
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 2px rgba(100, 215, 255, 0.1);
 }
 
 .record-notes__form textarea {
@@ -430,60 +890,52 @@ RecordNotes.css = String.raw`
   resize: vertical;
 }
 
-.record-notes__form button {
-  grid-column: 2;
-  justify-self: end;
+.record-notes__login input:focus,
+.record-notes__form textarea:focus {
+  border-color: var(--secondary);
+}
+
+.record-notes__login button,
+.record-notes__form > button {
   margin: 0;
-  padding: 0.55rem 0.8rem;
+  padding: 0.6rem 0.75rem;
   border: 1px solid rgba(100, 215, 255, 0.45);
   border-radius: 4px;
   background: rgba(100, 215, 255, 0.07);
   color: var(--secondary);
   cursor: pointer;
   font: inherit;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  transition:
-    background 120ms ease,
-    border-color 120ms ease;
-}
-
-.record-notes__form button:hover {
-  border-color: var(--secondary);
-  background: rgba(100, 215, 255, 0.13);
+  letter-spacing: 0.08em;
 }
 
 .record-notes__message {
   grid-column: 1 / -1;
   min-height: 1em;
-  margin: 0;
+  margin: 0.4rem 0 0;
   color: var(--gray);
   font-size: 0.72rem;
 }
 
+.record-notes [hidden] {
+  display: none !important;
+}
+
 @media (max-width: 700px) {
-  .record-notes {
-    padding: 1rem;
-  }
-
-  .record-notes__header {
-    align-items: flex-start;
-  }
-
+  .record-notes__login,
   .record-notes__form {
     grid-template-columns: 1fr;
-  }
-
-  .record-notes__form button {
-    grid-column: 1;
-    justify-self: stretch;
   }
 
   .record-note__meta {
     align-items: flex-start;
     flex-direction: column;
-    gap: 0.2rem;
+  }
+
+  .record-note__actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 `;
