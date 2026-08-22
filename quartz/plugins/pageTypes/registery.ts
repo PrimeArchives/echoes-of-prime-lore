@@ -52,6 +52,14 @@ RegistryRouterComponent.css =
   (FactionRecord.css ?? "") +
   (SystemRecord.css ?? "")
 
+RegistryRouterComponent.beforeDOMLoaded =
+  (FactionRecord.beforeDOMLoaded ?? "") +
+  (SystemRecord.beforeDOMLoaded ?? "")
+
+RegistryRouterComponent.afterDOMLoaded =
+  (FactionRecord.afterDOMLoaded ?? "") +
+  (SystemRecord.afterDOMLoaded ?? "")
+
 export const RegistryPageType: QuartzPageTypePlugin = () => ({
   name: "registry",
   priority: 200,

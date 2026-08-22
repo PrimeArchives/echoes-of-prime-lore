@@ -1,32 +1,25 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
-
 configuration:
   pageTitle: Prime Archives
   description: The official player archives of Echoes of Prime.
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
-
   analytics:
     provider: plausible
-
   locale: en-US
   baseUrl: echoes-of-prime-lore.primearchives.workers.dev
-
   ignorePatterns:
     - private
     - templates
     - .obsidian
-
   theme:
     fontOrigin: googleFonts
     cdnCaching: true
-
     typography:
       header: Schibsted Grotesk
       body: Source Sans Pro
       code: IBM Plex Mono
-
     colors:
       lightMode:
         light: "#F7F9FC"
@@ -36,9 +29,8 @@ configuration:
         dark: "#18212F"
         secondary: "#177FA6"
         tertiary: "#684FD6"
-        highlight: "rgba(23, 127, 166, 0.14)"
+        highlight: rgba(23, 127, 166, 0.14)
         textHighlight: "#64D7FF55"
-
       darkMode:
         light: "#15181D"
         lightgray: "#222831"
@@ -47,9 +39,8 @@ configuration:
         dark: "#F2F6FA"
         secondary: "#64D7FF"
         tertiary: "#8B6CFF"
-        highlight: "rgba(100, 215, 255, 0.15)"
+        highlight: rgba(100, 215, 255, 0.15)
         textHighlight: "#64D7FF44"
-
 plugins:
   - source: "@quartz-community/created-modified-date"
     enabled: true
@@ -60,7 +51,6 @@ plugins:
         - git
         - filesystem
     order: 10
-
   - source: "@quartz-community/syntax-highlighting"
     enabled: true
     options:
@@ -69,11 +59,9 @@ plugins:
         dark: github-dark
       keepBackground: false
     order: 20
-
-  - source: "./plugins/canonical-wikilinks"
+  - source: ./canonical-wikilinks-plugin/canonical-wikilinks
     enabled: true
     order: 25
-
   - source: "@quartz-community/obsidian-flavored-markdown"
     enabled: true
     options:
@@ -90,70 +78,55 @@ plugins:
       enableVideoEmbed: true
       enableCheckbox: true
     order: 30
-
   - source: "@quartz-community/github-flavored-markdown"
     enabled: true
     order: 40
-
   - source: "@quartz-community/table-of-contents"
     enabled: true
     order: 50
     layout:
       position: right
       priority: 30
-
   - source: "@quartz-community/crawl-links"
     enabled: true
     options:
       markdownLinkResolution: shortest
     order: 60
-
   - source: "@quartz-community/description"
     enabled: true
     order: 70
-
   - source: "@quartz-community/latex"
     enabled: true
     options:
       renderEngine: katex
     order: 80
-
   - source: "@quartz-community/citations"
     enabled: false
     order: 85
-
   - source: "@quartz-community/hard-line-breaks"
     enabled: true
     order: 90
-
   - source: "@quartz-community/ox-hugo"
     enabled: false
     order: 91
-
   - source: "@quartz-community/roam"
     enabled: false
     order: 92
-
   - source: "@quartz-community/quartz-fonts"
     enabled: true
-
   - source: "@quartz-themes/core"
     enabled: false
     options:
       theme: its-theme.ttrpg-dnd
       mode: both
-
   - source: "@quartz-community/remove-draft"
     enabled: true
-
   - source: "@quartz-community/explicit-publish"
     enabled: false
-
   - source: "@quartz-community/unlisted-pages"
     enabled: true
     options: {}
     order: 45
-
   - source: "@quartz-community/encrypted-pages"
     enabled: true
     options:
@@ -161,47 +134,35 @@ plugins:
       passwordField: password
       unlistWhenEncrypted: false
       outputPath: static/encryptedContentIndex.json
-
   - source: "@quartz-community/stacked-pages"
     enabled: false
     layout:
       position: afterBody
       priority: 50
     display: all
-
   - source: "@quartz-community/alias-redirects"
     enabled: true
-
   - source: "@quartz-community/assets"
     enabled: true
-
   - source: "@quartz-community/content-index"
     enabled: true
     options:
       enableSiteMap: true
       enableRSS: true
-
   - source: "@quartz-community/favicon"
     enabled: true
-
   - source: "@quartz-community/og-image"
     enabled: true
-
   - source: "@quartz-community/cname"
     enabled: false
-
   - source: "@quartz-community/canvas-page"
     enabled: true
-
   - source: "@quartz-community/content-page"
     enabled: true
-
   - source: "@quartz-community/folder-page"
     enabled: true
-
   - source: "@quartz-community/tag-page"
     enabled: true
-
   - source: "@quartz-community/explorer"
     enabled: true
     options:
@@ -212,13 +173,11 @@ plugins:
     layout:
       position: left
       priority: 50
-
   - source: "@quartz-community/graph"
     enabled: false
     layout:
       position: right
       priority: 10
-
   - source: "@quartz-community/search"
     enabled: true
     layout:
@@ -227,56 +186,47 @@ plugins:
       group: toolbar
       groupOptions:
         grow: true
-
   - source: "@quartz-community/backlinks"
     enabled: false
     layout:
       position: right
       priority: 50
-
   - source: "@quartz-community/article-title"
     enabled: true
     layout:
       position: beforeBody
       priority: 10
-
   - source: "@quartz-community/content-meta"
     enabled: true
     layout:
       position: beforeBody
       priority: 20
-
   - source: "@quartz-community/tag-list"
     enabled: false
     layout:
       position: beforeBody
       priority: 30
-
   - source: "@quartz-community/page-title"
     enabled: true
     layout:
       position: left
       priority: 10
-
   - source: "@quartz-community/darkmode"
     enabled: false
-
   - source: "@quartz-community/reader-mode"
     enabled: true
     layout:
       position: left
       priority: 35
       group: toolbar
-
   - source: "@quartz-community/breadcrumbs"
     enabled: true
     options:
-      rootName: "Archives"
+      rootName: Archives
     layout:
       position: beforeBody
       priority: 5
       condition: not-index
-
   - source: "@quartz-community/comments"
     enabled: false
     options:
@@ -285,19 +235,16 @@ plugins:
     layout:
       position: afterBody
       priority: 10
-
   - source: "@quartz-community/footer"
     enabled: true
     options:
       links:
-        Prime Archives: "https://primearchives.nl"
+        Prime Archives: https://primearchives.nl
     layout:
       position: footer
       priority: 50
-
   - source: "@quartz-community/recent-notes"
     enabled: false
-
   - source: "@quartz-community/spacer"
     enabled: true
     options: {}
@@ -306,12 +253,10 @@ plugins:
       position: left
       priority: 25
     display: mobile-only
-
   - source: "@quartz-community/bases-page"
     enabled: true
     options: {}
     order: 50
-
   - source: "@quartz-community/note-properties"
     enabled: true
     options:
@@ -322,55 +267,58 @@ plugins:
         - aliases
       excludedProperties: []
       hidePropertiesView: true
-      delimiters: "---"
+      delimiters: ---
       language: yaml
     order: 5
     layout:
       position: beforeBody
       priority: 15
     display: all
-
-  - source: "github:Requiae/quartz-leaflet-bases-plugin"
+  - source: github:Requiae/quartz-leaflet-bases-plugin
     enabled: true
     options:
       enableCopyTool: false
-
+  - source: ./quartz/plugins/record-notes-plugin
+    enabled: true
+    options: {}
+    order: 50
+    layout:
+      position: afterBody
+      priority: 10
+  - source: ./canonical-wikilinks-plugin/canonical-wikilinks
+    enabled: true
+    options: {}
+    order: 25
 layout:
   groups:
     toolbar:
       priority: 35
       direction: row
       gap: 0.5rem
-
   byPageType:
     "404":
       beforeBody: []
       left: []
       right: []
-
     content:
       exclude:
         - content-meta
         - table-of-contents
       left: []
       right: []
-
     folder:
       exclude:
         - reader-mode
       left: []
       right: []
-
     tag:
       exclude:
         - reader-mode
       left: []
       right: []
-
     canvas:
       left: []
       right: []
-
     bases:
       left: []
       right: []

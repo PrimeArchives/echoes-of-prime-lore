@@ -1,0 +1,46 @@
+{
+  "name": "record-notes-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+
+  "main": "./dist/index.js",
+
+  "exports": {
+    ".": "./dist/index.js",
+    "./components": "./dist/index.js"
+  },
+
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --platform node --clean"
+  },
+
+  "dependencies": {
+    "@quartz-community/types": "^0.3.0",
+    "preact": "^10.28.2"
+  },
+
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+
+  "quartz": {
+    "name": "record-notes",
+    "displayName": "Record Notes",
+    "description": "Player squad annotations for Prime Archives records.",
+    "category": "component",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 50,
+    "defaultEnabled": true,
+    "components": {
+      "RecordNotes": {
+        "displayName": "Record Notes",
+        "defaultPosition": "afterBody",
+        "defaultPriority": 10
+      }
+    }
+  }
+}

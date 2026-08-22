@@ -1,11 +1,23 @@
 {
   "version": "1.0.0",
   "plugins": {
+    "canonical-wikilinks": {
+      "source": "./canonical-wikilinks-plugin/canonical-wikilinks",
+      "resolved": "C:\\Echoes of Prime\\QuartzSetup\\canonical-wikilinks-plugin\\canonical-wikilinks",
+      "commit": "local",
+      "installedAt": "2026-08-22T21:08:35.774Z"
+    },
     "quartz-leaflet-bases-plugin": {
       "source": "github:Requiae/quartz-leaflet-bases-plugin",
       "resolved": "https://github.com/Requiae/quartz-leaflet-bases-plugin.git",
       "commit": "48da13cf01ba6d742e616da2e837fd2a9478ac79",
       "installedAt": "2026-08-06T10:02:11.942Z"
+    },
+    "record-notes-plugin": {
+      "source": "./quartz/plugins/record-notes-plugin",
+      "resolved": "C:\\Echoes of Prime\\QuartzSetup\\quartz\\plugins\\record-notes-plugin",
+      "commit": "local",
+      "installedAt": "2026-08-22T20:55:54.499Z"
     }
   }
 }

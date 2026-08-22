@@ -1,11 +1,22 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "echoes-of-prime-lore",
+  "main": "./worker/index.ts",
   "compatibility_date": "2026-08-08",
 
   "assets": {
     "directory": "./public",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
-  }
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/*"]
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "prime-archives",
+      "database_id": "edf2d65d-cbc5-42c5-b61d-99b1036dec5b"
+    }
+  ]
 }
