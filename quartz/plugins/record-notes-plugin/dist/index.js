@@ -6,7 +6,12 @@ var RecordNotes = ({
   const frontmatter = fileData.frontmatter ?? {};
   const recordId = typeof frontmatter.id === "string" ? frontmatter.id : "";
   const recordType = typeof frontmatter.type === "string" ? frontmatter.type.toLowerCase() : "";
-  if (recordType !== "npc" || !recordId) {
+  const supportedTypes = /* @__PURE__ */ new Set([
+    "npc",
+    "location",
+    "faction"
+  ]);
+  if (!supportedTypes.has(recordType) || !recordId) {
     return null;
   }
   return /* @__PURE__ */ jsxs(

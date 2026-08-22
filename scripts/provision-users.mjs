@@ -56,7 +56,7 @@ function hashPassword(password, saltHex) {
     .pbkdf2Sync(
       password,
       Buffer.from(saltHex, "hex"),
-      210_000,
+      100_000,
       32,
       "sha256",
     )

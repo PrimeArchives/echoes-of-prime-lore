@@ -25,9 +25,15 @@ const RecordNotes: QuartzComponent = ({
       ? frontmatter.type.toLowerCase()
       : ""
 
-  if (recordType !== "npc" || !recordId) {
-    return null
-  }
+  const supportedTypes = new Set([
+  "npc",
+  "location",
+  "faction",
+])
+
+if (!supportedTypes.has(recordType) || !recordId) {
+  return null
+}
 
   return (
     <section
