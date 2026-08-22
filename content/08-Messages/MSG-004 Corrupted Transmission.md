@@ -1,14 +1,15 @@
 ---
-title: "Corrupted Transmission"
+title: "Corrupted Transmission | Log 17-B"
 id: "MSG-004"
 type: message
 sender: "Unknown Signal"
-messageDate: "6862.114"
+messageDate: "6864.114"
 recipient: "Echo Squad"
 status: corrupted
 priority: high
 received: "UNKNOWN"
-published: false
+unread: false
+published: true
 ---
 Signal integrity below acceptable threshold.
 
@@ -18,6 +19,7 @@ This transmission appears to originate from outside the registered network.
 
 Recovered fragment:
 
-**"...do not trust the—"**
+**"…signal received — pattern identical to Elyssar…
+Core response: voluntary discharge detected…"**
 
 Transmission terminated.

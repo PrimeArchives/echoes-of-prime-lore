@@ -1,7 +1,9 @@
 import { h } from "preact"
 import type { Node, Root } from "hast"
 
+import type { QuartzComponent } from "../../types"
 import { QuartzPluginData } from "../../../plugins/vfile"
+import objectivesStyle from "./objectives.scss"
 
 type ObjectivesProps = {
   allFiles?: QuartzPluginData[]
@@ -94,7 +96,7 @@ const STATUS_ORDER: Record<ObjectiveStatus, number> = {
   failed: 3,
 }
 
-export default function Objectives({
+function Objectives({
   allFiles = [],
 }: ObjectivesProps = {}) {
   const records = allFiles
@@ -400,3 +402,7 @@ export default function Objectives({
     </section>
   )
 }
+
+(Objectives as QuartzComponent).css = objectivesStyle
+
+export default Objectives

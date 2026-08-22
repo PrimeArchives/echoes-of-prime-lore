@@ -3,6 +3,7 @@ title: The Docking Spires
 id: LOC-003
 type: location
 location: Virex-9
+archiveRegion: Virex-9
 aliases:
   - Docking Spires
 ---

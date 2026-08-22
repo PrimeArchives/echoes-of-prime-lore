@@ -6,14 +6,14 @@ import {
 
 import ArchiveCard from "./ArchiveCard"
 import Map from "./navigation/map"
-import { virex9Map } from "./navigation/maps/virex9"
+import { buildVirex9Map } from "./navigation/maps/virex9"
 import Messages from "./messages/messages"
-import AudioArchive from "./audio/AudioArchive"
-import audioStyle from "./audio/audio.scss"
 import Objectives from "./objectives/objectives"
-import objectivesStyle from "./objectives/objectives.scss"
+import AudioArchive, { audioArchiveAfterDOMLoaded } from "./audio/AudioArchive"
 
-const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
+const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
+  const virex9Map = buildVirex9Map(props.allFiles)
+
   return (
     <>
       <style
@@ -41,6 +41,524 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
 
             #objectives-toggle:checked ~ .prime-app--objectives {
               display: block;
+            }
+
+            .prime-audio {
+              width: min(1320px, calc(100% - 2rem));
+              margin: 1.25rem auto 2rem;
+              color: #d7e0e7;
+            }
+
+            .prime-audio__header {
+              display: flex;
+              align-items: flex-end;
+              justify-content: space-between;
+              gap: 1.5rem;
+              padding: 1.25rem 1.4rem 1rem;
+              border: 1px solid rgba(255, 191, 92, 0.18);
+              border-bottom: 0;
+              border-radius: 14px 14px 0 0;
+              background:
+                radial-gradient(circle at 15% 0%, rgba(255, 191, 92, 0.08), transparent 32rem),
+                linear-gradient(180deg, rgba(28, 26, 22, 0.96), rgba(13, 16, 20, 0.98));
+            }
+
+            .prime-audio__eyebrow,
+            .prime-audio__status span,
+            .prime-audio-panel__label,
+            .prime-audio-track__meta,
+            .prime-audio-deck__stamp,
+            .prime-audio-controls__time,
+            .prime-audio-detail dt,
+            .prime-audio-detail__footer {
+              font-family: var(--codeFont);
+              text-transform: uppercase;
+              letter-spacing: 0.11em;
+            }
+
+            .prime-audio__eyebrow {
+              margin: 0 0 0.3rem;
+              color: #ffbf5c;
+              font-size: 0.58rem;
+              font-weight: 900;
+            }
+
+            .prime-audio__header h1 {
+              margin: 0;
+              color: #f4f1e8;
+              font-size: clamp(2.5rem, 5vw, 4.6rem);
+              line-height: 0.94;
+            }
+
+            .prime-audio__subtitle {
+              max-width: 650px;
+              margin: 0.75rem 0 0;
+              color: #9eabb5;
+              font-size: 0.9rem;
+            }
+
+            .prime-audio__status {
+              display: flex;
+              align-items: center;
+              gap: 0.55rem;
+              color: #b8c3cc;
+              font-size: 0.56rem;
+              font-weight: 800;
+              white-space: nowrap;
+            }
+
+            .prime-audio__status::before {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              background: #ffbf5c;
+              box-shadow: 0 0 12px rgba(255, 191, 92, 0.7);
+              content: "";
+            }
+
+            .prime-audio__workspace {
+              display: grid;
+              grid-template-columns: minmax(255px, 0.72fr) minmax(430px, 1.35fr) minmax(260px, 0.78fr);
+              min-height: 590px;
+              overflow: hidden;
+              border: 1px solid rgba(255, 191, 92, 0.18);
+              border-radius: 0 0 14px 14px;
+              background: #080b0f;
+              box-shadow: 0 22px 65px rgba(0, 0, 0, 0.3);
+            }
+
+            .prime-audio__radio {
+              position: absolute;
+              width: 1px;
+              height: 1px;
+              opacity: 0;
+              pointer-events: none;
+            }
+
+            .prime-audio-panel {
+              min-width: 0;
+            }
+
+            .prime-audio-panel--library {
+              border-right: 1px solid rgba(255, 191, 92, 0.12);
+              background:
+                linear-gradient(180deg, rgba(24, 25, 25, 0.96), rgba(10, 13, 16, 0.98));
+            }
+
+            .prime-audio-panel--detail {
+              border-left: 1px solid rgba(255, 191, 92, 0.12);
+              background:
+                linear-gradient(180deg, rgba(21, 22, 22, 0.96), rgba(9, 12, 15, 0.98));
+            }
+
+            .prime-audio-panel__heading {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 1rem;
+              padding: 0.85rem 1rem;
+              border-bottom: 1px solid rgba(255, 191, 92, 0.1);
+            }
+
+            .prime-audio-panel__label {
+              color: #ffbf5c;
+              font-size: 0.5rem;
+              font-weight: 900;
+            }
+
+            .prime-audio-panel__count {
+              color: #667582;
+              font-family: var(--codeFont);
+              font-size: 0.5rem;
+            }
+
+            .prime-audio-library {
+              display: flex;
+              flex-direction: column;
+            }
+
+            .prime-audio-track {
+              position: relative;
+              display: block;
+              padding: 1rem 1rem 0.95rem 1.15rem;
+              border-bottom: 1px solid rgba(255, 191, 92, 0.075);
+              cursor: pointer;
+              transition: background 120ms ease, box-shadow 120ms ease;
+            }
+
+            .prime-audio-track:hover {
+              background: rgba(255, 191, 92, 0.045);
+            }
+
+            .prime-audio-track__top {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 0.75rem;
+            }
+
+            .prime-audio-track strong {
+              overflow: hidden;
+              color: #d9e0e5;
+              font-size: 0.78rem;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .prime-audio-track p {
+              overflow: hidden;
+              margin: 0.28rem 0 0 !important;
+              color: #7f8c97;
+              font-size: 0.72rem;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .prime-audio-track__meta {
+              flex: 0 0 auto;
+              color: #6a7884;
+              font-size: 0.42rem;
+            }
+
+            .prime-audio-track__type {
+              display: inline-block;
+              margin-top: 0.55rem;
+              padding: 0.2rem 0.38rem;
+              border: 1px solid rgba(255, 191, 92, 0.2);
+              border-radius: 3px;
+              color: #c99d55;
+              font-family: var(--codeFont);
+              font-size: 0.4rem;
+              font-weight: 800;
+              letter-spacing: 0.09em;
+              text-transform: uppercase;
+            }
+
+            #prime-audio-track-dakka:checked ~ .prime-audio__workspace
+              label[for="prime-audio-track-dakka"],
+            #prime-audio-track-echo:checked ~ .prime-audio__workspace
+              label[for="prime-audio-track-echo"] {
+              background:
+                linear-gradient(90deg, rgba(255, 191, 92, 0.11), rgba(255, 191, 92, 0.02));
+              box-shadow: inset 3px 0 0 #ffbf5c;
+            }
+
+            .prime-audio-stage {
+              display: flex;
+              min-width: 0;
+              flex-direction: column;
+              padding: clamp(1.25rem, 2.5vw, 2rem);
+              background:
+                radial-gradient(circle at 50% 40%, rgba(255, 191, 92, 0.055), transparent 28rem),
+                linear-gradient(180deg, #0e1114, #07090c);
+            }
+
+            .prime-audio-deck__stamp {
+              display: flex;
+              justify-content: space-between;
+              gap: 1rem;
+              margin-bottom: 1rem;
+              color: #6d7b84;
+              font-size: 0.46rem;
+              font-weight: 800;
+            }
+
+            .prime-audio-cassette {
+              position: relative;
+              width: min(620px, 100%);
+              margin: auto;
+              padding: clamp(1rem, 2.5vw, 1.6rem);
+              border: 1px solid #4a4538;
+              border-radius: 13px;
+              background:
+                linear-gradient(165deg, #302d26, #1c1b17 55%, #141410);
+              box-shadow:
+                0 26px 50px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 3px #161713,
+                inset 0 0 35px rgba(0, 0, 0, 0.7);
+            }
+
+            .prime-audio-cassette::before,
+            .prime-audio-cassette::after {
+              position: absolute;
+              top: 12px;
+              width: 8px;
+              height: 8px;
+              border: 1px solid #77705c;
+              border-radius: 50%;
+              background: #0a0b09;
+              content: "";
+            }
+
+            .prime-audio-cassette::before {
+              left: 12px;
+            }
+
+            .prime-audio-cassette::after {
+              right: 12px;
+            }
+
+            .prime-audio-cassette__label {
+              padding: 0.85rem 1rem 0.72rem;
+              border: 1px solid #b2a276;
+              border-radius: 5px 5px 0 0;
+              background:
+                linear-gradient(rgba(76, 64, 43, 0.08), rgba(76, 64, 43, 0.08)),
+                #d8c99f;
+              color: #17150f;
+              box-shadow: inset 0 -8px 0 rgba(116, 77, 34, 0.08);
+            }
+
+            .prime-audio-cassette__label-top {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 1rem;
+              font-family: var(--codeFont);
+              font-size: 0.52rem;
+              font-weight: 900;
+              letter-spacing: 0.11em;
+            }
+
+            .prime-audio-cassette__title {
+              margin-top: 0.45rem;
+              overflow: hidden;
+              font-size: clamp(1rem, 2vw, 1.25rem);
+              font-weight: 850;
+              letter-spacing: 0.03em;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .prime-audio-cassette__window {
+              display: grid;
+              grid-template-columns: 88px minmax(70px, 1fr) 88px;
+              align-items: center;
+              gap: 1rem;
+              min-height: 125px;
+              padding: 1rem;
+              border: 1px solid #706a58;
+              border-top: 0;
+              border-radius: 0 0 5px 5px;
+              background: #090a08;
+            }
+
+            .prime-audio-cassette__reel {
+              position: relative;
+              width: 72px;
+              height: 72px;
+              justify-self: center;
+              border: 9px double #8d8268;
+              border-radius: 50%;
+              background: #171815;
+              box-shadow:
+                inset 0 0 0 10px #080907,
+                0 0 0 2px #2b2b24;
+            }
+
+            .prime-audio-cassette__reel::before {
+              position: absolute;
+              inset: 14px;
+              border: 2px dashed #aca082;
+              border-radius: 50%;
+              content: "";
+            }
+
+            .prime-audio-cassette__tape {
+              height: 38px;
+              border: 1px solid #3a382f;
+              border-radius: 18px;
+              background:
+                linear-gradient(180deg, #161713, #050604);
+              box-shadow: inset 0 0 14px #000;
+            }
+
+            .prime-audio-cassette__footer {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 1rem;
+              margin-top: 1rem;
+              color: #787261;
+              font-family: var(--codeFont);
+              font-size: 0.44rem;
+              font-weight: 800;
+              letter-spacing: 0.1em;
+            }
+
+            .prime-audio-controls {
+              width: min(620px, 100%);
+              margin: 1.35rem auto 0;
+            }
+
+            .prime-audio-controls__progress {
+              position: relative;
+              height: 5px;
+              overflow: hidden;
+              border-radius: 999px;
+              background: #22272b;
+            }
+
+            .prime-audio-controls__progress span {
+              display: block;
+              width: 34%;
+              height: 100%;
+              background: #ffbf5c;
+              box-shadow: 0 0 12px rgba(255, 191, 92, 0.45);
+            }
+
+            .prime-audio-controls__time {
+              display: flex;
+              justify-content: space-between;
+              margin-top: 0.42rem;
+              color: #63717c;
+              font-size: 0.42rem;
+            }
+
+            .prime-audio-controls__buttons {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0.65rem;
+              margin-top: 1rem;
+            }
+
+            .prime-audio-button {
+              display: grid;
+              width: 42px;
+              height: 34px;
+              place-items: center;
+              border: 1px solid #494840;
+              border-radius: 4px;
+              background: linear-gradient(180deg, #252620, #11130f);
+              color: #9c9785;
+              font-family: var(--codeFont);
+              font-size: 0.72rem;
+              box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+            }
+
+            .prime-audio-button--primary {
+              width: 54px;
+              border-color: rgba(255, 191, 92, 0.45);
+              color: #ffbf5c;
+            }
+
+            .prime-audio-detail {
+              padding: 1.15rem;
+            }
+
+            .prime-audio-detail__record {
+              display: none;
+            }
+
+            #prime-audio-track-dakka:checked ~ .prime-audio__workspace
+              .prime-audio-detail__record[data-audio-record="dakka"],
+            #prime-audio-track-echo:checked ~ .prime-audio__workspace
+              .prime-audio-detail__record[data-audio-record="echo"] {
+              display: block;
+            }
+
+            .prime-audio-detail h2 {
+              margin: 0.35rem 0 0.5rem;
+              color: #f1eee5;
+              font-size: 1.35rem;
+            }
+
+            .prime-audio-detail__classification {
+              margin: 0 0 1.15rem;
+              color: #8e9ba5;
+              font-size: 0.75rem;
+            }
+
+            .prime-audio-detail dl {
+              display: grid;
+              gap: 0.8rem;
+              margin: 0;
+            }
+
+            .prime-audio-detail dl > div {
+              padding-bottom: 0.65rem;
+              border-bottom: 1px solid rgba(255, 191, 92, 0.075);
+            }
+
+            .prime-audio-detail dt {
+              margin-bottom: 0.18rem;
+              color: #6d7c87;
+              font-size: 0.42rem;
+              font-weight: 900;
+            }
+
+            .prime-audio-detail dd {
+              margin: 0;
+              color: #cbd4da;
+              font-size: 0.72rem;
+            }
+
+            .prime-audio-detail__footer {
+              margin-top: 1.5rem;
+              padding: 0.7rem;
+              border: 1px dashed rgba(255, 191, 92, 0.17);
+              color: #9b7c4d;
+              font-size: 0.43rem;
+              line-height: 1.7;
+            }
+
+            .prime-audio-stage__dakka,
+            .prime-audio-stage__echo {
+              display: none;
+            }
+
+            #prime-audio-track-dakka:checked ~ .prime-audio__workspace
+              .prime-audio-stage__dakka,
+            #prime-audio-track-echo:checked ~ .prime-audio__workspace
+              .prime-audio-stage__echo {
+              display: contents;
+            }
+
+            @media all and (max-width: 1040px) {
+              .prime-audio__workspace {
+                grid-template-columns: 280px minmax(0, 1fr);
+              }
+
+              .prime-audio-panel--detail {
+                display: none;
+              }
+            }
+
+            @media all and (max-width: 700px) {
+              .prime-audio {
+                width: calc(100% - 1rem);
+              }
+
+              .prime-audio__header {
+                align-items: flex-start;
+                flex-direction: column;
+              }
+
+              .prime-audio__workspace {
+                display: block;
+                min-height: 0;
+              }
+
+              .prime-audio-panel--library {
+                max-height: 230px;
+                overflow-y: auto;
+                border-right: 0;
+                border-bottom: 1px solid rgba(255, 191, 92, 0.12);
+              }
+
+              .prime-audio-stage {
+                padding: 1rem;
+              }
+
+              .prime-audio-cassette__window {
+                grid-template-columns: 64px minmax(50px, 1fr) 64px;
+              }
+
+              .prime-audio-cassette__reel {
+                width: 54px;
+                height: 54px;
+              }
             }
           `,
         }}
@@ -145,7 +663,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </dt>
 
               <dd>
-                Elevated
+                Public
               </dd>
             </div>
 
@@ -155,7 +673,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
               </dt>
 
               <dd>
-                1.2
+                1.0
               </dd>
             </div>
           </dl>
@@ -498,37 +1016,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             </label>
           </header>
 
-          <Messages allFiles={_props.allFiles ?? []} />
-        </div>
-      </section>
-
-      <section
-        class="prime-app prime-app--audio"
-        aria-label="Audio Archive application"
-      >
-        <div class="prime-app__shell">
-          <header class="prime-app__topbar">
-            <div>
-              <span class="prime-app__system">
-                PAT-04 / FIELD APPLICATION
-              </span>
-
-              <strong>
-                Audio Archive
-              </strong>
-            </div>
-
-            <label
-              for="audio-toggle"
-              class="prime-app__close"
-              aria-label="Return to Archive Index"
-              title="Return to Archive Index"
-            >
-              ×
-            </label>
-          </header>
-
-          <AudioArchive allFiles={_props.allFiles ?? []} />
+          <Messages allFiles={props.allFiles ?? []} />
         </div>
       </section>
 
@@ -558,7 +1046,37 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
             </label>
           </header>
 
-          <Objectives allFiles={_props.allFiles ?? []} />
+          <Objectives allFiles={props.allFiles ?? []} />
+        </div>
+      </section>
+
+      <section
+        class="prime-app prime-app--audio"
+        aria-label="Audio Archive application"
+      >
+        <div class="prime-app__shell">
+          <header class="prime-app__topbar">
+            <div>
+              <span class="prime-app__system">
+                PAT-04 / FIELD APPLICATION
+              </span>
+
+              <strong>
+                Audio Archive
+              </strong>
+            </div>
+
+            <label
+              for="audio-toggle"
+              class="prime-app__close"
+              aria-label="Return to Archive Index"
+              title="Return to Archive Index"
+            >
+              ×
+            </label>
+          </header>
+
+          <AudioArchive allFiles={props.allFiles ?? []} />
         </div>
       </section>
     </>
@@ -566,9 +1084,7 @@ const PrimeOS: QuartzComponent = (_props: QuartzComponentProps) => {
 }
 
 
-PrimeOS.css = audioStyle + objectivesStyle
-
-PrimeOS.afterDOMLoaded = `
+PrimeOS.afterDOMLoaded = audioArchiveAfterDOMLoaded + String.raw`
 (() => {
   const applyNavigationHash = (attempt = 0) => {
     const match = window.location.hash.match(/^#navigation([a-z0-9-]+)$/i)
@@ -613,163 +1129,6 @@ PrimeOS.afterDOMLoaded = `
     document.removeEventListener("nav", run)
     document.removeEventListener("render", run)
   })
-
-  const setupPrimeAudio = () => {
-    const root = document.querySelector(".prime-audio")
-    if (!(root instanceof HTMLElement)) return
-
-    // Rebind safely after Quartz SPA renders.
-    if (root.dataset.playerReady === "true") return
-
-    const audio = root.querySelector("#prime-audio-element")
-    const labels = Array.from(root.querySelectorAll("[data-audio-track-label]"))
-    const playButton = root.querySelector("[data-audio-action='play']")
-    const prevButton = root.querySelector("[data-audio-action='prev']")
-    const nextButton = root.querySelector("[data-audio-action='next']")
-    const seek = root.querySelector("[data-audio-seek]")
-    const volume = root.querySelector("[data-audio-volume]")
-    const currentTime = root.querySelector("[data-audio-current]")
-    const duration = root.querySelector("[data-audio-duration]")
-    const playerStatus = root.querySelector("[data-audio-player-status]")
-    const appToggle = document.getElementById("audio-toggle")
-
-    if (!(audio instanceof HTMLAudioElement) || labels.length === 0) return
-
-    root.dataset.playerReady = "true"
-    let activeIndex = 0
-
-    const setStatus = (message) => {
-      if (playerStatus) playerStatus.textContent = message
-    }
-
-    const formatTime = (seconds) => {
-      if (!Number.isFinite(seconds) || seconds < 0) return "00:00"
-      const minutes = Math.floor(seconds / 60)
-      const remainder = Math.floor(seconds % 60)
-      return String(minutes).padStart(2, "0") + ":" + String(remainder).padStart(2, "0")
-    }
-
-    const selectedIndex = () => {
-      const checked = root.querySelector('input[name="prime-audio-selection"]:checked')
-      if (!(checked instanceof HTMLInputElement)) return activeIndex
-      const index = Number(checked.dataset.audioIndex)
-      return Number.isFinite(index) ? index : activeIndex
-    }
-
-    const getTrack = (index) => {
-      const normalized = (index + labels.length) % labels.length
-      const label = labels[normalized]
-      if (!(label instanceof HTMLElement)) return null
-      return {
-        index: normalized,
-        src: label.dataset.audioSrc || "",
-      }
-    }
-
-    const loadTrack = (index, autoplay = false) => {
-      const track = getTrack(index)
-      if (!track) return
-      activeIndex = track.index
-
-      const radio = root.querySelector("#prime-audio-select-" + track.index)
-      if (radio instanceof HTMLInputElement) radio.checked = true
-
-      if ((audio.getAttribute("src") || "") !== track.src) {
-        audio.src = track.src
-        audio.load()
-      }
-
-      setStatus("MEDIA LOADED")
-      if (autoplay) {
-        audio.play().catch(() => setStatus("PLAYBACK BLOCKED"))
-      }
-    }
-
-    labels.forEach((label, index) => {
-      label.addEventListener("click", () => {
-        loadTrack(index, !audio.paused)
-      })
-    })
-
-    playButton?.addEventListener("click", () => {
-      const track = getTrack(selectedIndex())
-      if (!track) return
-      if ((audio.getAttribute("src") || "") !== track.src) loadTrack(track.index)
-
-      if (audio.paused) {
-        audio.play().catch(() => setStatus("FILE NOT AVAILABLE"))
-      } else {
-        audio.pause()
-      }
-    })
-
-    prevButton?.addEventListener("click", () => loadTrack(selectedIndex() - 1, true))
-    nextButton?.addEventListener("click", () => loadTrack(selectedIndex() + 1, true))
-
-    audio.addEventListener("play", () => {
-      root.classList.add("is-playing")
-      setStatus("PLAYING")
-      if (playButton) {
-        playButton.textContent = "❚❚"
-        playButton.setAttribute("aria-label", "Pause")
-      }
-    })
-
-    audio.addEventListener("pause", () => {
-      root.classList.remove("is-playing")
-      if (!audio.ended) setStatus("PAUSED")
-      if (playButton) {
-        playButton.textContent = "▶"
-        playButton.setAttribute("aria-label", "Play")
-      }
-    })
-
-    audio.addEventListener("loadedmetadata", () => {
-      if (duration) duration.textContent = formatTime(audio.duration)
-      if (seek instanceof HTMLInputElement) {
-        seek.max = String(Number.isFinite(audio.duration) ? audio.duration : 0)
-      }
-      setStatus("READY")
-    })
-
-    audio.addEventListener("timeupdate", () => {
-      if (currentTime) currentTime.textContent = formatTime(audio.currentTime)
-      if (seek instanceof HTMLInputElement) seek.value = String(audio.currentTime)
-    })
-
-    audio.addEventListener("ended", () => loadTrack(selectedIndex() + 1, true))
-    audio.addEventListener("error", () => setStatus("FILE NOT FOUND"))
-
-    if (seek instanceof HTMLInputElement) {
-      seek.addEventListener("input", () => {
-        const nextTime = Number(seek.value)
-        if (Number.isFinite(nextTime)) audio.currentTime = nextTime
-      })
-    }
-
-    if (volume instanceof HTMLInputElement) {
-      audio.volume = Number(volume.value)
-      volume.addEventListener("input", () => {
-        audio.volume = Number(volume.value)
-      })
-    }
-
-    if (appToggle instanceof HTMLInputElement) {
-      appToggle.addEventListener("change", () => {
-        if (!appToggle.checked) audio.pause()
-      })
-    }
-
-    // The initial src already exists in the rendered <audio>.
-    // Do not call load() here: metadata may already have loaded before listeners were bound.
-    setStatus(audio.readyState >= 1 ? "READY" : "MEDIA LOADED")
-  }
-
-  const runAudio = () => window.setTimeout(setupPrimeAudio, 0)
-
-  runAudio()
-  document.addEventListener("nav", runAudio)
-  document.addEventListener("render", runAudio)
 })()
 `
 

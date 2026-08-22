@@ -4,6 +4,7 @@ title: Virex-9
 id: LOC-002
 type: location
 location: Aetherium Prime
+archiveRegion: Virex-9
 aliases:
   - Virex-9
   - Virex 9

@@ -121,8 +121,11 @@ const ArchiveRegistry: QuartzComponent = ({
       })
     })
 
-  const personnelRegions =
-    config.kind === "personnel"
+  const regionalArchive =
+    config.kind === "personnel" || config.kind === "locations"
+
+  const archiveRegions =
+    regionalArchive
       ? Array.from(
           records.reduce((regions, page) => {
             const fm = page.frontmatter ?? {}
@@ -140,9 +143,9 @@ const ArchiveRegistry: QuartzComponent = ({
         )
       : []
 
-  const personnelSelectionCss =
-    config.kind === "personnel"
-      ? personnelRegions
+  const regionalSelectionCss =
+    regionalArchive
+      ? archiveRegions
           .map(([region]) => {
             const token = regionToken(region)
 
@@ -201,10 +204,10 @@ const ArchiveRegistry: QuartzComponent = ({
         </strong>
       </div>
 
-      {config.kind === "personnel" && records.length > 0 ? (
+      {regionalArchive && records.length > 0 ? (
         <div class="prime-personnel-regions">
-          {personnelSelectionCss && (
-            <style dangerouslySetInnerHTML={{ __html: personnelSelectionCss }} />
+          {regionalSelectionCss && (
+            <style dangerouslySetInnerHTML={{ __html: regionalSelectionCss }} />
           )}
 
           <input
@@ -216,7 +219,7 @@ const ArchiveRegistry: QuartzComponent = ({
             aria-hidden="true"
           />
 
-          {personnelRegions.map(([region]) => {
+          {archiveRegions.map(([region]) => {
             const token = regionToken(region)
 
             return (
@@ -234,12 +237,12 @@ const ArchiveRegistry: QuartzComponent = ({
             <div class="prime-personnel-regions__intro">
               <span>REGIONAL INDEX</span>
               <p>
-                Select an operational region to access its published personnel records.
+                Select an operational region to access its published {config.kind === "locations" ? "location" : "personnel"} records.
               </p>
             </div>
 
             <div class="prime-personnel-regions__grid">
-              {personnelRegions.map(([region, pages]) => {
+              {archiveRegions.map(([region, pages]) => {
                 const token = regionToken(region)
 
                 return (
@@ -248,7 +251,7 @@ const ArchiveRegistry: QuartzComponent = ({
                     class="prime-personnel-region-card"
                   >
                     <div class="prime-personnel-region-card__top">
-                      <span>REGIONAL PERSONNEL ARCHIVE</span>
+                      <span>{config.kind === "locations" ? "REGIONAL LOCATION ARCHIVE" : "REGIONAL PERSONNEL ARCHIVE"}</span>
                       <strong>{pages.length.toString().padStart(2, "0")}</strong>
                     </div>
 
@@ -270,7 +273,7 @@ const ArchiveRegistry: QuartzComponent = ({
           </div>
 
           <div class="prime-personnel-regions__archives">
-            {personnelRegions.map(([region, pages]) => {
+            {archiveRegions.map(([region, pages]) => {
               const token = regionToken(region)
 
               return (
@@ -280,7 +283,7 @@ const ArchiveRegistry: QuartzComponent = ({
                 >
                   <div class="prime-personnel-region__heading">
                     <div>
-                      <span>REGIONAL PERSONNEL ARCHIVE</span>
+                      <span>{config.kind === "locations" ? "REGIONAL LOCATION ARCHIVE" : "REGIONAL PERSONNEL ARCHIVE"}</span>
                       <h2>{region}</h2>
                     </div>
 
@@ -308,10 +311,19 @@ const ArchiveRegistry: QuartzComponent = ({
                         `Public archive record for ${title}.`
                       const classification =
                         text(fm.classification) ??
-                        [text(fm.species), text(fm.role)]
-                          .filter(Boolean)
-                          .join(" · ")
-                      const location = text(fm.location)
+                        (config.kind === "personnel"
+                          ? [text(fm.species), text(fm.role)]
+                              .filter(Boolean)
+                              .join(" · ")
+                          : text(fm.category) ?? config.classificationFallback)
+
+                      const metaValue =
+                        config.metaField === "scope"
+                          ? text(fm.scope)
+                          : config.metaField === "location"
+                            ? text(fm.location)
+                            : undefined
+
                       const href = `/${page.slug}`
 
                       return (
@@ -334,10 +346,10 @@ const ArchiveRegistry: QuartzComponent = ({
                               {description}
                             </p>
 
-                            {location && (
+                            {metaValue && (
                               <div class="prime-registry-card__location">
-                                <span>LOCATION</span>
-                                <strong>{location}</strong>
+                                <span>{config.metaLabel}</span>
+                                <strong>{metaValue}</strong>
                               </div>
                             )}
                           </div>
@@ -418,6 +430,13 @@ const ArchiveRegistry: QuartzComponent = ({
                     <strong>{id}</strong>
                   </div>
 
+                  <div class="prime-faction-card__identity">
+                    <h3>{title}</h3>
+                    <div class="prime-faction-card__classification">
+                      {classification}
+                    </div>
+                  </div>
+
                   <div class="prime-faction-card__main">
                     <div class="prime-faction-card__visual">
                       {image ? (
@@ -434,12 +453,6 @@ const ArchiveRegistry: QuartzComponent = ({
                     </div>
 
                     <div class="prime-faction-card__content">
-                      <div class="prime-faction-card__classification">
-                        {classification}
-                      </div>
-
-                      <h3>{title}</h3>
-
                       <div class="prime-faction-card__rule"></div>
 
                       <p class="prime-registry-card__description">
@@ -1014,24 +1027,47 @@ ArchiveRegistry.css = `
   font-size: 0.62rem;
 }
 
+.prime-faction-card__identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.35rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid color-mix(
+    in srgb,
+    var(--faction-accent) 16%,
+    transparent
+  );
+}
+
+.prime-faction-card__identity h3 {
+  margin: 0;
+  color: #f5f9fc;
+  font-size: clamp(1.15rem, 1.7vw, 1.45rem);
+  font-weight: 750;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
 .prime-faction-card__main {
   display: grid;
-  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.45fr);
-  gap: clamp(1.5rem, 3vw, 2.5rem);
-  align-items: start;
-  margin-top: 1.75rem;
+  grid-template-columns: minmax(210px, 0.95fr) minmax(0, 1.15fr);
+  gap: clamp(1.35rem, 2.5vw, 2rem);
+  align-items: stretch;
+  margin-top: 1rem;
   flex: 1;
 }
 
 .prime-faction-card__visual {
   position: relative;
   width: 100%;
-  max-width: 300px;
+  max-width: none;
   aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   border: 1px solid color-mix(
     in srgb,
@@ -1079,11 +1115,11 @@ ArchiveRegistry.css = `
 
 .prime-faction-card__visual img {
   display: block;
-  width: calc(100% - 8px);
-  height: calc(100% - 8px);
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   border-radius: 6px;
 }
@@ -1104,7 +1140,8 @@ ArchiveRegistry.css = `
 
 .prime-faction-card__classification {
   display: inline-flex;
-  padding: 0.5rem 0.65rem;
+  flex: 0 0 auto;
+  padding: 0.42rem 0.62rem;
   border: 1px solid color-mix(
     in srgb,
     var(--faction-accent) 40%,
@@ -1120,25 +1157,6 @@ ArchiveRegistry.css = `
   font-size: 0.6rem;
 }
 
-.prime-faction-card__content h3 {
-  margin: 0.9rem 0 0;
-  color: #f7f9fb;
-  font-size: clamp(2rem, 3.3vw, 3.4rem);
-  font-weight: 800;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  overflow-wrap: normal;
-  word-break: normal;
-}
-
-.prime-registry-card--faction .prime-faction-card__content h3 {
-  text-shadow:
-    0 0 28px color-mix(
-      in srgb,
-      var(--faction-primary) 15%,
-      transparent
-    );
-}
 
 .prime-registry-card--faction .prime-faction-card__scope strong,
 .prime-registry-card--faction .prime-faction-card__intel strong {
@@ -1152,7 +1170,7 @@ ArchiveRegistry.css = `
 .prime-faction-card__rule {
   width: min(440px, 70%);
   height: 2px;
-  margin-top: 1.2rem;
+  margin-top: 0.1rem;
   background:
     linear-gradient(
       90deg,
@@ -1165,7 +1183,7 @@ ArchiveRegistry.css = `
 
 .prime-faction-card__content .prime-registry-card__description {
   max-width: 760px;
-  margin-top: 1.4rem !important;
+  margin-top: 1rem !important;
   color: #b9c8d2;
   font-size: 1rem;
   line-height: 1.7;
@@ -1283,8 +1301,8 @@ ArchiveRegistry.css = `
     max-width: 340px;
   }
 
-  .prime-faction-card__content h3 {
-    font-size: clamp(2.3rem, 8vw, 3.5rem);
+  .prime-faction-card__identity h3 {
+    font-size: 1.35rem;
   }
 }
 
@@ -1307,8 +1325,13 @@ ArchiveRegistry.css = `
     max-width: none;
   }
 
-  .prime-faction-card__content h3 {
-    font-size: clamp(2.15rem, 12vw, 3.2rem);
+  .prime-faction-card__identity {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .prime-faction-card__identity h3 {
+    font-size: 1.25rem;
   }
 
   .prime-faction-card__content .prime-registry-card__description {

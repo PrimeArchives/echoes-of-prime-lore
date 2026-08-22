@@ -3,6 +3,7 @@ title: The Iron Halo
 id: LOC-005
 type: location
 location: Virex-9
+archiveRegion: Virex-9
 aliases:
   - The Iron Halo
   - Iron Halo

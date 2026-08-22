@@ -3,6 +3,7 @@ title: Coil Market
 id: LOC-004
 type: location
 location: Virex-9
+archiveRegion: Virex-9
 aliases:
   - Coil Market
 ---
