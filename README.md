@@ -1,13 +1,13 @@
 ﻿Prime Archives -- Chat Handoff / README
 
-Handoff voor een nieuwe ChatGPT-conversatie. Doel: verder kunnen
-werken zonder de huidige werkende architectuur opnieuw te
-reconstrueren.
+Handoff voor een nieuwe ChatGPT-conversatie. Doel: verder kunnen werken zonder de huidige werkende architectuur opnieuw te reconstrueren.
+
+Last updated: 2026-08-23
+Project: Prime Archives / Echoes of Prime
 
 Current Known-Good State
 
-Prime Archives is een Quartz v5-site voor de D&D-campaign Echoes of
-Prime.
+Prime Archives is een Quartz v5-site voor de D&D-campaign Echoes of Prime.
 
 Projectroot:
 
@@ -27,63 +27,265 @@ Cloudflare Assets
 
 Cloudflare D1 prime-archives
 
-Git voor versiebeheer
+Git
 
-De huidige productie-baseline heeft authenticated Squad Annotations
-op NPC-, Location- en Faction-records.
+Windows / PowerShell
 
-Werkregel voor toekomstige wijzigingen
+Huidige baseline:
 
-Behandel de huidige staat als known-good baseline.
+authenticated Squad Annotations op NPC-, Location- en Faction-records;
 
-Geen lukrake patches verspreid over bestanden. Wanneer een kernbestand
-substantieel wordt gewijzigd en de actuele inhoud bekend is, geef bij
-voorkeur de volledige vervangende file terug en behoud bestaande
-functionaliteit buiten de gevraagde wijziging.
+accounts voor Lumi, Clav, Dakka, Venn en The Architect;
 
-Na infrastructuurwijzigingen: lokaal testen → concrete fout/log bekijken
-→ één oorzaak wijzigen → opnieuw testen → stabiele mijlpaal committen.
+server-side note ownership en delete-permissions;
 
-Een groene build bewijst niet automatisch dat plugin-installatie,
-Worker-runtime, API, D1 of productie correct functioneren.
+persoonlijke Messages READ/UNREAD-state per user in D1;
 
-Lokale stack
+PrimeOS login/logout op het hoofdscherm;
 
-Quartz:
+Messages-tegel toont per ingelogde user XX UNREAD of ALL READ;
+
+Messages houden CORRUPTED / PRIORITY los van persoonlijke read-state.
+
+Belangrijkste werkregel
+
+Behandel de huidige repository als de known-good source of truth.
+
+Bij substantiële wijzigingen aan bestaande kernbestanden:
+
+gebruik de actuele volledige source file;
+
+reconstrueer grote bestanden niet uit geheugen of oude snippets;
+
+behoud bestaande functionaliteit buiten de gevraagde wijziging;
+
+geef bij voorkeur een complete replacement file terug;
+
+diagnoseer eerst welke laag faalt voordat code wordt herschreven.
+
+Een groene Quartz-build bewijst niet automatisch dat Worker, browser-JS, API, D1 of productie werken.
+
+Lokale development stack
+
+Voor de volledige lokale site zijn twee gelijktijdige processen nodig.
+
+Terminal 1 -- Quartz build/watch
 
 cd "C:\Echoes of Prime\QuartzSetup"
 npx quartz build --serve --watch
 
+Quartz-preview:
+
 http://localhost:8080
 
-Worker/API/D1:
+Gebruik 8080 alleen voor snelle content/layout-controle.
+
+Belangrijk:
+
+localhost:8080 = Quartz-only
+
+Daar bestaan Worker-routes zoals /api/auth/*, /api/notes en /api/messages/* niet. Auth, annotations, persoonlijke Messages-state en andere D1-functionaliteit hoeven daar dus niet te werken.
+
+Terminal 2 -- Worker + lokale D1/API
 
 cd "C:\Echoes of Prime\QuartzSetup"
 npx wrangler dev
 
+Volledige lokale Prime Archives:
+
 http://127.0.0.1:8787
 
-Gebruik 8787 voor auth, annotations, API en lokale D1.
+Gebruik altijd 8787 voor tests met:
 
-Een derde terminal wordt gebruikt voor plugin-builds, Git, scripts en
-D1-onderhoud.
+login/logout;
 
-Production deployment
+sessions;
+
+Squad Annotations;
+
+Messages READ/UNREAD;
+
+dashboard unread-counter;
+
+Worker API;
+
+lokale D1.
+
+Als iemand zegt "test lokaal" en de feature gebruikt backend/D1/auth, bedoelen we dus 127.0.0.1:8787, en daarvoor moeten zowel Quartz watch als Wrangler dev draaien.
+
+Terminal 3 -- onderhoud
+
+Gebruik voor:
+
+Git;
+
+plugin-build/install;
+
+D1-commando's;
+
+scripts;
+
+accountbeheer.
+
+Productie deployment
+
+Vanuit:
 
 cd "C:\Echoes of Prime\QuartzSetup"
+
+Gebruik:
+
+git status
+git add .
+git commit -m "Beschrijving"
+git push
+
 npx quartz build
 npx wrangler deploy
 
-Workerbindings:
+Workerbindings horen te tonen:
 
 env.DB      -> D1 prime-archives
 env.ASSETS  -> built Quartz assets
 
-Bij runtimeproblemen:
+Bij live Worker/API-problemen:
 
 npx wrangler tail echoes-of-prime-lore
 
-Dit is de eerste debuggingstap voor live Worker/API-fouten.
+Dit is de voorkeurs-debuggingstap voor productie-runtimefouten.
+
+PrimeOS
+
+Belangrijk kernbestand:
+
+C:\Echoes of Prime\QuartzSetup\quartz\components\prime\PrimeOS.tsx
+
+PrimeOS bevat/integreert onder andere:
+
+Navigation;
+
+Messages;
+
+Audio Archive;
+
+Objectives;
+
+PrimeAuth;
+
+dashboard tiles.
+
+PrimeOS is groot en actief gewijzigd. Altijd de actuele volledige file gebruiken voordat deze substantieel wordt aangepast.
+
+PrimeAuth
+
+Component:
+
+C:\Echoes of Prime\QuartzSetup\quartz\components\prime\PrimeAuth.tsx
+
+De login/accountstatus staat op het Archive Index-hoofdscherm in de rechter system-panel boven de device-info.
+
+Uitgelogd:
+
+OPERATIVE SESSION
+NOT AUTHENTICATED
+[ LOGIN ]
+
+Ingelogde speler:
+
+OPERATIVE AUTHENTICATED
+Lumi
+[ LOGOUT ]
+
+Architect:
+
+ARCHITECT CLEARANCE
+The Architect
+[ LOGOUT ]
+
+De loginprompt is een gecentreerde modal boven de interface, niet een dropdown binnen de header.
+
+PrimeAuth gebruikt de bestaande Worker-auth; er is geen tweede auth-systeem.
+
+Na login/logout dispatcht de frontend:
+
+prime-auth-changed
+
+Andere client-features kunnen daarop hun user-state opnieuw ophalen.
+
+Authentication
+
+Worker-entry:
+
+C:\Echoes of Prime\QuartzSetup\worker\index.ts
+
+Auth endpoints:
+
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+
+Er hoort geen publieke /api/auth/register te bestaan.
+
+Accounts:
+
+lumi       -> Lumi          -> player
+clav       -> Clav          -> player
+dakka      -> Dakka         -> player
+venn       -> Venn          -> player
+architect  -> The Architect -> architect
+
+Session-cookie:
+
+prime_session
+
+Eigenschappen:
+
+HttpOnly
+Path=/
+SameSite=Lax
+
+Huidige sessieduur: 30 dagen.
+
+Server bewaart alleen een hash van het session token.
+
+Password hashing
+
+Cloudflare Worker WebCrypto accepteerde in deze setup geen PBKDF2 iteration count boven 100000.
+
+Known-good instellingen:
+
+PBKDF2
+SHA-256
+100000 iterations
+32-byte derived key
+random salt
+
+Worker en account/password-scripts moeten exact compatibel blijven.
+
+Een mismatch kan leiden tot:
+
+401 Invalid username or password
+
+Accountbeheer
+
+Password reset:
+
+C:\Echoes of Prime\QuartzSetup\scripts\reset-password.mjs
+
+Voorbeeld:
+
+cd "C:\Echoes of Prime\QuartzSetup"
+node ".\scripts\reset-password.mjs" venn
+
+Reset wijzigt hash + salt en invalideert bestaande sessions. User-ID en note-ownership blijven bestaan.
+
+Provisioning:
+
+C:\Echoes of Prime\QuartzSetup\scripts\provision-users.mjs
+
+Accounts worden vanaf nu in principe remote beheerd; lokale accounts zijn niet de operationele bron.
+
+Nooit plaintext wachtwoorden in Git, permanente SQL, logs of documentatie zetten.
 
 Squad Annotations
 
@@ -95,14 +297,17 @@ Component:
 
 C:\Echoes of Prime\QuartzSetup\quartz\plugins\record-notes-plugin\src\components\RecordNotes.tsx
 
-Ondersteunde recordtypes:
+Actief op:
 
 npc
 location
 faction
 
-Record-ID is de notes-sleutel, bijvoorbeeld NPC-006, LOC-005,
-FAC-001.
+De frontmatter-ID is de notes-sleutel:
+
+NPC-006
+LOC-005
+FAC-001
 
 Na pluginwijziging:
 
@@ -114,94 +319,154 @@ npx quartz plugin install --latest record-notes-plugin
 
 Daarna Quartz opnieuw bouwen.
 
-Er was eerder dubbele rendering doordat record-notes-plugin tweemaal
-in quartz.config.yaml stond. Dat is opgelost; bij herhaling eerst
-config controleren.
+Er was eerder dubbele rendering doordat record-notes-plugin tweemaal in quartz.config.yaml stond. Dat is opgelost; bij herhaling eerst config controleren.
 
-Worker/API
-
-Worker-entry:
-
-C:\Echoes of Prime\QuartzSetup\worker\index.ts
-
-De Worker behandelt API-routes en stuurt overige requests door naar
-env.ASSETS.fetch(request).
-
-Auth:
-
-POST /api/auth/login
-POST /api/auth/logout
-GET  /api/auth/me
-
-Geen publieke /api/auth/register.
-
-Notes:
+Notes API
 
 GET    /api/notes
 GET    /api/notes?record_id=<ID>
 POST   /api/notes
 DELETE /api/notes/<note-id>
 
-POST gebruikt de authenticated session-user als auteur. Browserinput mag
-ownership niet bepalen.
+POST gebruikt de authenticated session-user als auteur.
 
-Users en permissions
+Ownership:
 
-lumi       -> Lumi          -> player
-clav       -> Clav          -> player
-dakka      -> Dakka         -> player
-venn       -> Venn          -> player
-architect  -> The Architect -> architect
+notes.user_id
+
+Niet:
+
+notes.author
 
 Player:
 
-notes lezen
+notes lezen;
 
-authenticated note plaatsen
+authenticated notes plaatsen;
 
-alleen eigen authenticated notes verwijderen
+alleen eigen authenticated notes verwijderen.
 
 Architect:
 
-notes lezen/plaatsen
+notes lezen/plaatsen;
 
-iedere note verwijderen
+iedere note verwijderen.
 
-Ownership is notes.user_id, niet notes.author.
+Er zijn momenteel geen legacy annotations die nog gemigreerd hoeven te worden; de eerdere testnotitie is verwijderd.
 
-Legacy notes van vóór auth kunnen een auteursnaam hebben maar
-user_id = NULL.
+Messages
 
-Sessions
+Component:
 
-Cookie:
+C:\Echoes of Prime\QuartzSetup\quartz\components\prime\messages\messages.tsx
 
-prime_session
+Messages blijven Markdown-driven voor inhoud en metadata.
 
-Eigenschappen:
+Persoonlijke READ/UNREAD-state komt niet meer uit Markdown maar uit D1.
 
-HttpOnly
-Path=/
-SameSite=Lax
+Oude unread: frontmatter mag nog in bestaande Markdown staan, maar de dynamische read-state hoort die niet te gebruiken. Dit kan later worden opgeschoond.
 
-Server bewaart een hash van het token. Huidige sessieduur: 30 dagen.
+Content-statussen blijven onafhankelijk:
 
-Password hashing
+status: corrupted
+priority: high
 
-Known production constraint: Cloudflare Worker WebCrypto weigerde PBKDF2
-boven 100000 iterations.
+Een message kan dus bijvoorbeeld tegelijk:
 
-Huidige werkende instellingen:
+UNREAD + CORRUPTED + PRIORITY
 
-PBKDF2
-SHA-256
-100000 iterations
-32-byte derived key
-random salt
+zijn.
 
-Deze instellingen moeten gelijk blijven in Worker en
-user/password-scripts. Mismatch geeft
-401 Invalid username or password.
+Messages API
+
+GET  /api/messages/read-state
+POST /api/messages/MSG-xxx/read
+
+GET /api/messages/read-state geeft voor de authenticated user de gelezen message IDs terug.
+
+Een bericht is:
+
+UNREAD = geen message_reads-row voor user + message
+READ   = wel message_reads-row
+
+Openen van een bericht markeert het als READ.
+
+Read-state is persoonlijk per account.
+
+D1 message_reads
+
+Schema bevat conceptueel:
+
+id
+user_id
+message_id
+read_at
+
+met unieke combinatie:
+
+(user_id, message_id)
+
+De schema/migration-file die hiervoor is gebruikt:
+
+C:\Echoes of Prime\QuartzSetup\worker\message-reads-schema.sql
+
+Alle production read receipts zijn bij introductie bewust leeggemaakt zodat alle spelers met een verse UNREAD-inbox begonnen.
+
+Messages UI
+
+Unread berichten zijn vóór openen visueel duidelijker door:
+
+cyan accent/glow;
+
+lichtere rij;
+
+sterkere sender/subject;
+
+UNREAD badge.
+
+Na openen verdwijnt de unread-styling direct.
+
+De reader toont daarnaast persoonlijke:
+
+READ STATE
+
+CORRUPTED en PRIORITY blijven aparte labels.
+
+Na verandering van read-state dispatcht Messages:
+
+prime-message-read-state-changed
+
+Messages dashboard counter
+
+De Messages-tegel op PrimeOS toont dynamisch:
+
+Uitgelogd:
+
+SIGN IN FOR STATUS
+
+Ingelogd met unread messages:
+
+03 UNREAD
+
+of het werkelijke aantal.
+
+Alles gelezen:
+
+ALL READ
+
+Wanneer de Worker/API niet beschikbaar is, bijvoorbeeld op de Quartz-only localhost:8080 preview:
+
+STATUS OFFLINE
+
+De teller wordt opnieuw berekend na:
+
+login/logout;
+
+message read-state wijziging;
+
+Quartz navigation/render.
+
+De known-good implementatie gebruikt een zelfstandige inline client-scriptlaag in PrimeOS. Een eerdere poging via alleen PrimeOS.afterDOMLoaded bleef op CHECKING... hangen en is vervangen.
 
 D1 schema
 
@@ -232,46 +497,38 @@ token_hash
 expires_at
 created_at
 
+message_reads bevat minimaal:
+
+id
+user_id
+message_id
+read_at
+
 Local versus remote D1
+
+Lokaal:
 
 npx wrangler d1 execute prime-archives --local --command="..."
 
-versus:
+Productie:
 
 npx wrangler d1 execute prime-archives --remote --command="..."
 
-Dit zijn verschillende databases. Controleer de vlag vóór iedere
-mutatie.
+Dit zijn verschillende databases.
 
-Accountbeheer
+Controleer altijd bewust --local versus --remote voordat een mutatie wordt uitgevoerd.
 
-Password reset:
-
-C:\Echoes of Prime\QuartzSetup\scripts\reset-password.mjs
-
-Voorbeeld:
-
-node ".\scripts\reset-password.mjs" venn
-
-De reset wijzigt hash + salt en invalideert bestaande sessions; user-ID
-en note-ownership blijven bestaan.
-
-Provisioning:
-
-C:\Echoes of Prime\QuartzSetup\scripts\provision-users.mjs
-
-Plaintext wachtwoorden horen niet in Git/permanente SQL terecht te
-komen.
+Op Windows/PowerShell kunnen multiline --command strings verkeerd aan Wrangler worden doorgegeven. Gebruik bij problemen één regel of een tijdelijke .sql file met --file.
 
 Security invariants
 
 Geen publieke /api/auth/register.
 
-Browser bepaalt niet de auteur/owner.
+Browser bepaalt niet de note-auteur/owner.
 
 Delete-permission wordt server-side gecontroleerd.
 
-Player verwijdert alleen eigen user_id.
+Player verwijdert alleen eigen notes.
 
 Architect mag alle notes verwijderen.
 
@@ -283,22 +540,13 @@ Geen raw session tokens in D1.
 
 Geen wachtwoorden in chat, Git of logs.
 
-Canonical Wikilinks
-
-Er is een custom lokale canonical-wikilinks-plugin. Tijdens setup stond
-de bron onder:
-
-C:\Echoes of Prime\QuartzSetup\canonical-wikilinks-plugin\canonical-wikilinks
-
-Bij problemen eerst het werkelijke pad en de Quartz plugin-installatie
-controleren; niet aannemen dat de bron onder
-quartz/plugins/canonical-wikilinks staat.
+Messages read-state is gekoppeld aan authenticated user_id, niet aan browserinput.
 
 Contentstructuur
 
-Publieke Markdown-content staat onder:
+Publieke Markdown-content:
 
-content/
+C:\Echoes of Prime\QuartzSetup\content
 
 Belangrijke recordtypes:
 
@@ -323,82 +571,57 @@ Obsidian-wikilinks behouden;
 
 imageLayout niet gokken als onduidelijk.
 
-Navigation / maps / messages
+Canonical Wikilinks
 
-Locations:
+Er is een custom canonical-wikilinks-plugin.
 
-quartz/components/prime/navigation/locations.ts
+Tijdens setup stond de bron onder:
 
-Maps:
+C:\Echoes of Prime\QuartzSetup\canonical-wikilinks-plugin\canonical-wikilinks
 
-content/static/maps/
-quartz/components/prime/navigation/maps/
+Bij problemen eerst het werkelijke pad en de actuele Quartz plugin-installatie controleren.
 
-Messages:
+Bekende buildwarning
 
-quartz/components/prime/messages/messages.ts
+Er zijn bewust corrupted/placeholder Messages met ongeldige/placeholder datumwaarden, bijvoorbeeld ????.
 
-Bekende housekeeping
+De formatter kan daardoor invalid date warnings geven.
 
-Tijdens builds zijn waarschuwingen gezien:
-
-found invalid date "false"
-
-bij enkele faction/message-records. Niet blocker, wel opruimen zodat
-echte toekomstige warnings zichtbaar blijven.
-
-Verder op de lijst:
-
-oude/lege Record Notes-resten controleren;
-
-tijdelijke provisioningbestanden/.gitignore controleren;
-
-canonical-wikilinks werking controleren;
-
-reset-password.mjs eventueel expliciete --local/--remote optie
-geven.
-
-Mogelijke volgende features
-
-Squad Annotations eventueel naar Systems.
-
-Bewust beslissen over Objectives.
-
-Annotation editing.
-
-Centrale login/accountstatus in header/PrimeOS.
-
-Klein Architect-adminpaneel.
-
-Legacy annotations eventueel koppelen aan echte users.
-
-Geen hiervan is nodig voor de huidige baseline.
+Dit is momenteel bewust en geen blocker. Niet automatisch "repareren" zonder eerst te controleren of het om zo'n corrupted message gaat.
 
 Debuggingprocedure
 
 1. Bepaal exact wat kapot is.
-2. Bepaal de laag: Quartz / plugin / browser JS / Worker / D1 / routing.
+2. Bepaal de laag:
+   Quartz / browser JS / plugin / Worker / API / D1 / routing.
 3. Reproduceer klein.
 4. Bekijk concrete output/log.
 5. Wijzig één oorzaak.
 6. Test opnieuw.
 
-Voor production Worker-problemen:
+Als nieuwe Markdown wel als directe pagina bestaat maar niet in een data-driven app verschijnt:
+
+stop Quartz;
+
+start npx quartz build --serve --watch opnieuw;
+
+hard refresh.
+
+Voor live Worker/API-fouten:
 
 npx wrangler tail echoes-of-prime-lore
 
-Dit onthulde tijdens auth-ontwikkeling direct de PBKDF2-limit en is de
-voorkeursroute boven gokken.
-
-Known-good milestone
+Known-Good Milestone -- 2026-08-23
 
 Prime Archives live                         ✓
 Quartz build                                ✓
 Cloudflare Worker                           ✓
 D1 remote                                   ✓
+
 Squad Annotations NPC                       ✓
 Squad Annotations Locations                 ✓
 Squad Annotations Factions                  ✓
+
 Lumi / Clav / Dakka / Venn                  ✓
 The Architect                               ✓
 Server-side identity                        ✓
@@ -407,5 +630,67 @@ Architect delete-any                        ✓
 Login/logout/session                        ✓
 Production password reset                   ✓
 
-Als een toekomstige wijziging één van bovenstaande breekt, is dat een
-regressie.
+Messages per-user READ/UNREAD               ✓
+message_reads D1                            ✓
+Unread visual state                         ✓
+PrimeOS login/account panel                 ✓
+PrimeOS Messages unread counter             ✓
+Auth/read-state event synchronization       ✓
+
+Als een toekomstige wijziging één van bovenstaande breekt, behandel dat als een regressie.
+
+Volgende ideeën / parked
+
+Niet automatisch uitvoeren; eerst met de gebruiker bepalen wat prioriteit heeft.
+
+Objectives: nog bewust onbeslist wat dynamische/user-state daar precies moet betekenen.
+
+Squad Annotations eventueel later naar Systems.
+
+Annotation editing.
+
+Klein Architect-adminpaneel.
+
+Verdere accountbeheer-UX alleen indien nodig.
+
+AUTH API UNAVAILABLE polish voor Quartz-only preview kan later; functioneel is 8080 bewust geen backendomgeving.
+
+Guidance voor volgende ChatGPT-conversatie
+
+Gebruik deze handoff als oriëntatie, maar de actuele repository files zijn source of truth voor code.
+
+Vraag/gebruik bij grote wijzigingen de meest recente volledige file.
+
+PrimeOS niet reconstrueren uit oude snippets.
+
+Geef bij terminalcommando's altijd het volledige relevante cd-pad; de gebruiker werkt vaak met drie terminals tegelijk.
+
+Zeg expliciet in welke terminal een commando hoort wanneer dat relevant is.
+
+Verwar localhost:8080 niet met de volledige lokale omgeving.
+
+Voor backendfeatures: beide processen draaien en testen op 127.0.0.1:8787.
+
+Prefer complete replacement files voor substantiële codewijzigingen.
+
+Houd wijzigingen klein en behoud working features.
+
+Campaign Markdown blijft data-driven waar mogelijk.
+
+Objectives niet zomaar herontwerpen zonder eerst de gewenste UX te bespreken.
+
+Source of Truth
+
+Campaign canon:
+
+De campaign vault / actuele Markdown-records.
+
+Application code:
+
+De actuele repository files.
+
+Handoff:
+
+Dit document beschrijft de known-good architectuur en geleerde lessen, maar kan opnieuw verouderen.
+
+Wanneer code en handoff verschillen, inspecteer de actuele code voordat het project wordt aangepast.

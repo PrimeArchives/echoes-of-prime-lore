@@ -174,6 +174,12 @@ const messageReadClientScript = String.raw`
     } finally {
       state.loading = false
       applyState()
+
+      document.dispatchEvent(
+        new CustomEvent(
+          "prime-message-read-state-changed",
+        ),
+      )
     }
   }
 
@@ -216,6 +222,12 @@ const messageReadClientScript = String.raw`
 
       state.readIds.add(messageId)
       applyState()
+
+      document.dispatchEvent(
+        new CustomEvent(
+          "prime-message-read-state-changed",
+        ),
+      )
     } catch (_) {
       // Keep the message unread if synchronization failed.
     }

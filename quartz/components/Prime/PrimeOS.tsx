@@ -12,6 +12,165 @@ import Objectives from "./objectives/objectives"
 import AudioArchive, { audioArchiveAfterDOMLoaded } from "./audio/AudioArchive"
 import PrimeAuth from "./PrimeAuth"
 
+
+const primeMessageSummaryScript = String.raw`
+(() => {
+  const STATE_KEY = "__primeMessageSummaryState"
+
+  if (!window[STATE_KEY]) {
+    window[STATE_KEY] = {
+      installed: false,
+      loading: false,
+    }
+  }
+
+  const state = window[STATE_KEY]
+
+  const getSummaries = () =>
+    document.querySelectorAll(
+      "[data-prime-message-summary]",
+    )
+
+  const setSummary = (text, status) => {
+    getSummaries().forEach((summary) => {
+      if (!(summary instanceof HTMLElement)) return
+
+      summary.textContent = text
+      summary.dataset.state = status
+    })
+  }
+
+  const getPublishedMessageIds = () => {
+    const ids = new Set()
+
+    document
+      .querySelectorAll(
+        ".prime-mail-item[data-message-id]",
+      )
+      .forEach((item) => {
+        if (!(item instanceof HTMLElement)) return
+
+        const messageId = item.dataset.messageId
+
+        if (messageId) {
+          ids.add(messageId)
+        }
+      })
+
+    return ids
+  }
+
+  const refresh = async () => {
+    if (state.loading) return
+
+    const summaries = getSummaries()
+    if (summaries.length === 0) return
+
+    state.loading = true
+
+    try {
+      const response = await fetch(
+        "/api/messages/read-state",
+        {
+          method: "GET",
+          credentials: "same-origin",
+        },
+      )
+
+      const contentType =
+        response.headers.get("content-type") ?? ""
+
+      if (
+        !response.ok ||
+        !contentType.includes("application/json")
+      ) {
+        throw new Error("Message API unavailable")
+      }
+
+      const data = await response.json()
+
+      if (data?.authenticated !== true) {
+        setSummary(
+          "SIGN IN FOR STATUS",
+          "guest",
+        )
+        return
+      }
+
+      const readIds = new Set(
+        Array.isArray(data?.read_message_ids)
+          ? data.read_message_ids
+          : [],
+      )
+
+      const messageIds =
+        getPublishedMessageIds()
+
+      let unread = 0
+
+      messageIds.forEach((messageId) => {
+        if (!readIds.has(messageId)) {
+          unread += 1
+        }
+      })
+
+      if (unread > 0) {
+        setSummary(
+          String(unread).padStart(2, "0") +
+            " UNREAD",
+          "unread",
+        )
+      } else {
+        setSummary(
+          "ALL READ",
+          "clear",
+        )
+      }
+    } catch (_) {
+      setSummary(
+        "STATUS OFFLINE",
+        "offline",
+      )
+    } finally {
+      state.loading = false
+    }
+  }
+
+  const scheduleRefresh = () => {
+    window.setTimeout(
+      () => void refresh(),
+      0,
+    )
+  }
+
+  if (!state.installed) {
+    state.installed = true
+
+    document.addEventListener(
+      "prime-auth-changed",
+      scheduleRefresh,
+    )
+
+    document.addEventListener(
+      "prime-message-read-state-changed",
+      scheduleRefresh,
+    )
+
+    document.addEventListener(
+      "nav",
+      scheduleRefresh,
+    )
+
+    document.addEventListener(
+      "render",
+      scheduleRefresh,
+    )
+  }
+
+  scheduleRefresh()
+})()
+`
+
 const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
   const virex9Map = buildVirex9Map(props.allFiles)
 
@@ -55,6 +214,32 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
               .archive-dashboard__device {
               width: 100%;
               margin: 0;
+            }
+
+            .archive-message-status {
+              color: #718392;
+              font-family: var(--codeFont);
+              font-size: 0.52rem;
+              font-weight: 900;
+              letter-spacing: 0.1em;
+              text-transform: uppercase;
+            }
+
+            .archive-message-status[data-state="unread"] {
+              color: #8fe6ff;
+              text-shadow: 0 0 12px rgba(100, 215, 255, 0.28);
+            }
+
+            .archive-message-status[data-state="clear"] {
+              color: #74c69d;
+            }
+
+            .archive-message-status[data-state="guest"] {
+              color: #778895;
+            }
+
+            .archive-message-status[data-state="offline"] {
+              color: #ff7f91;
             }
 
             @media all and (max-width: 800px) {
@@ -584,6 +769,12 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
         }}
       />
 
+      <script
+        dangerouslySetInnerHTML={{
+          __html: primeMessageSummaryScript,
+        }}
+      />
+
       <input
         id="navigation-toggle"
         class="prime-app-toggle"
@@ -845,8 +1036,11 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
               </div>
 
               <div class="archive-card-footer">
-                <span>
-                  AVAILABLE
+                <span
+                  class="archive-message-status"
+                  data-prime-message-summary
+                >
+                  CHECKING...
                 </span>
 
                 <span class="archive-open">
