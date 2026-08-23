@@ -381,6 +381,105 @@ export default {
     }
 
     // ============================================================
+    // MESSAGES — PERSONAL READ STATE
+    // ============================================================
+
+    if (
+      url.pathname === "/api/messages/read-state" &&
+      request.method === "GET"
+    ) {
+      const user =
+        await getSessionUser(
+          request,
+          env,
+        )
+
+      if (!user) {
+        return json({
+          authenticated: false,
+          read_message_ids: [],
+        })
+      }
+
+      const result = await env.DB
+        .prepare(
+          `
+          SELECT message_id
+          FROM message_reads
+          WHERE user_id = ?
+          ORDER BY read_at ASC
+          `,
+        )
+        .bind(user.id)
+        .all<{ message_id: string }>()
+
+      return json({
+        authenticated: true,
+        read_message_ids:
+          (result.results ?? [])
+            .map((row) => row.message_id)
+            .filter(
+              (messageId): messageId is string =>
+                typeof messageId === "string",
+            ),
+      })
+    }
+
+    const messageReadMatch =
+      url.pathname.match(
+        /^\/api\/messages\/(MSG-\d+)\/read$/i,
+      )
+
+    if (
+      messageReadMatch &&
+      request.method === "POST"
+    ) {
+      const user =
+        await getSessionUser(
+          request,
+          env,
+        )
+
+      if (!user) {
+        return json(
+          {
+            error:
+              "Authentication required",
+          },
+          { status: 401 },
+        )
+      }
+
+      const messageId =
+        messageReadMatch[1].toUpperCase()
+
+      await env.DB
+        .prepare(
+          `
+          INSERT INTO message_reads (
+            user_id,
+            message_id
+          )
+          VALUES (?, ?)
+          ON CONFLICT(user_id, message_id)
+          DO UPDATE SET
+            read_at = CURRENT_TIMESTAMP
+          `,
+        )
+        .bind(
+          user.id,
+          messageId,
+        )
+        .run()
+
+      return json({
+        success: true,
+        message_id: messageId,
+        read: true,
+      })
+    }
+
+    // ============================================================
     // NOTES — READ
     // ============================================================
 

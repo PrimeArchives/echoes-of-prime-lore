@@ -254,6 +254,70 @@ var worker_default = {
         user
       });
     }
+    if (url.pathname === "/api/messages/read-state" && request.method === "GET") {
+      const user = await getSessionUser(
+        request,
+        env
+      );
+      if (!user) {
+        return json({
+          authenticated: false,
+          read_message_ids: []
+        });
+      }
+      const result = await env.DB.prepare(
+        `
+          SELECT message_id
+          FROM message_reads
+          WHERE user_id = ?
+          ORDER BY read_at ASC
+          `
+      ).bind(user.id).all();
+      return json({
+        authenticated: true,
+        read_message_ids: (result.results ?? []).map((row) => row.message_id).filter(
+          (messageId) => typeof messageId === "string"
+        )
+      });
+    }
+    const messageReadMatch = url.pathname.match(
+      /^\/api\/messages\/(MSG-\d+)\/read$/i
+    );
+    if (messageReadMatch && request.method === "POST") {
+      const user = await getSessionUser(
+        request,
+        env
+      );
+      if (!user) {
+        return json(
+          {
+            error: "Authentication required"
+          },
+          { status: 401 }
+        );
+      }
+      const messageId = messageReadMatch[1].toUpperCase();
+      await env.DB.prepare(
+        `
+          INSERT INTO message_reads (
+            user_id,
+            message_id
+          )
+          VALUES (?, ?)
+          ON CONFLICT(user_id, message_id)
+          DO UPDATE SET
+            read_at = CURRENT_TIMESTAMP
+          `
+      ).bind(
+        user.id,
+        messageId
+      ).run();
+      return json({
+        success: true,
+        message_id: messageId,
+        read: true
+      });
+    }
     if (url.pathname === "/api/notes" && request.method === "GET") {
       const recordId = url.searchParams.get(
         "record_id"
@@ -463,7 +527,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-JP7T0I/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-dA8LeG/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -495,7 +559,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-JP7T0I/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-dA8LeG/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

@@ -1,352 +1,411 @@
-﻿Prime Archives
+﻿Prime Archives -- Chat Handoff / README
 
-Prime Archives is de publieke, in-universe tabletomgeving voor de D&D-campagne Echoes of Prime.
+Handoff voor een nieuwe ChatGPT-conversatie. Doel: verder kunnen
+werken zonder de huidige werkende architectuur opnieuw te
+reconstrueren.
 
-De website draait op Quartz 5 en wordt gebouwd vanuit Markdown-content. Spelers gebruiken de site als de software van hun tablet: PAT-03.
+Current Known-Good State
 
-Snel starten
+Prime Archives is een Quartz v5-site voor de D&D-campaign Echoes of
+Prime.
 
-Open PowerShell in de projectmap:
+Projectroot:
 
-cd C:\DnD\Development\echoes-of-prime-lore
+C:\Echoes of Prime\QuartzSetup
 
-Haal eerst de nieuwste versie op:
+Productie:
 
-git pull origin v5
+https://primearchives.nl
 
-Start daarna de lokale website:
+Stack:
 
+Quartz v5
+
+Cloudflare Worker echoes-of-prime-lore
+
+Cloudflare Assets
+
+Cloudflare D1 prime-archives
+
+Git voor versiebeheer
+
+De huidige productie-baseline heeft authenticated Squad Annotations
+op NPC-, Location- en Faction-records.
+
+Werkregel voor toekomstige wijzigingen
+
+Behandel de huidige staat als known-good baseline.
+
+Geen lukrake patches verspreid over bestanden. Wanneer een kernbestand
+substantieel wordt gewijzigd en de actuele inhoud bekend is, geef bij
+voorkeur de volledige vervangende file terug en behoud bestaande
+functionaliteit buiten de gevraagde wijziging.
+
+Na infrastructuurwijzigingen: lokaal testen → concrete fout/log bekijken
+→ één oorzaak wijzigen → opnieuw testen → stabiele mijlpaal committen.
+
+Een groene build bewijst niet automatisch dat plugin-installatie,
+Worker-runtime, API, D1 of productie correct functioneren.
+
+Lokale stack
+
+Quartz:
+
+cd "C:\Echoes of Prime\QuartzSetup"
 npx quartz build --serve --watch
-
-Open vervolgens:
 
 http://localhost:8080
 
-Stop de server met:
+Worker/API/D1:
 
-Ctrl+C
+cd "C:\Echoes of Prime\QuartzSetup"
+npx wrangler dev
 
-Werken op laptop en desktop
+http://127.0.0.1:8787
 
-De actieve projectbranch is momenteel:
+Gebruik 8787 voor auth, annotations, API en lokale D1.
 
-v5
+Een derde terminal wordt gebruikt voor plugin-builds, Git, scripts en
+D1-onderhoud.
 
-Voor je begint
+Production deployment
 
-git checkout v5
-git pull origin v5
+cd "C:\Echoes of Prime\QuartzSetup"
+npx quartz build
+npx wrangler deploy
 
-Aan het einde van je werksessie
+Workerbindings:
 
-git add .
-git commit -m "korte beschrijving van de wijzigingen"
-git push origin v5
+env.DB      -> D1 prime-archives
+env.ASSETS  -> built Quartz assets
 
-Controleer de status
+Bij runtimeproblemen:
 
-git status
+npx wrangler tail echoes-of-prime-lore
 
-Een schone werkomgeving toont ongeveer:
+Dit is de eerste debuggingstap voor live Worker/API-fouten.
 
-On branch v5
-Your branch is up to date with 'origin/v5'.
+Squad Annotations
 
-nothing to commit, working tree clean
+Pluginbron:
 
-Eenmalige installatie op een nieuwe computer
+C:\Echoes of Prime\QuartzSetup\quartz\plugins\record-notes-plugin
 
-Benodigd:
+Component:
 
-Visual Studio Code
+C:\Echoes of Prime\QuartzSetup\quartz\plugins\record-notes-plugin\src\components\RecordNotes.tsx
 
-Git
+Ondersteunde recordtypes:
 
-Node.js
+npc
+location
+faction
 
-npm
+Record-ID is de notes-sleutel, bijvoorbeeld NPC-006, LOC-005,
+FAC-001.
 
-Clone de repository:
+Na pluginwijziging:
 
-cd C:\DnD\Development
-git clone https://github.com/PrimeArchives/echoes-of-prime-lore.git
-cd echoes-of-prime-lore
-git checkout v5
-npm install
+cd "C:\Echoes of Prime\QuartzSetup\quartz\plugins\record-notes-plugin"
+npm run build
 
-Start daarna Quartz:
+cd "C:\Echoes of Prime\QuartzSetup"
+npx quartz plugin install --latest record-notes-plugin
 
-npx quartz build --serve --watch
+Daarna Quartz opnieuw bouwen.
 
-npm install hoeft normaal alleen bij de eerste installatie of nadat package.json is gewijzigd.
+Er was eerder dubbele rendering doordat record-notes-plugin tweemaal
+in quartz.config.yaml stond. Dat is opgelost; bij herhaling eerst
+config controleren.
 
-Content toevoegen
+Worker/API
 
-Alle publieke spelerscontent hoort in:
+Worker-entry:
 
-content/
+C:\Echoes of Prime\QuartzSetup\worker\index.ts
 
-Wijzig nooit handmatig bestanden in:
+De Worker behandelt API-routes en stuurt overige requests door naar
+env.ASSETS.fetch(request).
 
-public/
+Auth:
 
-De map public/ wordt automatisch opnieuw opgebouwd door Quartz.
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
 
-Belangrijkste contentmappen
+Geen publieke /api/auth/register.
 
-De huidige structuur gebruikt onder andere:
+Notes:
 
-content/
-â”œâ”€â”€ index.md
-â”œâ”€â”€ archives.md
-â”œâ”€â”€ static/
-â”œâ”€â”€ 01 Universe/
-â”œâ”€â”€ 02 Timeline/
-â”œâ”€â”€ 04 Locations/
-â”œâ”€â”€ 05 NPCs/
-â”œâ”€â”€ 06 Factions/
-â””â”€â”€ 07 Systems/
+GET    /api/notes
+GET    /api/notes?record_id=<ID>
+POST   /api/notes
+DELETE /api/notes/<note-id>
 
-Nieuwe content plaats je in de passende map.
+POST gebruikt de authenticated session-user als auteur. Browserinput mag
+ownership niet bepalen.
 
-Voorbeelden:
+Users en permissions
 
-content/04 Locations/LOC-001 Virex-9.md
-content/05 NPCs/NPC-001 Captain Vynn Correll.md
-content/06 Factions/FAC-001 Aether Syndicate.md
-content/07 Systems/SYS-001 Aether.md
+lumi       -> Lumi          -> player
+clav       -> Clav          -> player
+dakka      -> Dakka         -> player
+venn       -> Venn          -> player
+architect  -> The Architect -> architect
 
-Gebruik alleen informatie die spelers daadwerkelijk hebben ontdekt of die publiek beschikbaar mag zijn.
+Player:
 
-Nieuwe Markdown-pagina
+notes lezen
 
-Een eenvoudige pagina ziet er zo uit:
+authenticated note plaatsen
 
----
-title: Virex-9
-description: Een zwevende vrijhaven en handelsstad.
-tags:
-  - location
-  - virex-9
----
+alleen eigen authenticated notes verwijderen
 
-# Virex-9
+Architect:
 
-Schrijf hier de publieke spelersinformatie.
+notes lezen/plaatsen
 
-Na opslaan bouwt Quartz de pagina automatisch opnieuw wanneer de server met --watch draait.
+iedere note verwijderen
 
-Afbeeldingen
+Ownership is notes.user_id, niet notes.author.
 
-Publieke afbeeldingen staan in:
+Legacy notes van vóór auth kunnen een auteursnaam hebben maar
+user_id = NULL.
 
-content/static/images/
+Sessions
+
+Cookie:
+
+prime_session
+
+Eigenschappen:
+
+HttpOnly
+Path=/
+SameSite=Lax
+
+Server bewaart een hash van het token. Huidige sessieduur: 30 dagen.
+
+Password hashing
+
+Known production constraint: Cloudflare Worker WebCrypto weigerde PBKDF2
+boven 100000 iterations.
+
+Huidige werkende instellingen:
+
+PBKDF2
+SHA-256
+100000 iterations
+32-byte derived key
+random salt
+
+Deze instellingen moeten gelijk blijven in Worker en
+user/password-scripts. Mismatch geeft
+401 Invalid username or password.
+
+D1 schema
+
+notes bevat minimaal:
+
+id
+record_id
+author
+content
+created_at
+user_id
+
+users bevat minimaal:
+
+id
+username
+display_name
+password_hash
+password_salt
+role
+created_at
+
+sessions bevat minimaal:
+
+id
+user_id
+token_hash
+expires_at
+created_at
+
+Local versus remote D1
+
+npx wrangler d1 execute prime-archives --local --command="..."
+
+versus:
+
+npx wrangler d1 execute prime-archives --remote --command="..."
+
+Dit zijn verschillende databases. Controleer de vlag vóór iedere
+mutatie.
+
+Accountbeheer
+
+Password reset:
+
+C:\Echoes of Prime\QuartzSetup\scripts\reset-password.mjs
 
 Voorbeeld:
 
-content/static/images/prime-archives-banner.webp
+node ".\scripts\reset-password.mjs" venn
 
-Gebruik een afbeelding in Markdown of HTML met:
+De reset wijzigt hash + salt en invalideert bestaande sessions; user-ID
+en note-ownership blijven bestaan.
 
-<img
-  src="/static/images/prime-archives-banner.webp"
-  alt="Prime Archives"
-/>
+Provisioning:
 
-De assets-plugin in quartz.config.yaml zorgt ervoor dat bestanden uit content/static/ worden meegenomen in de build.
+C:\Echoes of Prime\QuartzSetup\scripts\provision-users.mjs
 
-Belangrijke pagina's
+Plaintext wachtwoorden horen niet in Git/permanente SQL terecht te
+komen.
 
-/             Landingpage
-/archives     PAT-03 Archive Dashboard
-/404          Eigen Prime Archives foutpagina
+Security invariants
 
-De dashboardtegels verwijzen momenteel onder andere naar:
+Geen publieke /api/auth/register.
 
-/01-universe/
-/02-timeline/
-/04-locations/
-/03-personnel/
-/06-factions/
-/07-systems/
+Browser bepaalt niet de auteur/owner.
 
-Belangrijke codebestanden
+Delete-permission wordt server-side gecontroleerd.
 
-Dashboardcomponenten
+Player verwijdert alleen eigen user_id.
 
-quartz/components/prime/
-â”œâ”€â”€ ArchiveCard.tsx
-â””â”€â”€ ArchiveDashboard.tsx
+Architect mag alle notes verwijderen.
 
-ArchiveCard.tsx bepaalt de opbouw van iedere dashboardtegel.
+Geen plaintext passwords in D1.
 
-ArchiveDashboard.tsx bepaalt welke tegels, teksten en statussen op /archives staan.
+Geen raw session tokens in D1.
 
-Dashboardstyling
+--remote alleen bewust gebruiken.
 
-quartz/styles/
-â”œâ”€â”€ custom.scss
-â”œâ”€â”€ archive-dashboard.scss
-â””â”€â”€ boot-sequence.scss
+Geen wachtwoorden in chat, Git of logs.
 
-custom.scss laadt de eigen stylesheets en bevat algemene site-aanpassingen.
+Canonical Wikilinks
 
-archive-dashboard.scss bevat de volledige PAT-03-dashboardstijl.
+Er is een custom lokale canonical-wikilinks-plugin. Tijdens setup stond
+de bron onder:
 
-boot-sequence.scss bevat het opstartscherm.
+C:\Echoes of Prime\QuartzSetup\canonical-wikilinks-plugin\canonical-wikilinks
 
-Bovenaan custom.scss moeten deze imports aanwezig zijn:
+Bij problemen eerst het werkelijke pad en de Quartz plugin-installatie
+controleren; niet aannemen dat de bron onder
+quartz/plugins/canonical-wikilinks staat.
 
-@use "./variables.scss" as *;
-@use "./archive-dashboard";
-@use "./boot-sequence";
+Contentstructuur
 
-Eigen paginatype
+Publieke Markdown-content staat onder:
 
-quartz/plugins/pageTypes/archives.ts
+content/
 
-Dit bestand zorgt ervoor dat /archives door ArchiveDashboard wordt gerenderd.
+Belangrijke recordtypes:
 
-Het paginatype wordt geÃ«xporteerd via:
+NPC
+Location
+Faction
+System
+Message
+Objective
 
-quartz/plugins/pageTypes/index.ts
+Canonregels:
 
-en toegevoegd aan de ingebouwde paginatypes in:
+YAML-frontmatter;
 
-quartz/plugins/loader/config-loader.ts
+bestaand canon-ID behouden;
 
-Dashboardinhoud aanpassen
+geen DM-only geheimen/spoilers publiceren;
 
-Open:
+ontbrekende lore niet verzinnen;
 
-quartz/components/prime/ArchiveDashboard.tsx
+Obsidian-wikilinks behouden;
 
-Een kaart ziet er bijvoorbeeld zo uit:
+imageLayout niet gokken als onduidelijk.
 
-<ArchiveCard
-  title="Universe"
-  description="History, worlds and cosmic knowledge."
-  href="/01-universe/"
-  icon="â—‰"
-  status="Online"
-/>
+Navigation / maps / messages
 
-Een Field Tool gebruikt:
+Locations:
 
-<ArchiveCard
-  title="Navigation"
-  description="Maps, routes and known destinations."
-  href="/navigation/"
-  icon="âŒ"
-  category="tool"
-  status="Available"
-/>
+quartz/components/prime/navigation/locations.ts
 
-Nieuwe tegels kunnen later op dezelfde manier worden toegevoegd.
+Maps:
 
-Reader Mode
+content/static/maps/
+quartz/components/prime/navigation/maps/
 
-Quartz bewaart Reader Mode als attribuut op het HTML-element:
+Messages:
 
-<html reader-mode="on">
+quartz/components/prime/messages/messages.ts
 
-De speciale Reader Mode-layout voor /archives staat onderaan:
+Bekende housekeeping
 
-quartz/styles/archive-dashboard.scss
+Tijdens builds zijn waarschuwingen gezien:
 
-De daadwerkelijke knopclass is:
+found invalid date "false"
 
-.readermode
+bij enkele faction/message-records. Niet blocker, wel opruimen zodat
+echte toekomstige warnings zichtbaar blijven.
 
-Niet:
+Verder op de lijst:
 
-.reader-mode
+oude/lege Record Notes-resten controleren;
 
-Dit verschil is belangrijk wanneer de styling later wordt aangepast.
+tijdelijke provisioningbestanden/.gitignore controleren;
 
-Huidige functies
+canonical-wikilinks werking controleren;
 
-Eigen landingpage
+reset-password.mjs eventueel expliciete --local/--remote optie
+geven.
 
-Archive Dashboard voor PAT-03
+Mogelijke volgende features
 
-Herbruikbare archive cards
+Squad Annotations eventueel naar Systems.
 
-Public Archives en Field Tools
+Bewust beslissen over Objectives.
 
-Pulserende statuslampjes
+Annotation editing.
 
-Bewegende scan-glare en scanlines
+Centrale login/accountstatus in header/PrimeOS.
 
-Full-width dashboard
+Klein Architect-adminpaneel.
 
-Reader Mode-ondersteuning
+Legacy annotations eventueel koppelen aan echte users.
 
-Boot sequence
+Geen hiervan is nodig voor de huidige baseline.
 
-Eigen 404-pagina
+Debuggingprocedure
 
-GitHub-workflow voor laptop en desktop
+1. Bepaal exact wat kapot is.
+2. Bepaal de laag: Quartz / plugin / browser JS / Worker / D1 / routing.
+3. Reproduceer klein.
+4. Bekijk concrete output/log.
+5. Wijzig één oorzaak.
+6. Test opnieuw.
 
-Eerstvolgende ontwikkeling
+Voor production Worker-problemen:
 
-De eerstvolgende geplande feature is:
+npx wrangler tail echoes-of-prime-lore
 
-Virex-9 Navigation Map
+Dit onthulde tijdens auth-ontwikkeling direct de PBKDF2-limit en is de
+voorkeursroute boven gokken.
 
-Eerste ontdekte locaties:
+Known-good milestone
 
-Iron Halo
+Prime Archives live                         ✓
+Quartz build                                ✓
+Cloudflare Worker                           ✓
+D1 remote                                   ✓
+Squad Annotations NPC                       ✓
+Squad Annotations Locations                 ✓
+Squad Annotations Factions                  ✓
+Lumi / Clav / Dakka / Venn                  ✓
+The Architect                               ✓
+Server-side identity                        ✓
+Player ownership/delete                     ✓
+Architect delete-any                        ✓
+Login/logout/session                        ✓
+Production password reset                   ✓
 
-Coil Market
-
-Skybridge
-
-Docking Spires
-
-De kaart krijgt een generieke cyberstad-achtergrond. Locatiemarkers worden als losse elementen boven de kaart geplaatst, zodat ontdekte locaties later aan- en uitgezet kunnen worden zonder de kaartafbeelding opnieuw te bewerken.
-
-Handige commando's
-
-Lokale server
-
-npx quartz build --serve --watch
-
-Alleen bouwen
-
-npx quartz build
-
-Git-status
-
-git status
-
-Laatste wijzigingen ophalen
-
-git pull origin v5
-
-Alles opslaan in Git
-
-git add .
-git commit -m "beschrijving"
-git push origin v5
-
-Huidige branch bekijken
-
-git branch --show-current
-
-Node en npm controleren
-
-node -v
-npm -v
-
-Belangrijke afspraken
-
-v5 is voorlopig de actieve hoofdbranch.
-
-Voeg alleen player-safe content toe aan content/.
-
-Bewerk nooit handmatig public/.
-
-Grote componentbestanden en stylesheets bij voorkeur volledig vervangen in plaats van veel losse patches stapelen.
-
-Maak voor iedere werkende mijlpaal een commit en push.
+Als een toekomstige wijziging één van bovenstaande breekt, is dat een
+regressie.

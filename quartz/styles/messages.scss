@@ -497,3 +497,107 @@
     animation: none;
   }
 }
+/* ==========================================================================
+   PRIME MAIL — PERSONAL READ STATE
+   ========================================================================== */
+
+/* Default / gelezen bericht */
+.prime-mail-item {
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+/* UNREAD — duidelijk zichtbaar vóór openen */
+.prime-mail-item--unread {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(100, 215, 255, 0.105),
+      rgba(100, 215, 255, 0.025)
+    );
+
+  box-shadow:
+    inset 3px 0 0 rgba(100, 215, 255, 0.85);
+}
+
+/* Unread indicator */
+.prime-mail-item--unread
+  .prime-mail-item__indicator {
+  background: #64d7ff;
+
+  box-shadow:
+    0 0 7px #64d7ff,
+    0 0 18px rgba(100, 215, 255, 0.65);
+}
+
+/* Afzender duidelijker bij unread */
+.prime-mail-item--unread
+  .prime-mail-item__top strong {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* Subject duidelijker bij unread */
+.prime-mail-item--unread
+  .prime-mail-item__content > p {
+  color: #e8f8ff;
+  font-weight: 700;
+}
+
+/* Dynamische UNREAD badge */
+.prime-mail-item
+  [data-message-read-flag] {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 18px;
+  padding: 0.12rem 0.42rem;
+
+  border: 1px solid rgba(100, 215, 255, 0.45);
+  border-radius: 3px;
+
+  background: rgba(100, 215, 255, 0.12);
+
+  color: #8fe6ff;
+
+  font-family: var(--codeFont);
+  font-size: 0.48rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+/*
+ * HTML hidden attribute moet dominant blijven.
+ * Anders zou bovenstaande display:inline-flex hem alsnog tonen.
+ */
+.prime-mail-item
+  [data-message-read-flag][hidden] {
+  display: none !important;
+}
+
+/* Gelezen berichten iets rustiger maken */
+.prime-mail-item:not(.prime-mail-item--unread)
+  .prime-mail-item__content > p {
+  color: #8fa1af;
+}
+
+.prime-mail-item:not(.prime-mail-item--unread)
+  .prime-mail-item__top strong {
+  color: #b9c4cc;
+}
+
+/* Maar corrupted blijft visueel belangrijk */
+.prime-mail-item--corrupted {
+  opacity: 1;
+}
+
+/* Selected state mag altijd boven read-state uitkomen */
+.prime-mail-item:hover {
+  opacity: 1;
+}
