@@ -10,6 +10,7 @@ import { buildVirex9Map } from "./navigation/maps/virex9"
 import Messages from "./messages/messages"
 import Objectives from "./objectives/objectives"
 import AudioArchive, { audioArchiveAfterDOMLoaded } from "./audio/AudioArchive"
+import PrimeAuth from "./PrimeAuth"
 
 const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
   const virex9Map = buildVirex9Map(props.allFiles)
@@ -41,6 +42,25 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
 
             #objectives-toggle:checked ~ .prime-app--objectives {
               display: block;
+            }
+
+            .archive-dashboard__system-panel {
+              display: flex;
+              width: min(340px, 100%);
+              flex-direction: column;
+              gap: 0.85rem;
+            }
+
+            .archive-dashboard__system-panel
+              .archive-dashboard__device {
+              width: 100%;
+              margin: 0;
+            }
+
+            @media all and (max-width: 800px) {
+              .archive-dashboard__system-panel {
+                width: 100%;
+              }
             }
 
             .prime-audio {
@@ -646,37 +666,41 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
             </p>
           </div>
 
-          <dl class="archive-dashboard__device">
-            <div>
-              <dt>
-                Device
-              </dt>
+          <div class="archive-dashboard__system-panel">
+            <PrimeAuth />
 
-              <dd>
-                PAT-03
-              </dd>
-            </div>
+            <dl class="archive-dashboard__device">
+              <div>
+                <dt>
+                  Device
+                </dt>
 
-            <div>
-              <dt>
-                Clearance
-              </dt>
+                <dd>
+                  PAT-03
+                </dd>
+              </div>
 
-              <dd>
-                Public
-              </dd>
-            </div>
+              <div>
+                <dt>
+                  Clearance
+                </dt>
 
-            <div>
-              <dt>
-                Firmware
-              </dt>
+                <dd>
+                  Public
+                </dd>
+              </div>
 
-              <dd>
-                1.0
-              </dd>
-            </div>
-          </dl>
+              <div>
+                <dt>
+                  Firmware
+                </dt>
+
+                <dd>
+                  1.0
+                </dd>
+              </div>
+            </dl>
+          </div>
         </header>
 
         <section class="archive-dashboard__section">
