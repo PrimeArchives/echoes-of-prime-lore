@@ -93,26 +93,6 @@ Kaela kwam op [[Skybridges|Skybridge-03]] in conflict met Warden **Silas Korr**.
 - [[Isha Morn]] — Eigenaresse van de Verdant Exchange en contact van de Rustfront.
 - [[Kaela Thorn]] — verbonden aan de rustfront 
 
-### Older / Unverified Lore
-
-De volgende elementen komen uit oudere Rustfront-notities en moeten opnieuw worden beoordeeld voordat ze als actuele canon gelden:
-
-- Lyra Voss — “De Roestmoeder”
-- Erek Talon — “De IJzervogel”
-- Mira Dall — “De Sporeseer”
-- De Wortels
-- De Stroom
-- De Schors
-- Het Zaad
-- Rustborn
-- Spore Children
-- De Zes Roestwetten
-- Het Boek van De Groene Hergeboorte
-- Rustfront contactritueel via geplaatste schimmels
-- Guild joining ritual
-- The Rustblight / Roestvloek
-- oude reputation rewards en penalties
-
 ### Reputation Direction
 
 **Focus:** ecologische zuivering, herstel en symbiose.
