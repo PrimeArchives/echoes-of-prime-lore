@@ -4,7 +4,8 @@ id: NPC-006
 type: npc
 species: Human
 role: Captain of the local Warden Guilds
-location: The Iron Halo
+location: The Iron Halo
+
 archiveRegion: Virex-9
 aliases:
   - Captain Vynn Correll
@@ -35,6 +36,7 @@ imageLayout: wide
     <label for="vyn-corell-image-2">a barman</label>
   </div>
 </div>
+
 # Captain Vynn Correll
 
 > *"Orde bestaat alleen zolang niemand oplet."*

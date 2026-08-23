@@ -54,6 +54,50 @@ const authClientScript = String.raw`
       const authenticated =
         Boolean(state.user)
 
+      const operative =
+        authenticated
+          ? String(
+              state.user.display_name ??
+                state.user.username ??
+                "OPERATIVE",
+            ).toUpperCase()
+          : "UNAUTHENTICATED"
+
+      const clearance =
+        authenticated
+          ? state.user.role === "architect"
+            ? "ARCHITECT"
+            : "FIELD OPERATIVE"
+          : "PUBLIC"
+
+      document
+        .querySelectorAll(
+          "[data-prime-operative]",
+        )
+        .forEach((element) => {
+          if (
+            element instanceof
+            HTMLElement
+          ) {
+            element.textContent =
+              operative
+          }
+        })
+
+      document
+        .querySelectorAll(
+          "[data-prime-clearance]",
+        )
+        .forEach((element) => {
+          if (
+            element instanceof
+            HTMLElement
+          ) {
+            element.textContent =
+              clearance
+          }
+        })
+
       if (guest instanceof HTMLElement) {
         guest.hidden = authenticated
       }

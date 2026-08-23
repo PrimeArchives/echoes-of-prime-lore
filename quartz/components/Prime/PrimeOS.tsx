@@ -11,6 +11,7 @@ import Messages from "./messages/messages"
 import Objectives from "./objectives/objectives"
 import AudioArchive, { audioArchiveAfterDOMLoaded } from "./audio/AudioArchive"
 import PrimeAuth from "./PrimeAuth"
+import Universe from "./universe/universe"
 
 
 const primeMessageSummaryScript = String.raw`
@@ -189,6 +190,32 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
 
             .prime-boot:target {
               display: grid !important;
+            }
+
+            #universe-toggle:checked ~ .prime-app--universe {
+              display: block;
+            }
+
+            .archive-card__inline-online {
+              display: inline-flex;
+              align-items: center;
+              gap: 0.45rem;
+              color: #73f5ae;
+              font-family: var(--codeFont);
+              font-size: inherit;
+              font-weight: 800;
+              letter-spacing: inherit;
+              text-transform: uppercase;
+            }
+
+            .archive-card__inline-online::before {
+              width: 7px;
+              height: 7px;
+              flex: 0 0 7px;
+              border-radius: 50%;
+              background: #73f5ae;
+              box-shadow: 0 0 10px rgba(115, 245, 174, 0.72);
+              content: "";
             }
 
             #messages-toggle:checked ~ .prime-app--messages {
@@ -776,6 +803,13 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
       />
 
       <input
+        id="universe-toggle"
+        class="prime-app-toggle"
+        type="checkbox"
+        aria-hidden="true"
+      />
+
+      <input
         id="navigation-toggle"
         class="prime-app-toggle"
         type="checkbox"
@@ -863,21 +897,21 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
             <dl class="archive-dashboard__device">
               <div>
                 <dt>
-                  Device
+                  Operative
                 </dt>
 
-                <dd>
-                  PAT-03
+                <dd data-prime-operative>
+                  UNAUTHENTICATED
                 </dd>
               </div>
 
               <div>
                 <dt>
-                  Clearance
+                  Access Level
                 </dt>
 
-                <dd>
-                  Public
+                <dd data-prime-clearance>
+                  PUBLIC
                 </dd>
               </div>
 
@@ -887,7 +921,7 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
                 </dt>
 
                 <dd>
-                  1.0
+                  1.4
                 </dd>
               </div>
             </dl>
@@ -906,13 +940,47 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
           </div>
 
           <div class="archive-dashboard__grid">
-            <ArchiveCard
-              title="Universe"
-              description="History, worlds and cosmic knowledge."
-              href="/01-universe/"
-              icon="◉"
-              status="Online"
-            />
+            <label
+              for="universe-toggle"
+              class="archive-card prime-app-launcher"
+            >
+              <div class="archive-card-top">
+                <span class="archive-label">
+                  DATABASE MODULE
+                </span>
+
+                <span
+                  class="archive-led"
+                  aria-hidden="true"
+                ></span>
+              </div>
+
+              <div class="archive-card-header">
+                <div class="archive-card-icon">
+                  ◉
+                </div>
+
+                <div>
+                  <h3>
+                    Universe
+                  </h3>
+
+                  <p>
+                    History, worlds and cosmic knowledge.
+                  </p>
+                </div>
+              </div>
+
+              <div class="archive-card-footer">
+                <span class="archive-card__inline-online">
+                  ONLINE
+                </span>
+
+                <span class="archive-open">
+                  OPEN →
+                </span>
+              </div>
+            </label>
 
             <ArchiveCard
               title="Locations"
@@ -1161,8 +1229,8 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
               Access Level
             </span>
 
-            <strong>
-              Public
+            <strong data-prime-clearance>
+              PUBLIC
             </strong>
           </div>
 
@@ -1177,6 +1245,36 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
           </div>
         </footer>
       </main>
+
+      <section
+        class="prime-app prime-app--universe"
+        aria-label="Universe database"
+      >
+        <div class="prime-app__shell">
+          <header class="prime-app__topbar">
+            <div>
+              <span class="prime-app__system">
+                PAT-03 / DATABASE MODULE
+              </span>
+
+              <strong>
+                Universe
+              </strong>
+            </div>
+
+            <label
+              for="universe-toggle"
+              class="prime-app__close"
+              aria-label="Return to Archive Index"
+              title="Return to Archive Index"
+            >
+              ×
+            </label>
+          </header>
+
+          <Universe allFiles={props.allFiles ?? []} />
+        </div>
+      </section>
 
       <section
         class="prime-app prime-app--navigation"
