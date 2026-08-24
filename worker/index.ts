@@ -15,6 +15,15 @@ interface SessionUser {
 const SESSION_COOKIE = "prime_session"
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30
 
+const RESTRICTED_ARCHIVE_ROUTES: Record<string, string[]> = {
+  "/04-factions/the-frequency": ["architect", "lumi"],
+}
+
+function normalizeArchivePath(pathname: string) {
+  const normalized = pathname.replace(/\/+/g, "/").replace(/\/$/, "")
+  return normalized || "/"
+}
+
 function json(data: unknown, init: ResponseInit = {}) {
   const headers = new Headers(init.headers)
   headers.set("Content-Type", "application/json; charset=utf-8")
@@ -747,6 +756,28 @@ export default {
       return json({
         success: true,
       })
+    }
+
+    // ============================================================
+    // RESTRICTED ARCHIVE ROUTES
+    // ============================================================
+
+    const archivePath = normalizeArchivePath(url.pathname)
+    const allowedUsers = RESTRICTED_ARCHIVE_ROUTES[archivePath]
+
+    if (allowedUsers) {
+      const user = await getSessionUser(request, env)
+      const username = user?.username?.trim().toLowerCase() ?? ""
+
+      if (!username || !allowedUsers.includes(username)) {
+        return new Response("Not Found", {
+          status: 404,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "no-store",
+          },
+        })
+      }
     }
 
     // ============================================================

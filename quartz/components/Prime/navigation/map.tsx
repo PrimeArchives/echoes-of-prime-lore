@@ -566,7 +566,7 @@ export default function Map({ map }: MapProps) {
               const root = document.currentScript?.closest(".navigation-map")
               if (!root) return
 
-              const storageKey = "prime-navigation-destination"
+              const storageKey = "prime-navigation-destination-${map.id}"
               const hashParams = new URLSearchParams(
                 window.location.hash.replace(/^#/, ""),
               )

@@ -97,6 +97,16 @@ function regionToken(value: string) {
   return cssToken(value.toLowerCase())
 }
 
+function stringList(value: unknown) {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : []
+}
+
+function isRestricted(frontmatter: Record<string, unknown> | undefined) {
+  return text(frontmatter?.visibility)?.toLowerCase() === "restricted"
+}
+
 const ArchiveRegistry: QuartzComponent = ({
   fileData,
   allFiles,
@@ -199,7 +209,7 @@ const ArchiveRegistry: QuartzComponent = ({
           <h2>{config.title}</h2>
         </div>
 
-        <strong>
+        <strong id="prime-registry-record-count">
           {records.length} {records.length === 1 ? "RECORD" : "RECORDS"}
         </strong>
       </div>
@@ -378,6 +388,8 @@ const ArchiveRegistry: QuartzComponent = ({
         <div class="prime-registry__grid">
           {records.map((page) => {
             const fm = page.frontmatter ?? {}
+            const restricted = config.kind === "factions" && isRestricted(fm)
+            const allowedUsers = restricted ? stringList(fm.allowedUsers) : []
 
             const title =
               text(fm.title) ??
@@ -424,6 +436,9 @@ const ArchiveRegistry: QuartzComponent = ({
                 <article
                   class="prime-registry-card prime-registry-card--faction"
                   data-faction-id={factionId}
+                  data-archive-visibility={restricted ? "restricted" : "public"}
+                  data-allowed-users={allowedUsers.join(",")}
+                  hidden={restricted}
                 >
                   <div class="prime-registry-card__top">
                     <span>{config.cardLabel}</span>
@@ -471,7 +486,7 @@ const ArchiveRegistry: QuartzComponent = ({
                   <div class="prime-faction-card__bottom">
                     <div class="prime-faction-card__intel">
                       <span>ARCHIVE STATUS</span>
-                      <strong>PUBLIC DOSSIER</strong>
+                      <strong>{restricted ? "RESTRICTED DOSSIER" : "PUBLIC DOSSIER"}</strong>
                     </div>
 
                     <a
@@ -527,6 +542,60 @@ const ArchiveRegistry: QuartzComponent = ({
             )
           })}
         </div>
+      )}
+
+      {config.kind === "factions" && (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (() => {
+                const applyFactionAccess = async () => {
+                  const cards = Array.from(
+                    document.querySelectorAll('[data-archive-visibility="restricted"]')
+                  )
+
+                  let username = ""
+
+                  try {
+                    const response = await fetch('/api/auth/me', {
+                      credentials: 'same-origin',
+                      cache: 'no-store',
+                    })
+
+                    if (response.ok) {
+                      const payload = await response.json()
+                      username = String(payload?.user?.username ?? payload?.username ?? '')
+                        .trim()
+                        .toLowerCase()
+                    }
+                  } catch (_) {}
+
+                  for (const card of cards) {
+                    const allowed = String(card.getAttribute('data-allowed-users') ?? '')
+                      .split(',')
+                      .map((value) => value.trim().toLowerCase())
+                      .filter(Boolean)
+
+                    card.hidden = !username || !allowed.includes(username)
+                  }
+
+                  const visibleCards = Array.from(
+                    document.querySelectorAll('.prime-registry-card')
+                  ).filter((card) => !card.hidden)
+
+                  const count = document.getElementById('prime-registry-record-count')
+                  if (count) {
+                    count.textContent = visibleCards.length + ' ' + (visibleCards.length === 1 ? 'RECORD' : 'RECORDS')
+                  }
+                }
+
+                applyFactionAccess()
+                document.addEventListener('nav', applyFactionAccess)
+                window.addEventListener('prime-auth-changed', applyFactionAccess)
+              })()
+            `,
+          }}
+        />
       )}
     </main>
   )
@@ -588,6 +657,10 @@ ArchiveRegistry.css = `
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   width: 100%;
+}
+
+.prime-registry-card[data-archive-visibility="restricted"][hidden] {
+  display: none !important;
 }
 
 .prime-registry-card {

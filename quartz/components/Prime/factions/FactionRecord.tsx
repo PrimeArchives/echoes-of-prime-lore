@@ -25,6 +25,8 @@ type FactionFrontmatter = {
   reputationSystem?: boolean
   theme?: FactionTheme
   published?: boolean
+  visibility?: "public" | "restricted"
+  allowedUsers?: string[]
 }
 
 function text(value: unknown) {
@@ -107,6 +109,7 @@ const FactionRecord: QuartzComponent = ({
     text(fm.description) ??
     "No public faction summary is currently available."
   const image = text(fm.image)
+  const restricted = text(fm.visibility)?.toLowerCase() === "restricted"
 
   const primary = safeCssValue(text(fm.theme?.primary) ?? "#8f9699")
   const secondary = safeCssValue(text(fm.theme?.secondary) ?? "#403b37")
@@ -174,7 +177,7 @@ const FactionRecord: QuartzComponent = ({
 
               <div>
                 <span>ARCHIVE STATUS</span>
-                <strong>PUBLIC DOSSIER</strong>
+                <strong>{restricted ? "RESTRICTED DOSSIER" : "PUBLIC DOSSIER"}</strong>
               </div>
             </div>
           </div>

@@ -5,8 +5,7 @@ import {
 } from "../types"
 
 import ArchiveCard from "./ArchiveCard"
-import Map from "./navigation/map"
-import { buildVirex9Map } from "./navigation/maps/virex9"
+import Navigation from "./navigation/navigation"
 import Messages from "./messages/messages"
 import Objectives from "./objectives/objectives"
 import AudioArchive, { audioArchiveAfterDOMLoaded } from "./audio/AudioArchive"
@@ -172,8 +171,278 @@ const primeMessageSummaryScript = String.raw`
 })()
 `
 
+
+const PRIME_SIGNAL_LOST = false
+
+const SignalLost = () => (
+  <main class="prime-signal-lost" role="status" aria-live="polite">
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          .prime-signal-lost {
+            position: fixed;
+            z-index: 999999;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 1.25rem;
+            box-sizing: border-box;
+            overflow: hidden;
+            background:
+              radial-gradient(circle at 50% 42%, rgba(255, 74, 95, 0.07), transparent 28rem),
+              linear-gradient(180deg, #070a0e 0%, #030507 100%);
+            color: #dbe4ea;
+            font-family: var(--codeFont);
+          }
+
+          .prime-signal-lost::before {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+              0deg,
+              rgba(255,255,255,0.018) 0,
+              rgba(255,255,255,0.018) 1px,
+              transparent 1px,
+              transparent 4px
+            );
+            content: "";
+          }
+
+          .prime-signal-lost__frame {
+            position: relative;
+            z-index: 1;
+            width: min(900px, 100%);
+            padding: clamp(1.4rem, 4vw, 2.8rem);
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 78, 99, 0.32);
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(17,22,28,0.94), rgba(8,11,15,0.98));
+            box-shadow:
+              0 28px 90px rgba(0,0,0,0.58),
+              inset 0 0 45px rgba(255,74,95,0.025);
+          }
+
+          .prime-signal-lost__header,
+          .prime-signal-lost__footer {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+          }
+
+          .prime-signal-lost__header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,78,99,0.16);
+          }
+
+          .prime-signal-lost__eyebrow,
+          .prime-signal-lost__stamp,
+          .prime-signal-lost__status dt,
+          .prime-signal-lost__footer,
+          .prime-signal-lost__attempt {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+          }
+
+          .prime-signal-lost__eyebrow {
+            margin: 0 0 0.35rem;
+            color: #778895;
+            font-size: 0.52rem;
+            font-weight: 900;
+          }
+
+          .prime-signal-lost__header strong {
+            color: #d9e3e9;
+            font-size: 0.82rem;
+          }
+
+          .prime-signal-lost__stamp {
+            color: #ff596e;
+            font-size: 0.48rem;
+            font-weight: 900;
+          }
+
+          .prime-signal-lost__core {
+            padding: clamp(2rem, 6vw, 4.5rem) 0 2.6rem;
+            text-align: center;
+          }
+
+          .prime-signal-lost__code {
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            color: #ff596e;
+            font-size: 0.5rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+          }
+
+          .prime-signal-lost h1 {
+            margin: 0;
+            color: #ff6679;
+            font-size: clamp(3.3rem, 10vw, 7.4rem);
+            line-height: 0.9;
+            letter-spacing: -0.055em;
+            text-shadow: 0 0 20px rgba(255,74,95,0.18);
+          }
+
+          .prime-signal-lost__subtitle {
+            margin: 1.25rem auto 0;
+            color: #a7b3bc;
+            font-size: clamp(0.78rem, 2vw, 1rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+          }
+
+          .prime-signal-lost__status {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin: 0;
+            border-top: 1px solid rgba(255,78,99,0.13);
+            border-bottom: 1px solid rgba(255,78,99,0.13);
+          }
+
+          .prime-signal-lost__status > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-width: 0;
+            padding: 0.8rem 0.9rem;
+            border-right: 1px solid rgba(255,78,99,0.08);
+            border-bottom: 1px solid rgba(255,78,99,0.08);
+          }
+
+          .prime-signal-lost__status > div:nth-child(2n) {
+            border-right: 0;
+          }
+
+          .prime-signal-lost__status > div:nth-last-child(-n + 2) {
+            border-bottom: 0;
+          }
+
+          .prime-signal-lost__status dt {
+            color: #697a86;
+            font-size: 0.43rem;
+            font-weight: 900;
+          }
+
+          .prime-signal-lost__status dd {
+            margin: 0;
+            color: #d4dee4;
+            font-size: 0.6rem;
+            font-weight: 800;
+            text-align: right;
+          }
+
+          .prime-signal-lost__status dd[data-error="true"] {
+            color: #ff6a7c;
+          }
+
+          .prime-signal-lost__attempt {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1.6rem;
+            color: #738591;
+            font-size: 0.48rem;
+            font-weight: 800;
+          }
+
+          .prime-signal-lost__dots span {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            margin-left: 0.28rem;
+            border-radius: 50%;
+            background: #ff596e;
+            animation: primeSignalPulse 1.35s ease-in-out infinite;
+          }
+
+          .prime-signal-lost__dots span:nth-child(2) { animation-delay: 0.18s; }
+          .prime-signal-lost__dots span:nth-child(3) { animation-delay: 0.36s; }
+
+          .prime-signal-lost__footer {
+            margin-top: 1.6rem;
+            color: #5f707c;
+            font-size: 0.43rem;
+            font-weight: 800;
+          }
+
+          .prime-signal-lost__footer strong { color: #8a9aa5; }
+
+          @keyframes primeSignalPulse {
+            0%, 100% { opacity: 0.18; transform: translateY(0); }
+            50% { opacity: 0.95; transform: translateY(-2px); }
+          }
+
+          @media all and (max-width: 650px) {
+            .prime-signal-lost__status { grid-template-columns: 1fr; }
+
+            .prime-signal-lost__status > div,
+            .prime-signal-lost__status > div:nth-child(2n),
+            .prime-signal-lost__status > div:nth-last-child(-n + 2) {
+              border-right: 0;
+              border-bottom: 1px solid rgba(255,78,99,0.08);
+            }
+
+            .prime-signal-lost__status > div:last-child { border-bottom: 0; }
+            .prime-signal-lost__footer { flex-direction: column; }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .prime-signal-lost__dots span { animation: none; }
+          }
+        `,
+      }}
+    />
+
+    <section class="prime-signal-lost__frame">
+      <header class="prime-signal-lost__header">
+        <div>
+          <p class="prime-signal-lost__eyebrow">PRIME ARCHIVES TERMINAL</p>
+          <strong>PAT-03 // OFFLINE MODE</strong>
+        </div>
+        <span class="prime-signal-lost__stamp">ERROR // 0x13</span>
+      </header>
+
+      <div class="prime-signal-lost__core">
+        <span class="prime-signal-lost__code">ARCHIVE NETWORK UNREACHABLE</span>
+        <h1>SIGNAL LOST</h1>
+        <p class="prime-signal-lost__subtitle">
+          Relay path unavailable. Positional lock could not be established.
+        </p>
+      </div>
+
+      <dl class="prime-signal-lost__status">
+        <div><dt>LAST KNOWN RELAY</dt><dd>VIREX-9</dd></div>
+        <div><dt>ARCHIVE UPLINK</dt><dd data-error="true">LOST</dd></div>
+        <div><dt>POSITIONAL DATA</dt><dd data-error="true">UNKNOWN</dd></div>
+        <div><dt>LOCAL CACHE</dt><dd>DEGRADED</dd></div>
+        <div><dt>TIME SYNC</dt><dd data-error="true">FAILED</dd></div>
+        <div><dt>ENVIRONMENTAL FEED</dt><dd>NO CARRIER</dd></div>
+      </dl>
+
+      <div class="prime-signal-lost__attempt">
+        ATTEMPTING RECONNECTION
+        <span class="prime-signal-lost__dots" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </div>
+
+      <footer class="prime-signal-lost__footer">
+        <span>Prime Archives network services unavailable</span>
+        <strong>FIRMWARE 1.5</strong>
+      </footer>
+    </section>
+  </main>
+)
+
 const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
-  const virex9Map = buildVirex9Map(props.allFiles)
+  if (PRIME_SIGNAL_LOST) {
+    return <SignalLost />
+  }
 
   return (
     <>
@@ -921,7 +1190,7 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
                 </dt>
 
                 <dd>
-                  1.4
+                  1.5
                 </dd>
               </div>
             </dl>
@@ -1302,7 +1571,7 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
             </label>
           </header>
 
-          <Map map={virex9Map} />
+          <Navigation allFiles={props.allFiles ?? []} />
         </div>
       </section>
 

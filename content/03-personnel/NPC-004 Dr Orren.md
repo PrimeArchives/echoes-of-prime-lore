@@ -1,7 +1,7 @@
 ---
 title: Dr. Orren
 id: NPC-004
-type: npc vendor
+type: npc
 species: Tiefling
 role: Chemist
 location: The Coil Market
