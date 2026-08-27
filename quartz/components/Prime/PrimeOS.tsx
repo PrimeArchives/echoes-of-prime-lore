@@ -172,7 +172,7 @@ const primeMessageSummaryScript = String.raw`
 `
 
 
-const PRIME_SIGNAL_LOST = false
+const PRIME_SIGNAL_LOST = true
 
 const SignalLost = () => (
   <main class="prime-signal-lost" role="status" aria-live="polite">

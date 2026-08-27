@@ -13,6 +13,8 @@ function navigationKey(value: string) {
     .replace(/^-+|-+$/g, "")
 }
 
+const MAP_DEBUG = false
+
 export default function Map({ map }: MapProps) {
   const discoveredLocations = map.locations.filter(
     (location) => location.discovered,
@@ -110,8 +112,10 @@ export default function Map({ map }: MapProps) {
     })
     .join("\n")
 
+  const debugId = `map-debug-${map.id}`
+
   return (
-    <section class="navigation-map">
+    <section class="navigation-map" data-map-debug={MAP_DEBUG ? "true" : "false"}>
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -660,6 +664,246 @@ export default function Map({ map }: MapProps) {
           `,
         }}
       />
+      {MAP_DEBUG && (
+        <>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+                [data-map-debug="true"] {
+                  position: relative;
+                }
+
+                .map-debugger {
+                  position: fixed;
+                  z-index: 999999;
+                  right: 1rem;
+                  bottom: 1rem;
+                  width: min(330px, calc(100vw - 2rem));
+                  padding: 0.9rem;
+                  border: 1px solid rgba(100, 215, 255, 0.38);
+                  border-radius: 10px;
+                  background: rgba(5, 10, 15, 0.96);
+                  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42);
+                  color: #dce8ef;
+                  font-family: var(--codeFont);
+                }
+
+                .map-debugger__title {
+                  display: flex;
+                  justify-content: space-between;
+                  gap: 1rem;
+                  margin-bottom: 0.65rem;
+                  color: #64d7ff;
+                  font-size: 0.58rem;
+                  font-weight: 900;
+                  letter-spacing: 0.1em;
+                  text-transform: uppercase;
+                }
+
+                .map-debugger__coords {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 0.5rem;
+                  margin-bottom: 0.65rem;
+                }
+
+                .map-debugger__coords div {
+                  padding: 0.55rem 0.65rem;
+                  border: 1px solid rgba(100, 215, 255, 0.13);
+                  border-radius: 7px;
+                  background: rgba(100, 215, 255, 0.03);
+                }
+
+                .map-debugger__coords span {
+                  display: block;
+                  margin-bottom: 0.15rem;
+                  color: #6f8492;
+                  font-size: 0.42rem;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                }
+
+                .map-debugger__coords strong {
+                  color: #eefaff;
+                  font-size: 0.8rem;
+                }
+
+                .map-debugger__yaml {
+                  width: 100%;
+                  min-height: 72px;
+                  box-sizing: border-box;
+                  padding: 0.65rem;
+                  border: 1px solid rgba(100, 215, 255, 0.14);
+                  border-radius: 7px;
+                  resize: none;
+                  background: #071018;
+                  color: #bfeeff;
+                  font: inherit;
+                  font-size: 0.58rem;
+                  line-height: 1.5;
+                }
+
+                .map-debugger__hint {
+                  margin: 0.55rem 0 0 !important;
+                  color: #7d909d;
+                  font-size: 0.46rem;
+                  line-height: 1.45;
+                }
+
+                [data-map-debug="true"] .navigation-map__markers {
+                  pointer-events: none;
+                }
+
+                [data-map-debug="true"] .navigation-map__markers label,
+                [data-map-debug="true"] .navigation-map__markers button,
+                [data-map-debug="true"] .navigation-map__markers a {
+                  pointer-events: auto;
+                }
+
+                .map-debug-crosshair {
+                  position: absolute;
+                  z-index: 50;
+                  width: 18px;
+                  height: 18px;
+                  transform: translate(-50%, -50%);
+                  pointer-events: none;
+                }
+
+                .map-debug-crosshair::before,
+                .map-debug-crosshair::after {
+                  position: absolute;
+                  background: #ff5f7a;
+                  box-shadow: 0 0 8px rgba(255, 95, 122, 0.55);
+                  content: "";
+                }
+
+                .map-debug-crosshair::before {
+                  left: 8px;
+                  top: 0;
+                  width: 2px;
+                  height: 18px;
+                }
+
+                .map-debug-crosshair::after {
+                  left: 0;
+                  top: 8px;
+                  width: 18px;
+                  height: 2px;
+                }
+              `,
+            }}
+          />
+
+          <div
+            id={debugId}
+            class="map-debugger"
+            data-map-debugger
+            data-map-id={map.id}
+          >
+            <div class="map-debugger__title">
+              <span>MAP MARKER DEBUG</span>
+              <strong>{map.name}</strong>
+            </div>
+
+            <div class="map-debugger__coords">
+              <div>
+                <span>X</span>
+                <strong data-map-debug-x>--</strong>
+              </div>
+
+              <div>
+                <span>Y</span>
+                <strong data-map-debug-y>--</strong>
+              </div>
+            </div>
+
+            <textarea
+              class="map-debugger__yaml"
+              data-map-debug-yaml
+              readOnly
+              value={"Click the map to sample coordinates."}
+            />
+
+            <p class="map-debugger__hint">
+              Click anywhere on the map. Coordinates are percentages and can be pasted directly into NAV YAML.
+            </p>
+          </div>
+
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (() => {
+                  const debuggerPanel = document.getElementById('${debugId}')
+                  if (!debuggerPanel) return
+
+                  const mapRoot = debuggerPanel.closest('.prime-map, .navigation-map, [data-map-debug="true"]') || document
+                  const candidates = Array.from(
+                    mapRoot.querySelectorAll('img, .navigation-map__image, .prime-map__image, [data-map-image]')
+                  )
+
+                  const image =
+                    candidates.find((node) => node instanceof HTMLImageElement) ||
+                    candidates[0]
+
+                  if (!(image instanceof HTMLElement)) return
+
+                  const xEl = debuggerPanel.querySelector('[data-map-debug-x]')
+                  const yEl = debuggerPanel.querySelector('[data-map-debug-y]')
+                  const yamlEl = debuggerPanel.querySelector('[data-map-debug-yaml]')
+
+                  let crosshair = mapRoot.querySelector('.map-debug-crosshair')
+
+                  if (!crosshair) {
+                    crosshair = document.createElement('div')
+                    crosshair.className = 'map-debug-crosshair'
+                    image.parentElement?.appendChild(crosshair)
+                  }
+
+                  const viewport =
+                    image.closest('.navigation-map__viewport') ||
+                    image.parentElement
+
+                  if (!(viewport instanceof HTMLElement)) return
+
+                  viewport.style.cursor = 'crosshair'
+
+                  viewport.addEventListener('click', (event) => {
+                    const rect = image.getBoundingClientRect()
+
+                    if (
+                      event.clientX < rect.left ||
+                      event.clientX > rect.right ||
+                      event.clientY < rect.top ||
+                      event.clientY > rect.bottom
+                    ) {
+                      return
+                    }
+
+                    const x = ((event.clientX - rect.left) / rect.width) * 100
+                    const y = ((event.clientY - rect.top) / rect.height) * 100
+
+                    const xFixed = Math.max(0, Math.min(100, x)).toFixed(2)
+                    const yFixed = Math.max(0, Math.min(100, y)).toFixed(2)
+
+                    if (xEl) xEl.textContent = xFixed
+                    if (yEl) yEl.textContent = yFixed
+
+                    if (yamlEl instanceof HTMLTextAreaElement) {
+                      yamlEl.value = 'x: ' + xFixed + '\\ny: ' + yFixed
+                    }
+
+                    if (crosshair instanceof HTMLElement) {
+                      crosshair.style.left = xFixed + '%'
+                      crosshair.style.top = yFixed + '%'
+                    }
+                  }, true)
+                })()
+              `,
+            }}
+          />
+        </>
+      )}
+
     </section>
   )
 }

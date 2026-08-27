@@ -287,3 +287,27 @@ Geen publieke /api/auth/register.
 Wachtwoorden nooit in Git, SQL-bestanden of chat/logs bewaren.
 
 Na een stabiele mijlpaal committen.
+
+PrimeOS.tsx
+  PRIME_SIGNAL_LOST
+      true  = SIGNAL LOST
+      false = normale site
+
+navigation/map.tsx
+  MAP_DEBUG
+      true  = klik voor X/Y coordinates
+      false = normale player map
+
+Restricted lore
+  visibility: restricted
+  allowedUsers:
+    - architect
+    - lumi
+
+Firmware
+  huidige development state = 1.5
+
+Frozen Lattice
+  lokaal voorbereid
+  campaign-sensitive
+  NIET gedachteloos pushen
