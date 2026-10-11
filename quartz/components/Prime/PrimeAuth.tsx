@@ -61,7 +61,7 @@ const authClientScript = String.raw`
                 state.user.username ??
                 "OPERATIVE",
             ).toUpperCase()
-          : "UNAUTHENTICATED"
+          : "UNINLOGGEND"
 
       const clearance =
         authenticated
@@ -123,7 +123,7 @@ const authClientScript = String.raw`
         role.textContent =
           state.user.role === "architect"
             ? "ARCHITECT CLEARANCE"
-            : "OPERATIVE AUTHENTICATED"
+            : "ACCOUNT AANGEMELD"
       }
     })
   }
@@ -437,6 +437,8 @@ const authClientScript = String.raw`
 })()
 `
 
+export const primeAuthAfterDOMLoaded = authClientScript
+
 export default function PrimeAuth() {
   return (
     <div
@@ -694,7 +696,7 @@ export default function PrimeAuth() {
             OPERATIVE SESSION
           </span>
           <strong>
-            NOT AUTHENTICATED
+            NOT INLOGGEND
           </strong>
         </div>
 
@@ -703,7 +705,7 @@ export default function PrimeAuth() {
           class="prime-auth__button"
           data-prime-auth-open
         >
-          LOGIN
+          INLOGGEN
         </button>
       </div>
 
@@ -717,11 +719,11 @@ export default function PrimeAuth() {
             class="prime-auth__eyebrow"
             data-prime-auth-role
           >
-            OPERATIVE AUTHENTICATED
+            ACCOUNT AANGEMELD
           </span>
 
           <strong data-prime-auth-name>
-            AUTHENTICATED OPERATIVE
+            AANGEMELD ACCOUNT
           </strong>
         </div>
 
@@ -730,7 +732,7 @@ export default function PrimeAuth() {
           class="prime-auth__button prime-auth__button--logout"
           data-prime-auth-logout
         >
-          LOGOUT
+          UITLOGGEN
         </button>
       </div>
 
@@ -742,10 +744,10 @@ export default function PrimeAuth() {
         <div class="prime-auth__panel-header">
           <div>
             <span>
-              PRIME ACCESS CONTROL
+              PRIME TOEGANGSCONTROLE
             </span>
             <strong>
-              Operative Authentication
+              Account aanmelden
             </strong>
           </div>
 
@@ -753,7 +755,7 @@ export default function PrimeAuth() {
             type="button"
             class="prime-auth__close"
             data-prime-auth-close
-            aria-label="Close login"
+            aria-label="Login sluiten"
           >
             ×
           </button>
@@ -764,7 +766,7 @@ export default function PrimeAuth() {
           data-prime-auth-form
         >
           <label>
-            Operative ID
+            Gebruikersnaam
 
             <input
               type="text"
@@ -775,7 +777,7 @@ export default function PrimeAuth() {
           </label>
 
           <label>
-            Access Key
+            Wachtwoord
 
             <input
               type="password"
@@ -789,7 +791,7 @@ export default function PrimeAuth() {
             type="submit"
             class="prime-auth__button"
           >
-            AUTHENTICATE
+            INLOGGEN
           </button>
         </form>
 

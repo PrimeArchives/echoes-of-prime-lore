@@ -9,8 +9,11 @@ import Navigation from "./navigation/navigation"
 import Messages from "./messages/messages"
 import Objectives from "./objectives/objectives"
 import AudioArchive, { audioArchiveAfterDOMLoaded } from "./audio/AudioArchive"
-import PrimeAuth from "./PrimeAuth"
+import PrimeAuth, { primeAuthAfterDOMLoaded } from "./PrimeAuth"
 import Universe from "./universe/universe"
+import Interactive, {
+  interactiveAfterDOMLoaded,
+} from "./interactive/Interactive"
 
 
 const primeMessageSummaryScript = String.raw`
@@ -171,6 +174,35 @@ const primeMessageSummaryScript = String.raw`
 })()
 `
 
+
+const primeArchiveSignalScript = String.raw`
+;(() => {
+ const key="__primeArchiveSignalGate";
+ if(window[key])return;window[key]=true;
+ let loading=false;
+ async function refresh(){
+  const roots=[...document.querySelectorAll('[data-prime-archive-gateway]')];
+  if(!roots.length||loading)return;loading=true;
+  try{
+   const response=await fetch('/api/frostgale/signal',{cache:'no-store',credentials:'same-origin'});
+   if(!response.ok)return;
+   const data=await response.json();
+   for(const root of roots){
+    if(!root.isConnected)continue;
+    const lost=typeof data.signalLost==='boolean'?data.signalLost:root.dataset.defaultLost==='true';
+    root.querySelector('[data-prime-signal-screen]').hidden=!lost;
+    root.querySelector('[data-prime-archive-content]').hidden=lost;
+   }
+  }catch{}finally{loading=false;}
+ }
+ document.addEventListener('nav',refresh);
+ document.addEventListener('render',refresh);
+ document.addEventListener('prime-archive-signal-changed',refresh);
+ window.addEventListener('focus',refresh);
+ setInterval(()=>{if(!document.hidden)refresh();},3000);
+ refresh();
+})();
+`
 
 const PRIME_SIGNAL_LOST = true
 
@@ -440,12 +472,36 @@ const SignalLost = () => (
 )
 
 const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
-  if (PRIME_SIGNAL_LOST) {
-    return <SignalLost />
+  // A real Quartz page type routes /interface here, before the archive outage gate.
+  if (String(props.fileData?.slug ?? "").replace(/\/$/, "") === "interface") {
+    return (
+      <main class="prime-field-interface" aria-label="Frostgale lokale interface">
+        <style dangerouslySetInnerHTML={{ __html: `
+          body[data-slug="interface"] { background: #030e19; }
+          body[data-slug="interface"] #quartz-body {
+            display: block; width: 100%; max-width: 1200px; margin: auto; padding: 0;
+          }
+          body[data-slug="interface"] .sidebar,
+          body[data-slug="interface"] .page-header,
+          body[data-slug="interface"] footer { display: none; }
+          body[data-slug="interface"] .center { margin: 0; width: 100%; }
+          .prime-field-interface { background: #030e19; min-height: 100dvh; padding: 12px; }
+          .prime-field-interface__close {
+            display: block; color: #69f9e1; padding: 12px 16px;
+            font: 14px var(--codeFont, monospace); min-height: 44px;
+          }
+        ` }} />
+        <a href="/" class="prime-field-interface__close" data-no-popover="true">← TERUG NAAR START</a>
+        <Interactive />
+      </main>
+    )
   }
 
   return (
-    <>
+    <div data-prime-archive-gateway data-default-lost={String(PRIME_SIGNAL_LOST)}>
+      <style dangerouslySetInnerHTML={{__html: `[data-prime-archive-gateway] > [hidden] { display: none !important; }`}} />
+      <div data-prime-signal-screen hidden={!PRIME_SIGNAL_LOST}><SignalLost /></div>
+      <div data-prime-archive-content hidden={PRIME_SIGNAL_LOST}>
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -496,6 +552,10 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
             }
 
             #objectives-toggle:checked ~ .prime-app--objectives {
+              display: block;
+            }
+
+            #interactive-toggle:checked ~ .prime-app--interactive {
               display: block;
             }
 
@@ -1106,6 +1166,13 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
         aria-hidden="true"
       />
 
+      <input
+        id="interactive-toggle"
+        class="prime-app-toggle"
+        type="checkbox"
+        aria-hidden="true"
+      />
+
       <div
         id="prime-boot"
         class="prime-boot"
@@ -1340,6 +1407,31 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
                 </span>
               </div>
             </label>
+
+            <label
+              for="interactive-toggle"
+              class="archive-card tool prime-app-launcher"
+            >
+              <div class="archive-card-top">
+                <span class="archive-label">FIELD APPLICATION</span>
+                <span class="archive-led" aria-hidden="true"></span>
+              </div>
+
+              <div class="archive-card-header">
+              <div class="archive-card-icon">⌘</div>
+              <div>
+                <h3>Interactive</h3>
+                <p>Local equipment and terminal interfaces.</p>
+              </div>
+            </div>
+
+  <div class="archive-card-footer">
+    <span>AVAILABLE</span>
+    <span class="archive-open">OPEN →</span>
+  </div>
+</label>
+
+
 
             <label
               for="messages-toggle"
@@ -1664,14 +1756,50 @@ const PrimeOS: QuartzComponent = (props: QuartzComponentProps) => {
           <AudioArchive allFiles={props.allFiles ?? []} />
         </div>
       </section>
-    </>
+
+      <section
+          class="prime-app prime-app--interactive"
+          aria-label="Interactive application"
+      >
+        <div class="prime-app__shell">
+          <header class="prime-app__topbar">
+        <div>
+          <span class="prime-app__system">
+          PAT-03 / FIELD APPLICATION
+          </span>
+          <strong>Interactive</strong>
+        </div>
+
+            <a href="/" class="prime-app__close" aria-label="Terug naar start" title="Terug naar start" data-no-popover="true">×</a>
+        </header>
+
+          <Interactive />
+        </div>
+      </section>
+      </div>
+    </div>
   )
 }
 
 
-PrimeOS.afterDOMLoaded = audioArchiveAfterDOMLoaded + String.raw`
+PrimeOS.afterDOMLoaded =
+  primeArchiveSignalScript +
+  "\n;\n" +
+  primeAuthAfterDOMLoaded +
+  "\n;\n" +
+  audioArchiveAfterDOMLoaded +
+  "\n;\n" +
+  interactiveAfterDOMLoaded +
+  "\n;\n" +
+  String.raw`
 (() => {
   const applyNavigationHash = (attempt = 0) => {
+    // Old bookmarks must leave /archives rather than expose its dashboard.
+    if (window.location.hash === "#interface" &&
+        window.location.pathname.replace(/\/$/, "") === "/archives") {
+      window.location.replace("/interface")
+      return
+    }
     const match = window.location.hash.match(/^#navigation([a-z0-9-]+)$/i)
     if (!match) return
 

@@ -3038,3 +3038,10 @@ body[data-slug="02-locations/index"] {
 .prime-mail-item p {
   color: #91a3b2;
 }
+/* Frostgale: equal landing actions, wrapping on narrow screens. */
+body[data-slug="index"] .markdown-preview-view > .hero-button {
+  display: flex; flex-wrap: wrap; gap: 14px; right: 1.5rem;
+}
+body[data-slug="index"] .markdown-preview-view > .hero-button .prime-button {
+  margin: 0; white-space: nowrap;
+}

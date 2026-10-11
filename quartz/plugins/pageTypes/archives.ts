@@ -6,7 +6,7 @@ export const ArchivesPageType: QuartzPageTypePlugin = () => ({
   priority: 100,
 
   match({ slug }) {
-    return slug === "archives"
+    return slug === "archives" || slug === "interface"
   },
 
   layout: "archives",

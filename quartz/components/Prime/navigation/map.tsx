@@ -13,7 +13,7 @@ function navigationKey(value: string) {
     .replace(/^-+|-+$/g, "")
 }
 
-const MAP_DEBUG = false
+const MAP_DEBUG = true
 
 export default function Map({ map }: MapProps) {
   const discoveredLocations = map.locations.filter(

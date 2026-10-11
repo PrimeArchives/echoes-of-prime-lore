@@ -1,3 +1,4 @@
+import { frostgale, frostgaleSignal } from "./frostgale"
 interface Env {
   ASSETS: Fetcher
   DB: D1Database
@@ -353,6 +354,14 @@ export default {
     env: Env,
   ): Promise<Response> {
     const url = new URL(request.url)
+
+    if (url.pathname === "/api/frostgale/signal") {
+      return frostgaleSignal(request, env.DB)
+    }
+
+    if (url.pathname === "/api/frostgale") {
+      return frostgale(request, env.DB, await getSessionUser(request, env))
+    }
 
     // ============================================================
     // AUTH

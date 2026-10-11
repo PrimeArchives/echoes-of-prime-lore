@@ -1,4 +1,4 @@
-﻿---
+---
 title: Prime Archives
 description: De publieke spelersarchieven van Echoes of Prime.
 ---
@@ -15,7 +15,8 @@ description: De publieke spelersarchieven van Echoes of Prime.
     href="/archives#prime-boot"
     data-no-popover="true"
   >
-    Enter the Archives
+    ENTER ARCHIVES
   </a>
+  <a class="prime-button" href="/interface" data-no-popover="true">INTERFACE</a>
 </p>
 
