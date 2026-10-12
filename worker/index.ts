@@ -359,6 +359,10 @@ export default {
       return frostgaleSignal(request, env.DB)
     }
 
+    if (url.pathname === "/api/frostgale/test") {
+      return frostgale(request, env.DB, await getSessionUser(request, env), true)
+    }
+
     if (url.pathname === "/api/frostgale") {
       return frostgale(request, env.DB, await getSessionUser(request, env))
     }

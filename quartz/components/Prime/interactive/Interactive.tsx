@@ -2,24 +2,36 @@ import { QuartzComponent } from "../../types"
 import PrimeAuth from "../PrimeAuth"
 
 const css = String.raw`
+.fr select{font:inherit;background:#102f35;color:#daf9f2;min-height:44px;border:1px solid #bb94ff;border-radius:6px;padding:8px;max-width:100%}.fr label{display:flex;flex-direction:column;gap:6px;font-size:12px}.fr-test-banner{border:2px solid #ffcb70;color:#ffcb70;padding:12px;background:#352f16}
+
 .fr{--cyan:#69f9e1;--violet:#bb94ff;--amber:#ffcb70;--red:#ff657c;background:#030e19;color:#daf9f2;font-family:var(--codeFont,monospace);padding:18px;min-height:75vh;position:relative;isolation:isolate;overflow:hidden}.fr *{box-sizing:border-box}.fr [hidden]{display:none!important}.fr:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#67ffd908 3px 4px);z-index:-1}.fr-rain{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.12;z-index:-1;display:flex;justify-content:space-around}.fr-rain span{writing-mode:vertical-rl;color:#74ff98;letter-spacing:12px;animation:fr-fall 18s linear infinite;transform:translateY(-100%)}.fr-rain span:nth-child(2n){animation-delay:-7s}.fr-rain span:nth-child(3n){animation-delay:-13s}@keyframes fr-fall{to{transform:translateY(120vh)}}.fr-wrap{max-width:1000px;margin:auto}.fr h2{font-size:clamp(23px,5vw,38px);color:#dffff3;text-shadow:0 0 25px #5bffd34d;margin:10px 0}.fr h3{font-size:15px;color:var(--cyan);margin:0 0 12px}.fr p{font-size:12px;line-height:1.7}.fr small{font-size:11px;color:#a4c9c9}.fr-kicker{color:var(--cyan);font-size:11px;letter-spacing:.12em}.fr-panel{background:#0b1c2de8;border:1px solid #285064;border-radius:10px;padding:16px;margin:12px 0;box-shadow:inset 0 1px 0 #ffffff08}.fr-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.fr-summary>div{border:1px solid #275264;padding:12px;background:#061725}.fr-summary strong{display:block;font-size:22px;color:var(--cyan)}.fr-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}.fr button{font:inherit;cursor:pointer;min-height:44px;color:var(--cyan);border:1px solid #35796e;background:#102f35;border-radius:6px;padding:10px}.fr button:hover{background:#18504a}.fr button:disabled{opacity:.55;cursor:default}.fr button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}.fr-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:14px 0}.fr-grid button{position:relative;aspect-ratio:1;padding:0;min-height:44px;min-width:0;background:#06121e;border-color:#2a4054;touch-action:manipulation}.fr-grid svg{width:100%;height:100%;display:block}.fr-grid button[data-live="true"]{border-color:var(--cyan);box-shadow:0 0 12px #69f9e120;background:#10372f}.fr-grid button[data-lock="true"]{border-style:dashed;border-color:var(--amber)}.fr-grid button[data-broken="true"]{border-color:var(--red);background:#351323}.fr-grid em{position:absolute;bottom:2px;right:3px;font:9px monospace;color:#c6d9df}.fr-grid b{position:absolute;top:2px;right:3px;font-size:10px;color:var(--amber)}.fr-grid button[data-selected="true"]{outline:2px solid var(--violet);outline-offset:1px}.fr:has(.prime-auth__panel:not([hidden])){overflow:visible}.fr-circuit{padding:12px 0;border-bottom:1px solid #274252;display:grid;grid-template-columns:1fr auto;gap:6px}.fr-circuit strong{font-size:12px}.fr-circuit small{display:block;margin-top:5px}.fr-circuit meter{width:100%;height:13px;grid-column:1/-1}.fr-circuit meter::-webkit-meter-bar{background:#142631;border:0}.fr-circuit meter::-webkit-meter-optimum-value{background:#69f9e1}.fr-circuit meter::-webkit-meter-suboptimum-value{background:#ffcb70}.fr-circuit meter::-webkit-meter-even-less-good-value{background:#ff657c}.fr-diagnosis{border-left:3px solid var(--violet);padding:10px;background:#17203b;line-height:1.65;font-size:12px;margin:10px 0}.fr-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.fr-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}.fr-progress span{border:1px solid #365269;font-size:11px;text-align:center;padding:10px 2px}.fr-progress span[data-done="true"]{color:var(--cyan);border-color:var(--cyan);background:#0c352f}.fr-error{color:#ffcb70;min-height:24px;font-size:12px;line-height:1.6}.fr-log{max-height:180px;overflow:auto;white-space:pre-wrap;font-size:11px;color:#96d3b6;background:#030c13;padding:12px}.fr-status{color:var(--amber)}.fr legend{font-size:11px}.fr-dm details{padding:12px;border:1px solid #38556a;margin:8px 0}.fr-dm summary{cursor:pointer;min-height:44px;color:var(--violet)}.fr-source{display:flex;justify-content:space-between;font-size:11px;color:var(--cyan)}@media(max-width:720px){.fr-layout{grid-template-columns:1fr}.fr{padding:10px}.fr-summary>div{padding:9px 5px}.fr-summary strong{font-size:18px}.fr-panel{padding:12px}}@media(prefers-reduced-motion:reduce){.fr-rain{display:none}.fr *{animation:none!important}}
 .fr-columns{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.fr-columns button{padding:8px 2px;font-size:9px;line-height:1.6;min-height:65px;overflow-wrap:anywhere}.fr-columns button[data-off="true"]{border-color:var(--amber);color:var(--amber);background:#352f16}.fr-grid{margin-top:5px}.fr-grid button[data-lock="true"]{border-style:solid;border-color:#476074}.fr-grid button[data-free="true"]{border-color:var(--amber);border-style:dashed}.fr-grid button[data-endpoint="true"]{outline:2px solid var(--violet);outline-offset:0}.fr-grid .fr-marker{left:3px;right:auto;color:var(--violet);font-size:12px}.fr-phase-track{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.fr-phase-track span{font-size:11px;border:1px solid #385269;padding:10px}.fr-phase-track span[data-current="true"]{border-color:var(--violet);color:var(--violet)}.fr-phase-track span[data-done="true"]{border-color:var(--cyan);color:var(--cyan)}.fr-checkpoints{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:12px 0}.fr-checkpoints span{padding:7px;border:1px solid #46606d;color:#aac0cf}.fr-checkpoints span[data-live="true"]{color:var(--cyan);border-color:var(--cyan)}.fr-source{padding:10px;background:#1e2440;border-left:3px solid var(--violet);font-size:12px;line-height:1.6}.fr-source--target{justify-content:flex-end;border-left:0;border-right:3px solid var(--violet)}.fr-goal{font-size:14px!important;color:var(--violet)}
 `
 
 export const interactiveAfterDOMLoaded = String.raw`
 ;(() => {
- if(window.__frostgale22)return;window.__frostgale22=true;
+ if(window.__frostgaleArchitectTest)return;window.__frostgaleArchitectTest=true;
  const labels={lumi:'Lumi',clav:'Clavator',dakka:'Dakka',venn:'Venn'};
  const phases=['Aanvoer','Verdeelnet','Zender'];
  const base=[[0,2],[0,1],[0,1,3]],coords=[[50,0],[100,50],[50,100],[0,50]];
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function mount(root){
   if(root.dataset.mounted)return;root.dataset.mounted='1';
-  let data=null,busy=false,authVersion=0,selected=null,disposed=false,polling=false;
+  let data=null,busy=false,authVersion=0,selected=null,disposed=false,polling=false,testMode=false,testPlayer='lumi',canTest=false,testPhase=null;
+  const endpoint=()=>testMode?'/api/frostgale/test?player='+encodeURIComponent(testPlayer):'/api/frostgale';
   const q=s=>root.querySelector(s),msg=q('[data-fr-error]');
   const unlocked=p=>p.circuits.filter(on=>!on).length;
   function view(){
    if(!data)return;
+   if(!testMode)canTest=!!data.dm;
+   q('[data-fr-test-controls]').hidden=!canTest;
+   q('[data-fr-test-options]').hidden=!testMode;
+   q('[data-fr-test-banner]').hidden=!testMode;
+   q('[data-fr-test-open]').textContent=testMode?'TERUG NAAR RELAYBEHEER':'OPEN TESTCONSOLE';
+   q('[data-fr-test-player]').value=testPlayer;
+   ['open','player','phase','load','pause'].forEach(k=>q('[data-fr-test-'+k+']').disabled=busy);
+   q('[data-fr-test-phase]').value=String(testPhase??data.puzzle?.phase??0);
+   q('[data-fr-test-pause]').textContent=data.paused?'HERVAT TESTTIMERS':'PAUZEER TESTTIMERS';
    q('[data-fr-content]').hidden=false;
    q('[data-fr-upgrade]').hidden=!data.needsUpgrade;
    q('[data-fr-upgrade-button]').hidden=!data.dm;
@@ -84,9 +96,12 @@ export const interactiveAfterDOMLoaded = String.raw`
     const archives=q('[data-fr-archives]');archives.dataset.lost=String(data.archiveSignalLost===false);archives.textContent=data.archiveSignalLost===false?'ZET ARCHIVES OP SIGNAL LOST':'HERSTEL ARCHIVES-VERBINDING';archives.disabled=busy||data.archiveSignalLost!==false&&!data.online;
    }
   }
-  async function refresh(){if(disposed||busy||polling)return;polling=true;const version=authVersion;try{const r=await fetch('/api/frostgale',{credentials:'same-origin',cache:'no-store'});const d=await r.json();if(disposed||version!==authVersion)return;if(!r.ok){data=null;q('[data-fr-content]').hidden=true;msg.textContent=d.error;return;}if(!data||d.revision>=data.revision)data=d;view();}catch{if(!disposed)msg.textContent='Geen verbinding. Wijzigingen gelden pas na serverbevestiging.';}finally{polling=false;}}
-  async function send(action,extra={}){if(busy||!data)return;const version=authVersion;busy=true;view();try{const r=await fetch('/api/frostgale',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,phase:data.puzzle?.phase,requestId:crypto.randomUUID(),...extra})});const d=await r.json();if(disposed||version!==authVersion)return;if(!r.ok)throw Error(d.error);data=d;if(action==='advance'||action==='upgrade')selected=null;msg.textContent='✓ '+({rotate:'Tegel gedraaid',toggle:'Kolomschakelaar bijgewerkt',advance:'Kalibratie opgeslagen. Controleer de fase-status.' ,archives:'Archives-verbindingsstatus opgeslagen voor alle bezoekers.',release:'Externe interventie bevestigd. Volgende fase voor alle spelers vrijgegeven.',complete:'Alle fases voltooid. Reserve gebufferd.',initialize:'Frostgale Relay online. Tabletsignaal hersteld.',pause:'Timers gepauzeerd',resume:'Timers hervat',reset:'Subsystem gereset',resetAll:'Relay gereset',upgrade:'Nieuwe puzzelversie actief. De console is vergrendeld totdat de Architect fase 1 vrijgeeft.'}[action]||'Toestand bijgewerkt');}catch(e){if(!disposed)msg.textContent=e.message;}finally{busy=false;if(!disposed){view();await refresh();}}}
+  async function refresh(){if(disposed||busy||polling)return;polling=true;const version=authVersion;try{const r=await fetch(endpoint(),{credentials:'same-origin',cache:'no-store'});const d=await r.json();if(disposed||version!==authVersion)return;if(!r.ok){data=null;q('[data-fr-content]').hidden=true;msg.textContent=d.error;return;}if(!data||d.revision>=data.revision)data=d;view();}catch{if(!disposed)msg.textContent='Geen verbinding. Wijzigingen gelden pas na serverbevestiging.';}finally{polling=false;}}
+  async function send(action,extra={}){if(busy||!data)return;const version=authVersion;busy=true;view();try{const r=await fetch(endpoint(),{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,phase:data.puzzle?.phase,requestId:crypto.randomUUID(),...extra})});const d=await r.json();if(disposed||version!==authVersion)return;if(!r.ok)throw Error(d.error);data=d;if(['advance','testPhase'].includes(action))testPhase=null;if(action==='advance'||action==='upgrade'||action==='testPhase')selected=null;msg.textContent='✓ '+({rotate:'Tegel gedraaid',toggle:'Kolomschakelaar bijgewerkt',advance:'Kalibratie opgeslagen. Controleer de fase-status.' ,archives:'Archives-verbindingsstatus opgeslagen voor alle bezoekers.',release:'Externe interventie bevestigd. Volgende fase voor alle spelers vrijgegeven.',complete:'Alle fases voltooid. Reserve gebufferd.',initialize:'Frostgale Relay online. Tabletsignaal hersteld.',pause:'Timers gepauzeerd',resume:'Timers hervat',reset:'Subsystem gereset',resetAll:'Relay gereset',upgrade:'Nieuwe puzzelversie actief. De console is vergrendeld totdat de Architect fase 1 vrijgeeft.'}[action]||'Toestand bijgewerkt');}catch(e){if(!disposed)msg.textContent=e.message;}finally{busy=false;if(!disposed){view();await refresh();}}}
   const clickHandler=e=>{const b=e.target.closest('button');if(!b||!root.contains(b)||busy||!data)return;
+   if(b.hasAttribute('data-fr-test-open')){authVersion++;testMode=!testMode;data=null;selected=null;testPhase=null;msg.textContent='Console laden…';q('[data-fr-content]').hidden=true;refresh();return;}
+   if(b.hasAttribute('data-fr-test-load')){send('testPhase',{targetPhase:Number(q('[data-fr-test-phase]').value)});return;}
+   if(b.hasAttribute('data-fr-test-pause')){send(data.paused?'resume':'pause');return;}
    if(b.dataset.cell!==undefined){selected=Number(b.dataset.cell);view();const p=data.puzzle,c=p.config.cells[selected];if(data.paused||data.online||p.completed||p.waiting)return;if(c.damaged){msg.textContent='J-'+(selected+1)+' is fysiek beschadigd. Kies een andere route.';return;}if(p.circuits[selected%5]){msg.textContent='Kolom '+(selected%5+1)+' is onder spanning. Schakel '+data.circuits[selected%5].name+' UIT om te draaien.';return;}send('rotate',{cell:selected});}
    else if(b.dataset.circuit)send('toggle',{circuit:b.dataset.circuit,on:!data.puzzle.circuits[data.circuits.findIndex(c=>c.id===b.dataset.circuit)]});
    else if(b.hasAttribute('data-fr-complete'))send(data.puzzle.phase<2?'advance':'complete');
@@ -98,10 +113,12 @@ export const interactiveAfterDOMLoaded = String.raw`
    else if(b.hasAttribute('data-fr-reset-all')&&confirm('Alle fases, incidenten en relayvoortgang opnieuw starten?'))send('resetAll');
    else if(b.hasAttribute('data-fr-upgrade-button')&&confirm('Nieuwe puzzelversie activeren? Alle spelers beginnen opnieuw met een vergrendelde console; de oude toestand wordt als serverarchief bewaard.'))send('upgrade');
   };
+  const changeHandler=e=>{if(e.target.hasAttribute('data-fr-test-phase')){testPhase=Number(e.target.value);return;}if(!e.target.hasAttribute('data-fr-test-player')||busy||!testMode)return;authVersion++;testPlayer=e.target.value;testPhase=null;data=null;selected=null;q('[data-fr-content]').hidden=true;refresh();};
+  root.addEventListener('change',changeHandler);
   root.addEventListener('click',clickHandler);
   const timer=setInterval(()=>{if(!document.hidden)refresh();},1500);
-  const auth=()=>{authVersion++;data=null;q('[data-fr-content]').hidden=true;refresh();};document.addEventListener('prime-auth-changed',auth);
-  function cleanup(){if(disposed)return;disposed=true;clearInterval(timer);document.removeEventListener('prime-auth-changed',auth);root.removeEventListener('click',clickHandler);delete root.dataset.mounted;observer.disconnect();}
+  const auth=()=>{authVersion++;testMode=false;canTest=false;q('[data-fr-test-controls]').hidden=true;data=null;q('[data-fr-content]').hidden=true;refresh();};document.addEventListener('prime-auth-changed',auth);
+  function cleanup(){if(disposed)return;disposed=true;clearInterval(timer);document.removeEventListener('prime-auth-changed',auth);root.removeEventListener('click',clickHandler);root.removeEventListener('change',changeHandler);delete root.dataset.mounted;observer.disconnect();}
   window.addCleanup?.(cleanup);
   const observer=new MutationObserver(()=>{if(!root.isConnected){cleanup();observer.disconnect();}});observer.observe(document.body,{childList:true,subtree:true});
   refresh();
@@ -120,6 +137,17 @@ const Interactive: QuartzComponent = () => (
    <p><strong>Vijf kolommen, vijf circuits.</strong> Circuit AAN = kolom vergrendeld. Circuit UIT = tegels draaibaar, conditie daalt. Herstel op tijd en voltooi drie reparatiefases.</p>
    <PrimeAuth />
    <p class="fr-error" data-fr-error role="status" aria-live="polite">Beveiligde verbinding opbouwen…</p>
+   <section class="fr-panel" data-fr-test-controls hidden>
+    <button data-fr-test-open>OPEN TESTCONSOLE</button>
+    <div data-fr-test-options hidden>
+     <p class="fr-test-banner" data-fr-test-banner hidden><strong>TESTMODUS // ALLEEN ARCHITECT</strong><br />Eigen testvoortgang. De echte sessie, spelers en Archives blijven onaangeraakt.</p>
+     <div class="fr-actions">
+      <label>Testspeler <select data-fr-test-player><option value="lumi">Lumi</option><option value="clav">Clavator</option><option value="dakka">Dakka</option><option value="venn">Venn</option></select></label>
+      <label>Testfase <select data-fr-test-phase><option value="0">1 · Aanvoer</option><option value="1">2 · Verdeelnet</option><option value="2">3 · Zender</option></select></label>
+      <button data-fr-test-load>START / RESET GEKOZEN TESTFASE</button><button data-fr-test-pause>PAUZEER TESTTIMERS</button>
+     </div><p>Een fase starten wist alleen de testpuzzel van de gekozen speler. Alle testfases zijn toegankelijk; kalibreren opent de volgende testfase automatisch.</p>
+    </div>
+   </section>
    <div data-fr-content hidden>
     <section class="fr-panel" data-fr-upgrade hidden><h3>NIEUWE REPARATIEPROCEDURE BESCHIKBAAR</h3><p>De Architect moet versie 2.2 activeren voordat de nieuwe puzzels beginnen. De oude voortgang is nog intact.</p><button data-fr-upgrade-button hidden>ACTIVEER PUZZELVERSIE 2.2</button></section>
     <div data-fr-main>
