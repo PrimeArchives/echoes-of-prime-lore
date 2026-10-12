@@ -79,8 +79,8 @@ export const interactiveAfterDOMLoaded = String.raw`
      detail.textContent='J-'+(selected+1)+' · '+(c.damaged?'Breuk':locked?'Vergrendeld':p.circuits[k]?'Kolom '+(k+1)+' staat AAN':'90° gedraaid');
      if(p.circuits[k]&&!c.damaged&&!locked){unlock.hidden=false;unlock.dataset.circuit=data.circuits[k].id;unlock.textContent='SCHAKEL KOLOM '+(k+1)+' VRIJ';unlock.disabled=busy||unlocked(p)>=2;}
     }else detail.textContent='Tik op een tegel. Is de kolom vergrendeld? Schakel boven het raster het bijbehorende circuit UIT.';
-    const restored=p.circuits.every(Boolean)&&p.conditions.every(v=>v>=60);
-    q('[data-fr-requirements]').textContent=p.waiting?'Wacht op de Architect':p.completed?'✓ Gereed':p.phase<2?(restored?'':'Herstel circuits tot ≥60%'):'Reserveer ≥3 PU';
+    const restored=p.circuits.every(Boolean);
+    q('[data-fr-requirements]').textContent=p.waiting?'Wacht op de Architect':p.completed?'✓ Gereed':p.phase<2?(restored?'':'Schakel alle circuits AAN'):'Reserveer ≥3 PU';
     q('[data-fr-complete]').disabled=busy||locked||!a.valid||(p.phase<2?!restored:p.free<3);
     q('[data-fr-complete]').textContent=p.waiting?'WACHTEN OP EXTERNE INTERVENTIE':p.completed?'SUBSYSTEM GEREED':p.phase<2?p.nextReleased?'KALIBREER EN OPEN FASE '+(p.phase+2):'ROND FASE '+(p.phase+1)+' AF':'VERGRENDEL SUBSYSTEM';
    }

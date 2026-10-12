@@ -97,7 +97,7 @@ export function settle(state:any,now:number){
  for(const player of PLAYERS){
   const p=state.puzzles[player],elapsed=Math.max(0,(now-p.last)/1000)
   if(state.openedPhase>=0&&!state.paused&&!p.completed&&!state.online)CIRCUITS.forEach((c,k)=>{
-   const before=p.conditions[k],after=Math.max(0,Math.min(100,before+elapsed*(p.circuits[k]?100/c.recovery:-100/c.decay)))
+   const before=p.conditions[k],after=Math.max(0,Math.min(100,before-elapsed*(p.circuits[k]?0:100/c.decay)))
    if(before>0&&after===0)p.incidents.push({circuit:c.id,at:p.last+before*c.decay*10,message:c.warning,phase:p.phase})
    p.conditions[k]=after
   })
@@ -164,7 +164,7 @@ export function act(s:any,player:string|null,dm:boolean,b:any,now:number){
   if(!analyze(cfg,p.rotations).valid)throw Error('Verbind bron, alle controlepunten en uitgang zonder beschadigde leiding.')
   if(p.phase<2){
    if(b.action!=='advance')throw Error('Voltooi eerst de aanvoer en het verdeelnet.')
-   if(!p.circuits.every(Boolean)||p.conditions.some((v:number)=>v<60))throw Error('Herstel alle circuits en laat elke conditie minimaal 60% bereiken voor fasekalibratie.')
+   if(!p.circuits.every(Boolean))throw Error('Herstel alle circuits en laat elke conditie minimaal 60% bereiken voor fasekalibratie.')
    p.history.push({phase:p.phase,at:now})
    if(p.phase<s.openedPhase){p.phase++;p.rotations=config(player,p.phase).cells.map(c=>c.initial)}
    else p.waiting=true
