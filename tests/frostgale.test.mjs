@@ -28,23 +28,23 @@ test('onderhoudslimiet, vrijschakelen en herstel blijven mogelijk bij 0%',()=>{
  assert.throws(()=>command(s,'lumi',{action:'rotate',cell:0},375000),/UIT/)
 })
 test('condities, hervatten, browserrefresh en incidentdeduplicatie',()=>{
- const s=fresh(0),p=s.puzzles.lumi
- command(s,'lumi',{action:'toggle',circuit:'heat',on:false});settle(s,60000);assert.equal(p.conditions[0],50)
- command(s,'lumi',{action:'toggle',circuit:'heat',on:true},60000);settle(s,78750);assert.equal(p.conditions[0],75)
- command(s,'lumi',{action:'toggle',circuit:'heat',on:false},78750)
- act(s,null,true,{action:'pause'},78750);settle(s,500000);assert.equal(p.conditions[0],75)
- act(s,null,true,{action:'resume'},500000);settle(s,590000);assert.equal(p.conditions[0],0);assert.equal(p.incidents.length,1)
+ const s=fresh(0),p=s.puzzles.lumi,half=CIRCUITS[0].decay*500,quarterRecovery=CIRCUITS[0].recovery*250,t=half+quarterRecovery
+ command(s,'lumi',{action:'toggle',circuit:'heat',on:false});settle(s,half);assert.equal(p.conditions[0],50)
+ command(s,'lumi',{action:'toggle',circuit:'heat',on:true},half);settle(s,t);assert.equal(p.conditions[0],75)
+ command(s,'lumi',{action:'toggle',circuit:'heat',on:false},t)
+ act(s,null,true,{action:'pause'},t);settle(s,500000);assert.equal(p.conditions[0],75)
+ act(s,null,true,{action:'resume'},500000);settle(s,500000+CIRCUITS[0].decay*750);assert.equal(p.conditions[0],0);assert.equal(p.incidents.length,1)
  settle(s,690000);assert.equal(p.incidents.length,1)
  const restored=JSON.parse(JSON.stringify(s));settle(restored,790000);assert.equal(restored.puzzles.lumi.incidents.length,1)
 })
 test('kalibratie vereist herstel; geen fases overslaan of oude acties herhalen',()=>{
- const s=fresh(0);solve(s,'lumi');const p=s.puzzles.lumi
+ const s=fresh(0);solve(s,'lumi');const p=s.puzzles.lumi,empty=CIRCUITS[0].decay*1000,ready=empty+CIRCUITS[0].recovery*600
  command(s,'lumi',{action:'toggle',circuit:'heat',on:false});assert.throws(()=>command(s,'lumi',{action:'advance'}),/Herstel/)
- settle(s,120000);command(s,'lumi',{action:'toggle',circuit:'heat',on:true},120000);assert.throws(()=>command(s,'lumi',{action:'advance'},120000),/60%/)
- settle(s,165000);assert.equal(p.conditions[0],60);command(s,'lumi',{action:'advance'},165000)
- assert.equal(p.phase,0);assert.equal(p.waiting,true);assert.equal(p.history.length,1);release(s,0,165000);assert.equal(p.phase,1);assert.equal(p.waiting,false);assert.equal(analyze(config('lumi',1),p.rotations).valid,false)
- assert.throws(()=>command(s,'lumi',{action:'rotate',cell:0,phase:0},165000),/fase is gewijzigd/)
- assert.throws(()=>command(s,'lumi',{action:'complete'},165000))
+ settle(s,empty);command(s,'lumi',{action:'toggle',circuit:'heat',on:true},empty);assert.throws(()=>command(s,'lumi',{action:'advance'},empty),/60%/)
+ settle(s,ready);assert.equal(p.conditions[0],60);command(s,'lumi',{action:'advance'},ready)
+ assert.equal(p.phase,0);assert.equal(p.waiting,true);assert.equal(p.history.length,1);release(s,0,ready);assert.equal(p.phase,1);assert.equal(p.waiting,false);assert.equal(analyze(config('lumi',1),p.rotations).valid,false)
+ assert.throws(()=>command(s,'lumi',{action:'rotate',cell:0,phase:0},ready),/fase is gewijzigd/)
+ assert.throws(()=>command(s,'lumi',{action:'complete'},ready))
 })
 for(const player of PLAYERS)test(player+': drie fases via werkelijke actieregels, eindreserve en wachtstand',()=>{
  const s=fresh(0),p=s.puzzles[player]

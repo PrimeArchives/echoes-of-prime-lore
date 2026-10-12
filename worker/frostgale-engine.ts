@@ -7,11 +7,11 @@ export const PHASES = [
  {name:'Zender aansluiten',goal:'Verbind de bron via A, B en C met de zender en reserveer minimaal 3 PU.'},
 ]
 export const CIRCUITS = [
- {id:'heat',name:'Woonverwarming',short:'WARMTE',pu:2,decay:120,recovery:75,warning:'Temperatuur daalt; bewoners zoeken beschutting.'},
- {id:'food',name:'Voedselbewaring',short:'VOEDSEL',pu:1,decay:180,recovery:90,warning:'Koelketen onderbroken; voedselvoorraad loopt risico.'},
- {id:'perimeter',name:'Perimeterbeveiliging',short:'PERIMETER',pu:1,decay:100,recovery:65,warning:'Buitensensoren vallen uit; blinde zones ontstaan.'},
- {id:'medical',name:'Medische post',short:'MEDISCH',pu:1,decay:110,recovery:70,warning:'Medische apparatuur verliest capaciteit.'},
- {id:'7g',name:'Circuit 7-G — BUITEN GEBRUIK',short:'7-G',pu:2,decay:150,recovery:100,warning:'Onverklaarde terugkoppeling. Bestemming onbekend.'},
+ {id:'heat',name:'Woonverwarming',short:'WARMTE',pu:2,decay:45,recovery:30,warning:'Temperatuur daalt; bewoners zoeken beschutting.'},
+ {id:'food',name:'Voedselbewaring',short:'VOEDSEL',pu:1,decay:60,recovery:35,warning:'Koelketen onderbroken; voedselvoorraad loopt risico.'},
+ {id:'perimeter',name:'Perimeterbeveiliging',short:'PERIMETER',pu:1,decay:35,recovery:25,warning:'Buitensensoren vallen uit; blinde zones ontstaan.'},
+ {id:'medical',name:'Medische post',short:'MEDISCH',pu:1,decay:40,recovery:25,warning:'Medische apparatuur verliest capaciteit.'},
+ {id:'7g',name:'Circuit 7-G — BUITEN GEBRUIK',short:'7-G',pu:2,decay:50,recovery:35,warning:'Onverklaarde terugkoppeling. Bestemming onbekend.'},
 ]
 const BASE = [[0,2],[0,1],[0,1,3]]
 const STEP = [-5,1,5,-1]
